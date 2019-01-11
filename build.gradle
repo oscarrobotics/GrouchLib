@@ -1,0 +1,90 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'edu.wpi.first.NativeUtils' version '2.1.2'
+    id 'edu.wpi.first.GradleJni' version '0.3.1' apply false
+}
+
+/////////////////////////////////////////
+// Specify WPI Versions
+
+ext.allwpilibVersion = {
+    return '2019.1.1'
+}
+
+ext.getWpiUtilVersion = {
+    return allwpilibVersion()
+}
+ext.getNtCoreVersion = {
+    return allwpilibVersion()
+}
+ext.getCsCoreVersion = {
+    return allwpilibVersion()
+}
+
+ext.getWpilibOpencvVersion = {
+    return '3.2.0'
+}
+ext.getCtreVersion = {
+    return '5.12.0'
+}
+ext.getCtreSimVersion = {
+    return getCtreVersion() + "_V0_RC"
+}
+ext.getNavxVersion = {
+    return '3.1.340'
+}
+ext.getWpiRepo = {
+    return "http://first.wpi.edu/FRC/roborio/maven/release/"
+}
+
+ext.getNavxRepo = {
+    return 'http://www.kauailabs.com/maven2/'
+}
+
+ext.getCtreRepo = {
+    return 'http://devsite.ctr-electronics.com/maven/release/'
+}
+
+ext.getPathfinderRepo = {
+    return 'https://dev.imjac.in/maven'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven { url getWpiRepo() }
+    maven { url getNavxRepo() }
+    maven { url getCtreRepo() }
+    maven { url getPathfinderRepo() }
+}
+
+sourceCompatibility = 11
+
+dependencies {
+    compile 'com.kauailabs.navx.frc:navx-java:3.1.344'
+    compile 'edu.wpi.first.wpilibj:wpilibj-java:2019.1.1'
+    compile 'edu.wpi.first.ntcore:ntcore-java:2019.1.1'
+    compile 'edu.wpi.first.wpiutil:wpiutil-java:2019.1.1'
+    compile 'edu.wpi.first.thirdparty.frc2019.opencv:opencv-java:3.4.4-4'
+    compile 'edu.wpi.first.cscore:cscore-java:2019.1.1'
+    compile 'edu.wpi.first.cameraserver:cameraserver-java:2019.1.1'
+    compile 'edu.wpi.first.hal:hal-java:2019.1.1'
+    compile 'com.ctre.phoenix:api-java:5.12.1'
+    compile 'com.ctre.phoenix:wpiapi-java:5.12.1'
+    compile 'jaci.pathfinder:Pathfinder-Java:2019.1.11'
+    compile 'jaci.jniloader:JNILoader:1.0.1'
+    compile 'jaci.pathfinder:Pathfinder-FRCSupport:2019.1.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
