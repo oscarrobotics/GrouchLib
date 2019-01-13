@@ -95,7 +95,7 @@ public class OscarNavX implements IOscarIMU {
 
     @Override
     public void calibrate() {
-        return;
+        // NavX auto-calibrates
     }
 
     @Override

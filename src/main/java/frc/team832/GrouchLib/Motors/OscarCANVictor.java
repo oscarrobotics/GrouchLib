@@ -196,6 +196,6 @@ public class OscarCANVictor implements IOscarSmartMotor {
 
     @Override
     public void setNominalOutputReverse(double percentOut) {
-
+        // Not supported by Victor
     }
 }

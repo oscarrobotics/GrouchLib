@@ -1,6 +1,7 @@
 package frc.team832.GrouchLib.Motion;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
 import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
@@ -116,9 +117,6 @@ public class OscarDiffDrive extends OscarDriveBase {
      */
     @SuppressWarnings("ParameterName")
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-        if (Math.abs(xSpeed) > 0.1) {
-            System.out.println("DRIVING");
-        }
         xSpeed = limit(xSpeed);
         xSpeed = applyDeadband(xSpeed, m_deadband);
 
