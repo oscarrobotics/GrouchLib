@@ -17,16 +17,16 @@ public interface IOscarSimpleMotor {
     double get();
 
     /**
-     * Common interface for returning if a speed controller is in the inverted state or not.
+     * Common interface for returning if a speed controller is in the inverted get or not.
      *
-     * @return isInverted The state of the inversion true is inverted.
+     * @return isInverted The get of the inversion true is inverted.
      */
     boolean getInverted();
 
     /**
      * Common interface for inverting direction of a speed controller.
      *
-     * @param isInverted The state of inversion true is inverted.
+     * @param isInverted The get of inversion true is inverted.
      */
     void setInverted(boolean isInverted);
 
@@ -36,7 +36,7 @@ public interface IOscarSimpleMotor {
     void disable();
 
     /**
-     * Stops motor movement. Motor can be moved again by calling set without having to re-enable the
+     * Stops motor movement. Motor can be moved again by calling set without having to re-enabled the
      * motor.
      */
     void stopMotor();

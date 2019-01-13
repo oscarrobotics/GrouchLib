@@ -1,13 +1,14 @@
 package frc.team832.GrouchLib.Motion;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.team832.GrouchLib.Control.OscarPCM;
 
 public class OscarDoubleSolenoid {
 
-    DoubleSolenoid _solenoid;
+    private DoubleSolenoid _solenoid;
 
-    public OscarDoubleSolenoid(int pcmID, int pcmChannelF, int pcmChannelR) {
-        _solenoid = new DoubleSolenoid(pcmID, pcmChannelF, pcmChannelR);
+    public OscarDoubleSolenoid(OscarPCM pcm, int pcmChannelF, int pcmChannelR) {
+        _solenoid = new DoubleSolenoid(pcm.getDeviceID(), pcmChannelF, pcmChannelR);
     }
 
     public void forward() {
@@ -22,5 +23,6 @@ public class OscarDoubleSolenoid {
         _solenoid.set(DoubleSolenoid.Value.kOff);
     }
 
+    public DoubleSolenoid.Value get() { return _solenoid.get();}
 
 }
