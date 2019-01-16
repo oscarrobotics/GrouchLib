@@ -1,12 +1,10 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
+import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
-public class OscarRotaryMechanism extends OscarSimpleMechanism {
+public class OscarRotaryMechanism extends OscarSmartMechanism {
 
-
-
-    public OscarRotaryMechanism(IOscarSimpleMotor simpleMotor) {
-        super(simpleMotor);
+    public OscarRotaryMechanism(IOscarSmartMotor smartMotor) {
+        super(smartMotor);
     }
 }
