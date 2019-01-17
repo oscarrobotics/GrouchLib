@@ -4,21 +4,7 @@ package frc.team832.GrouchLib.Mechanisms;
 
 public class OscarLinearMechanism extends OscarSmartMechanism {
 
-    public OscarLinearMechanism(IOscarSmartMotor smartMotor) {
-        super(smartMotor);
-    }
-
     public OscarLinearMechanism(IOscarSmartMotor smartMotor, OscarMechanismPosition[] presetPositions) {
-        super(smartMotor, presetPositions);
-    }
-
-    @Override
-    public double getPositionInches() {
-        return 0;
-    }
-
-    @Override
-    public void setPositionInches() {
-
+	    super(smartMotor, presetPositions);
     }
 }
