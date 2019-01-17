@@ -4,7 +4,8 @@ import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
 public class OscarRotaryMechanism extends OscarSmartMechanism {
 
-    public OscarRotaryMechanism(IOscarSmartMotor smartMotor) {
-        super(smartMotor);
+    public OscarRotaryMechanism(IOscarSmartMotor smartMotor, OscarMechanismPosition[] presetPositions) {
+        super(smartMotor, presetPositions);
+
     }
 }
