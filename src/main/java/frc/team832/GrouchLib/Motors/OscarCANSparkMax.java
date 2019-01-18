@@ -49,6 +49,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 		    	// Not supported
 			    break;
 	    }
+	    _sparkMax.getPIDController().setReference(0, _ctrlType);
     }
 
     public void setFollowType(CANSparkMax.ExternalFollower followType) {
