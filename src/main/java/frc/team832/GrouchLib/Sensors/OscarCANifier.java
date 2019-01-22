@@ -97,6 +97,9 @@ public class OscarCANifier {
 	}
 
 	public class Ultrasonic {
+		private static final double kPingTime = 10 * 1e-6;
+		private static final double kSpeedOfSoundInchesPerSec = 1130.0 * 12.0;
+
 		private CANifier.PWMChannel _triggerPin, _echoPin;
 
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
@@ -122,15 +125,31 @@ public class OscarCANifier {
 			_canifier.enablePWMOutput(_triggerPin.value, false);
 		}
 
-		public void update() {
+		public void ping() {
 			start();
-			_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
+			// delays?
 			stop();
 		}
 
+		public void update() {
+			ping();
+			_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
+		}
+
 		public double getMeasuredPulseWidthUs() {
-			update();
 			return _dutyCycleAndPeriod[0];
+		}
+
+		private boolean isRangeValid() {
+			return _dutyCycleAndPeriod[1] > 1;
+		}
+
+		public double getRangeInches() {
+			return isRangeValid() ? _dutyCycleAndPeriod[1] * kSpeedOfSoundInchesPerSec / 2.0 : 0;
+		}
+
+		public double getRangeMM() {
+			return getRangeInches() * 25.4;
 		}
 	}
 
