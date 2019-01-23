@@ -138,6 +138,11 @@ public class OscarCANTalon implements IOscarSmartMotor {
     }
 
     @Override
+    public int getSensorVelocity() {
+       return _talon.getSelectedSensorVelocity();
+    }
+
+    @Override
     public int getSensorPosition() {
         return _talon.getSelectedSensorPosition(0);
     }

@@ -2,6 +2,7 @@ package frc.team832.GrouchLib.Sensors;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
+import frc.team832.GrouchLib.Motors.OscarCANSparkMax;
 
 import java.awt.*;
 import java.security.InvalidParameterException;
@@ -64,6 +65,21 @@ public class OscarCANifier {
 		}
 	}
 
+	public Ultrasonic addUltrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin) {
+		// don't check trigger pin, as we can use the same trigger for multiple ultrasonics
+		GeneralPin t_triggerPin = GeneralPinFromPWMChannel(triggerPin);
+		GeneralPin t_echoPin = GeneralPinFromPWMChannel(echoPin);
+		if (_outputPins.contains(t_echoPin) || _inputPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a digital channel!");
+		if (_pwmPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a PWM Channel!");
+
+		if (!_pwmPins.contains(t_triggerPin)) {
+			_pwmPins.add(t_triggerPin);
+		}
+		_pwmPins.add(t_echoPin);
+
+		return new Ultrasonic(triggerPin, echoPin, _canifier);
+	}
+
 	/* RGB channel assignment is as follows
 	 * Red = LEDChannelA
 	 * Blue = LEDChannelB
@@ -96,24 +112,19 @@ public class OscarCANifier {
 		setLedRGB(0, 0, 0);
 	}
 
-	public class Ultrasonic {
+	public static class Ultrasonic {
 		private static final double kPingTime = 10 * 1e-6;
 		private static final double kSpeedOfSoundInchesPerSec = 1130.0 * 12.0;
 
+		private CANifier _canifier;
 		private CANifier.PWMChannel _triggerPin, _echoPin;
 
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 
-		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin) {
-			GeneralPin t_triggerPin = GeneralPinFromPWMChannel(triggerPin);
-			GeneralPin t_echoPin = GeneralPinFromPWMChannel(echoPin);
-			if (_outputPins.contains(t_triggerPin) || _inputPins.contains(t_triggerPin)) throw new UnsupportedOperationException("Trigger pin is already assigned as a digital channel!");
-			if (_outputPins.contains(t_echoPin) || _inputPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a digital channel!");
-			if (_pwmPins.contains(t_triggerPin)) throw new UnsupportedOperationException("Trigger pin is already assigned as a PWM Channel!");
-			if (_pwmPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a PWM Channel!");
-
-			_pwmPins.add(t_triggerPin);
-			_pwmPins.add(t_echoPin);
+		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin, CANifier canifier) {
+			_triggerPin = triggerPin;
+			_echoPin = echoPin;
+			_canifier = canifier;
 		}
 
 		public void start() {
