@@ -1,6 +1,7 @@
 package frc.team832.GrouchLib.Control;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class OscarPCM {
 
@@ -12,7 +13,7 @@ public class OscarPCM {
         _pcm = new Compressor(canID);
     }
 
-    public void enabled(boolean value) {
+    public void setEnabled(boolean value) {
         _pcm.setClosedLoopControl(value);
     }
 
@@ -30,5 +31,10 @@ public class OscarPCM {
 
     public int getDeviceID() {
         return _id;
+    }
+
+    public void setOutput(int channel, boolean value) {
+        Solenoid tempSolenoid = new Solenoid(_id, channel);
+        tempSolenoid.set(value);
     }
 }

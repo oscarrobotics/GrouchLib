@@ -145,6 +145,11 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     }
 
     @Override
+    public int getSensorVelocity() {
+        return m_masterMotor.getSensorVelocity();
+    }
+
+    @Override
     public int getSensorPosition() {
         return m_masterMotor.getSensorPosition();
     }

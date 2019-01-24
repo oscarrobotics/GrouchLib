@@ -140,6 +140,11 @@ public class OscarCANVictor implements IOscarSmartMotor {
     }
 
     @Override
+    public int getSensorVelocity() {
+        return 0; // Not supported by Victor
+    }
+
+    @Override
     public int getSensorPosition() {
         return 0; // Not supported by Victor
     }

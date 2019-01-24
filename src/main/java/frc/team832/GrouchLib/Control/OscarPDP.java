@@ -22,11 +22,9 @@ public class OscarPDP {
         return _pdp.getCurrent(channel);
     }
 
-    public double getTemperature() {
-        return _pdp.getTemperature();
-    }
+    public double getChannelPower(int channel) { return getChannelCurrent(channel) * getVoltage(); }
 
-    public double getVoltage() {
-        return _pdp.getVoltage();
-    }
+    public double getTemperature() { return _pdp.getTemperature(); }
+
+    public double getVoltage() { return _pdp.getVoltage(); }
 }

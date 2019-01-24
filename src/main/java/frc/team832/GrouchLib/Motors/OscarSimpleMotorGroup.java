@@ -8,6 +8,9 @@ public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
     public OscarSimpleMotorGroup(IOscarSimpleMotor simpleMotor, IOscarSimpleMotor... simpleMotors) {
         m_simpleMotors = new IOscarSimpleMotor[simpleMotors.length + 1];
         m_simpleMotors[0] = simpleMotor;
+        for (int i = 0; i < simpleMotors.length; i++) {
+            m_simpleMotors[i + 1] = simpleMotors[i];
+        }
     }
 
     @Override

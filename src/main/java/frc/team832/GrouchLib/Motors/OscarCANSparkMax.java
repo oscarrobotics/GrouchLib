@@ -49,6 +49,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 		    	// Not supported
 			    break;
 	    }
+	    _sparkMax.getPIDController().setReference(0, _ctrlType);
     }
 
     public void setFollowType(CANSparkMax.ExternalFollower followType) {
@@ -60,7 +61,11 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 
 	@Override
 	public void follow(IOscarSmartMotor masterMotor) {
-
+		if (masterMotor instanceof OscarCANTalon || masterMotor instanceof OscarCANVictor) {
+			_followType = CANSparkMax.ExternalFollower.kFollowerPhoenix;
+		} else if (masterMotor instanceof OscarCANSparkMax) {
+			_followType = CANSparkMax.ExternalFollower.kFollowerSparkMax;
+		} else _followType = CANSparkMax.ExternalFollower.kFollowerDisabled;
 	}
 
 	@Override
@@ -116,13 +121,18 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 	}
 
 	@Override
+	public int getSensorVelocity() {
+		return (int) _sparkMax.getEncoder().getVelocity();
+	}
+
+	@Override
 	public int getSensorPosition() {
 		return (int) _sparkMax.getEncoder().getPosition();
 	}
 
 	@Override
 	public void setSensorPosition(int absolutePosition) {
-		// Not supported
+		// Not supported, coming in future API
 	}
 
 	@Override

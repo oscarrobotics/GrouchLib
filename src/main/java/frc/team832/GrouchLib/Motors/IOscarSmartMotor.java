@@ -109,6 +109,8 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
      */
     void setOpenLoopRamp(double secondsFromNeutralToFull);
 
+    int getSensorVelocity();
+
     int getSensorPosition();
 
     void setSensorPosition(int absolutePosition);
