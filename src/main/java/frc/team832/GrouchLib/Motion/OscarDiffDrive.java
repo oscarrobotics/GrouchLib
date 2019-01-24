@@ -19,8 +19,6 @@ public class OscarDiffDrive extends OscarDriveBase {
     public OscarDiffDrive(IOscarSimpleMotor leftMotor, IOscarSimpleMotor rightMotor) {
         m_leftMotor = leftMotor;
         m_rightMotor = rightMotor;
-
-        System.out.println("DiffDrive INIT");
     }
 
     public OscarDiffDrive(IOscarSmartMotor leftMotor, IOscarSmartMotor rightMotor) {
@@ -29,8 +27,6 @@ public class OscarDiffDrive extends OscarDriveBase {
 
         leftMotor.setMode(ControlMode.PercentOutput);
         rightMotor.setMode(ControlMode.PercentOutput);
-
-        System.out.println("DiffDrive INIT");
     }
 
     /**
@@ -97,8 +93,6 @@ public class OscarDiffDrive extends OscarDriveBase {
 
         m_leftMotor.set(limit(leftMotorOutput) * m_maxOutput);
         m_rightMotor.set(-limit(rightMotorOutput) * m_maxOutput);
-
-//        feed();
     }
 
     /**
