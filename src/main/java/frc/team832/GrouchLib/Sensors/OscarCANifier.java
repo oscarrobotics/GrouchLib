@@ -2,6 +2,8 @@ package frc.team832.GrouchLib.Sensors;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.team832.GrouchLib.Motors.OscarCANSparkMax;
 
 import java.awt.*;
@@ -118,6 +120,7 @@ public class OscarCANifier {
 
 		private CANifier _canifier;
 		private CANifier.PWMChannel _triggerPin, _echoPin;
+		private long lastPing;
 
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 
@@ -143,8 +146,12 @@ public class OscarCANifier {
 		}
 
 		public void update() {
-			ping();
-			_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
+			// wait 60ms between pings
+			if (lastPing >= 60){
+				ping();
+				_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
+				lastPing = (long)(RobotController.getFPGATime() / 1000.0);
+			}
 		}
 
 		public double getMeasuredPulseWidthUs() {
