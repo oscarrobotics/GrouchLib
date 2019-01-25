@@ -6,14 +6,22 @@ import frc.team832.GrouchLib.Motors.OscarCANSparkMax;
 
 import java.awt.*;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OscarCANifier {
 
 	private CANifier _canifier;
-	private List<GeneralPin> _inputPins;
-	private List<GeneralPin> _outputPins;
-	private List<GeneralPin> _pwmPins;
+	private List<GeneralPin> _inputPins = new ArrayList<>();
+	private List<GeneralPin> _outputPins = new ArrayList<>();
+	private List<GeneralPin> _pwmPins = new ArrayList<>();
+
+	private CANifier.LEDChannel _ledRChannel = CANifier.LEDChannel.LEDChannelC;
+	private CANifier.LEDChannel _ledGChannel = CANifier.LEDChannel.LEDChannelB;
+	private CANifier.LEDChannel _ledBChannel = CANifier.LEDChannel.LEDChannelA;
+
+	private double _ledVoltage = 12;
+	private double _ledMaxOutput = 1;
 
 	public OscarCANifier(CANifier canifier) {
 		_canifier = canifier;
@@ -81,19 +89,27 @@ public class OscarCANifier {
 	}
 
 	/* RGB channel assignment is as follows
-	 * Red = LEDChannelA
+	 * Red = LEDChannelC
+	 * Green = LEDChannelA
 	 * Blue = LEDChannelB
-	 * Green = LEDChannelC
 	 */
 
+	public void setLedChannels(CANifier.LEDChannel ledRChannel, CANifier.LEDChannel ledGChannel, CANifier.LEDChannel ledBChannel) {
+		_ledRChannel = ledRChannel;
+		_ledGChannel = ledGChannel;
+		_ledBChannel = ledBChannel;
+	}
+
 	public void setLedRGB(double rValue, double gValue, double bValue) {
-		_canifier.setLEDOutput(rValue, CANifier.LEDChannel.LEDChannelA);
-		_canifier.setLEDOutput(gValue, CANifier.LEDChannel.LEDChannelB);
-		_canifier.setLEDOutput(bValue, CANifier.LEDChannel.LEDChannelC);
+		double trueOutput = (_ledVoltage / 12) * _ledMaxOutput;
+		System.out.println("LED Output: " + trueOutput);
+		_canifier.setLEDOutput(rValue * trueOutput, _ledRChannel);
+		_canifier.setLEDOutput(gValue * trueOutput, _ledGChannel);
+		_canifier.setLEDOutput(bValue * trueOutput, _ledBChannel);
 	}
 
 	public void setLedColor(Color color) {
-		setLedRGB(color.getRed(), color.getGreen(), color.getBlue());
+		setLedRGB((double)color.getRed() / 256.0, (double)color.getGreen() / 256.0, (double)color.getBlue() / 256.0);
 	}
 
 	public void setLedR(double value) {
@@ -110,6 +126,14 @@ public class OscarCANifier {
 
 	public void setLedOff() {
 		setLedRGB(0, 0, 0);
+	}
+
+	public void setLedVoltage(double volts) {
+		_ledVoltage = volts;
+	}
+
+	public void setLedMaxOutput(double maxOutput) {
+		_ledMaxOutput = maxOutput;
 	}
 
 	public static class Ultrasonic {
@@ -143,7 +167,7 @@ public class OscarCANifier {
 		}
 
 		public void update() {
-			ping();
+			//ping();
 			_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
 		}
 
@@ -151,12 +175,14 @@ public class OscarCANifier {
 			return _dutyCycleAndPeriod[0];
 		}
 
+		public double getPulsePeriod() { return _dutyCycleAndPeriod[1];	}
+
 		private boolean isRangeValid() {
 			return _dutyCycleAndPeriod[1] > 1;
 		}
 
 		public double getRangeInches() {
-			return isRangeValid() ? _dutyCycleAndPeriod[1] * kSpeedOfSoundInchesPerSec / 2.0 : 0;
+			return isRangeValid() ? getMeasuredPulseWidthUs() * 0.0133 / 2.0 : 0;
 		}
 
 		public double getRangeMM() {

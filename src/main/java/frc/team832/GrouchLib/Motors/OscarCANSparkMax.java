@@ -66,6 +66,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 		} else if (masterMotor instanceof OscarCANSparkMax) {
 			_followType = CANSparkMax.ExternalFollower.kFollowerSparkMax;
 		} else _followType = CANSparkMax.ExternalFollower.kFollowerDisabled;
+		_sparkMax.follow(_followType, masterMotor.getBaseID());
 	}
 
 	@Override
