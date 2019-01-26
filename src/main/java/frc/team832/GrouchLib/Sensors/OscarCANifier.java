@@ -142,6 +142,7 @@ public class OscarCANifier {
 
 		private CANifier _canifier;
 		private CANifier.PWMChannel _triggerPin, _echoPin;
+		private long lastPing;
 
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 
