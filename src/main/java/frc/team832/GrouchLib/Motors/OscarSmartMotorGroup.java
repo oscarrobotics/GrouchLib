@@ -28,8 +28,8 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     }
 
     @Override
-    public int getPosition() {
-        return m_masterMotor.getPosition();
+    public int getCurrentPosition() {
+        return m_masterMotor.getCurrentPosition();
     }
 
     @Override
@@ -160,8 +160,8 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     }
 
     @Override
-    public double getClosedLoopTarget() {
-        return m_masterMotor.getClosedLoopTarget();
+    public double getTargetPosition() {
+        return m_masterMotor.getTargetPosition();
     }
 
     @Override

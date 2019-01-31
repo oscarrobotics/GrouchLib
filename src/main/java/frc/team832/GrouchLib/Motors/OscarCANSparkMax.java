@@ -70,7 +70,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 	}
 
 	@Override
-    public int getPosition() { return (int) _sparkMax.getEncoder().getPosition(); }
+    public int getCurrentPosition() { return (int) _sparkMax.getEncoder().getPosition(); }
 
     @Override
     public double getInputVoltage() { return _sparkMax.getBusVoltage(); }
@@ -137,7 +137,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 	}
 
 	@Override
-	public double getClosedLoopTarget() {
+	public double getTargetPosition() {
     	return 0.0; // Not supported
 	}
 

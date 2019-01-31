@@ -40,7 +40,7 @@ public class OscarCANTalon implements IOscarSmartMotor {
     }
 
     @Override
-    public int getPosition() {
+    public int getCurrentPosition() {
         return _talon.getSelectedSensorPosition(_curPidIdx);
     }
 
@@ -153,7 +153,7 @@ public class OscarCANTalon implements IOscarSmartMotor {
     }
 
     @Override
-    public double getClosedLoopTarget() {
+    public double getTargetPosition() {
         return _talon.getClosedLoopTarget(0);
     }
 

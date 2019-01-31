@@ -36,7 +36,7 @@ public class OscarCANVictor implements IOscarSmartMotor {
     }
 
     @Override
-    public int getPosition() {
+    public int getCurrentPosition() {
         return 0; // Not supported by Victor
     }
 
@@ -155,7 +155,7 @@ public class OscarCANVictor implements IOscarSmartMotor {
     }
 
     @Override
-    public double getClosedLoopTarget() {
+    public double getTargetPosition() {
         return 0; // Not supported by Victor
     }
 

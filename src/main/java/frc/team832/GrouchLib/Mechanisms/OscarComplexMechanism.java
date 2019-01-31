@@ -1,5 +1,7 @@
 package frc.team832.GrouchLib.Mechanisms;
 
+import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPosition;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;

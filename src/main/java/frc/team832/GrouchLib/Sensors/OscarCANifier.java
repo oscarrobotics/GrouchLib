@@ -102,7 +102,7 @@ public class OscarCANifier {
 
 	public void setLedRGB(double rValue, double gValue, double bValue) {
 		double trueOutput = (_ledVoltage / 12) * _ledMaxOutput;
-		System.out.println("LED Output: " + trueOutput);
+		System.out.println("Setting LED Output: " + trueOutput);
 		_canifier.setLEDOutput(rValue * trueOutput, _ledRChannel);
 		_canifier.setLEDOutput(gValue * trueOutput, _ledGChannel);
 		_canifier.setLEDOutput(bValue * trueOutput, _ledBChannel);

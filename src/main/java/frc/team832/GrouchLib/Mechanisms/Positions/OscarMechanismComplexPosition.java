@@ -1,4 +1,4 @@
-package frc.team832.GrouchLib.Mechanisms;
+package frc.team832.GrouchLib.Mechanisms.Positions;
 
 import frc.team832.GrouchLib.Util.Tuple;
 

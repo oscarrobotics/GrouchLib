@@ -31,11 +31,11 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void follow(IOscarSmartMotor masterMotor);
 
     /**
-     * Gets the current encoder position in native ticks.
+     * Gets the current sensor position in it's native unit.
      *
      * @return Position.
      */
-    int getPosition();
+    int getCurrentPosition();
 
     /**
      * Gets the current input voltage of the controller.
@@ -115,7 +115,7 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
 
     void setSensorPosition(int absolutePosition);
 
-    double getClosedLoopTarget();
+    double getTargetPosition();
 
     boolean getForwardLimitSwitch();
 
