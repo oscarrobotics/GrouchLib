@@ -169,8 +169,6 @@ public class OscarDiffDrive extends OscarDriveBase {
 
         m_leftMotor.set(leftMotorOutput * m_maxOutput);
         m_rightMotor.set(-rightMotorOutput * m_maxOutput);
-
-//        feed();
     }
 
     /**
