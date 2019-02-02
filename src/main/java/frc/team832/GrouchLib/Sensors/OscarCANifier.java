@@ -163,12 +163,10 @@ public class OscarCANifier {
 
 		public void ping() {
 			start();
-			// delays?
 			stop();
 		}
 
 		public void update() {
-			//ping();
 			_canifier.getPWMInput(_echoPin, _dutyCycleAndPeriod);
 		}
 
