@@ -12,7 +12,6 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
 
     public OscarSmartMotorGroup(IOscarSmartMotor masterMotor, IOscarSmartMotor... slaveMotors) {
         m_masterMotor = masterMotor;
-//        m_slaveMotors = new IOscarSmartMotor[slaveMotors.length];
         m_slaveMotors = slaveMotors.clone();
         follow(masterMotor);
     }

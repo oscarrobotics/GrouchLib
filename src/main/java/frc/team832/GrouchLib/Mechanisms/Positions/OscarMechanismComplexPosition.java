@@ -12,6 +12,11 @@ public class OscarMechanismComplexPosition {
 		_complexPosition = new Tuple<>(pos1, pos2);
 	}
 
+	public OscarMechanismComplexPosition(String index, OscarMechanismPositionList pos1List, OscarMechanismPositionList pos2List) {
+		_index = index;
+		_complexPosition = new Tuple<>(pos1List.getByIndex(index), pos2List.getByIndex(index));
+	}
+
 	public String getIndex() {
 		return _index;
 	}
