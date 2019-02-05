@@ -17,20 +17,6 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void setMode(ControlMode mode);
 
     /**
-     * Sets this motor controller to follow the output of another controller.
-     *
-     * @param masterMotorID CAN ID of the controller to follow.
-     */
-    void follow(int masterMotorID);
-
-    /**
-     * Sets this motor controller to follow the output of another controller.
-     *
-     * @param masterMotor IOscarSmartMotor to follow.
-     */
-    void follow(IOscarSmartMotor masterMotor);
-
-    /**
      * Gets the current sensor position in it's native unit.
      *
      * @return Position.
@@ -57,15 +43,6 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
      * @return Output in Amps.
      */
     double getOutputCurrent();
-
-    /**
-     * Gets the CAN Id of the device.
-     *
-     * @return Device CAN ID.
-     */
-    int getDeviceID();
-
-    int getBaseID();
 
     /**
      * Sets the NeutralMode of the motor. (Brake or Coast)
