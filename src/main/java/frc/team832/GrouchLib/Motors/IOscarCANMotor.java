@@ -13,7 +13,7 @@ public interface IOscarCANMotor extends IOscarSimpleMotor {
      *
      * @param masterMotor IOscarSmartMotor to follow.
      */
-    void follow(IOscarSmartMotor masterMotor);
+    void follow(IOscarCANMotor masterMotor);
 
     /**
      * Gets the CAN Id of the device.
@@ -23,4 +23,24 @@ public interface IOscarCANMotor extends IOscarSimpleMotor {
     int getDeviceID();
 
     int getBaseID();
+    /**
+     * Gets the current input voltage of the controller.
+     *
+     * @return Input in Volts.
+     */
+    double getInputVoltage();
+
+    /**
+     * Gets the current output voltage of the controller.
+     *
+     * @return Output in Volts.
+     */
+    double getOutputVoltage();
+
+    /**
+     * Gets the current output current of the controller.
+     *
+     * @return Output in Amps.
+     */
+    double getOutputCurrent();
 }

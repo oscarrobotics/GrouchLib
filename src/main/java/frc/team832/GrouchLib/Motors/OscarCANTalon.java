@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
  */
-public class OscarCANTalon implements IOscarSmartMotor {
+public class OscarCANTalon implements IOscarCANSmartMotor {
 
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
@@ -78,7 +78,7 @@ public class OscarCANTalon implements IOscarSmartMotor {
     }
 
     @Override
-    public void follow(IOscarSmartMotor masterMotor) {
+    public void follow(IOscarCANMotor masterMotor) {
         follow(masterMotor.getDeviceID());
     }
 
@@ -200,5 +200,53 @@ public class OscarCANTalon implements IOscarSmartMotor {
     @Override
     public void setNominalOutputReverse(double percentOut) {
 
+    }
+
+    @Override
+    public void setkP(double kP) {
+        _talon.config_kP(0, kP);
+    }
+
+    @Override
+    public void setkI(double kI) {
+        _talon.config_kI(0, kI);
+    }
+
+    @Override
+    public void setkD(double kD) {
+        _talon.config_kD(0, kD);
+    }
+
+    @Override
+    public void setkF(double kF) {
+        _talon.config_kF(0, kF);
+    }
+
+    @Override
+    public void setkP(double kP, int slotID) {
+        _talon.config_kP(slotID, kP);
+    }
+
+    @Override
+    public void setkI(double kI, int slotID) {
+        _talon.config_kI(slotID, kI);
+    }
+
+    @Override
+    public void setkD(double kD, int slotID) {
+        _talon.config_kD(slotID, kD);
+    }
+
+    @Override
+    public void setkF(double kF, int slotID) {
+        _talon.config_kF(slotID, kF);
+    }
+
+    public void setAllowableError(int allowableError){
+        _talon.configAllowableClosedloopError(0, allowableError);
+    }
+
+    public void setAllowableError(int slotID,int allowableError){
+        _talon.configAllowableClosedloopError(slotID, allowableError);
     }
 }

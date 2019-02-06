@@ -111,4 +111,20 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void setNominalOutputForward(double percentOut);
 
     void setNominalOutputReverse(double percentOut);
+
+    void setkP(double kP);
+
+    void setkI(double kI);
+
+    void setkD(double kD);
+
+    void setkF(double kF);
+
+    void setkP(double kP, int slotID);
+
+    void setkI(double kI, int slotID);
+
+    void setkD(double kD, int slotID);
+
+    void setkF(double kF, int slotID);
 }

@@ -13,7 +13,7 @@ import com.revrobotics.ControlType;
  * Awaiting release of SPARK MAX API.
  */
 
-public class OscarCANSparkMax implements IOscarSmartMotor {
+public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	private int _id;
 
@@ -60,7 +60,7 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
     public void follow(int masterMotorID) { _sparkMax.follow(_followType, masterMotorID); }
 
 	@Override
-	public void follow(IOscarSmartMotor masterMotor) {
+	public void follow(IOscarCANMotor masterMotor) {
 		if (masterMotor instanceof OscarCANTalon || masterMotor instanceof OscarCANVictor) {
 			_followType = CANSparkMax.ExternalFollower.kFollowerPhoenix;
 		} else if (masterMotor instanceof OscarCANSparkMax) {
@@ -186,6 +186,46 @@ public class OscarCANSparkMax implements IOscarSmartMotor {
 	@Override
 	public void setNominalOutputReverse(double percentOut) {
 		// Not supported
+	}
+
+	@Override
+	public void setkP(double kP) {
+		_sparkMax.getPIDController().setP(kP);
+	}
+
+	@Override
+	public void setkI(double kI) {
+		_sparkMax.getPIDController().setP(kI);
+	}
+
+	@Override
+	public void setkD(double kD) {
+		_sparkMax.getPIDController().setP(kD);
+	}
+
+	@Override
+	public void setkF(double kF) {
+		_sparkMax.getPIDController().setP(kF);
+	}
+
+	@Override
+	public void setkP(double kP, int slotID) {
+		_sparkMax.getPIDController().setP(kP, slotID);
+	}
+
+	@Override
+	public void setkI(double kI, int slotID) {
+		_sparkMax.getPIDController().setP(kI, slotID);
+	}
+
+	@Override
+	public void setkD(double kD, int slotID) {
+		_sparkMax.getPIDController().setP(kD, slotID);
+	}
+
+	@Override
+	public void setkF(double kF, int slotID) {
+		_sparkMax.getPIDController().setP(kF, slotID);
 	}
 
 	@Override

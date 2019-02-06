@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-public class OscarCANVictor implements IOscarSmartMotor {
+public class OscarCANVictor implements IOscarCANMotor {
 
     private VictorSPX _victor;
     private ControlMode _ctrlMode;
@@ -36,11 +36,6 @@ public class OscarCANVictor implements IOscarSmartMotor {
     }
 
     @Override
-    public int getCurrentPosition() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
     public boolean getInverted() {
         return _victor.getInverted();
     }
@@ -62,7 +57,6 @@ public class OscarCANVictor implements IOscarSmartMotor {
         set(0);
     }
 
-    @Override
     public void setMode(ControlMode mode) {
         _ctrlMode = mode;
     }
@@ -73,7 +67,7 @@ public class OscarCANVictor implements IOscarSmartMotor {
         set((double) masterMotorID);
     }
 
-    public void follow(IOscarSmartMotor motor) {
+    public void follow(IOscarCANMotor motor) {
         int id32 = motor.getBaseID();
         int id24 = id32;
         id24 >>= 16;
@@ -84,19 +78,17 @@ public class OscarCANVictor implements IOscarSmartMotor {
         follow(id24);
     }
 
-    @Override
     public double getInputVoltage() {
         return _victor.getBusVoltage();
     }
 
-    @Override
     public double getOutputVoltage() {
         return _victor.getMotorOutputVoltage();
     }
 
     @Override
     public double getOutputCurrent() {
-        return 0; // Not supported by Victor.
+        return 0;
     }
 
     @Override
@@ -109,98 +101,9 @@ public class OscarCANVictor implements IOscarSmartMotor {
         return _victor.getBaseID();
     }
 
-    @Override
     public void setNeutralMode(NeutralMode mode) {
         _victor.setNeutralMode(mode);
     }
 
-    @Override
-    public void setSensorPhase(boolean phase) {
-        // Not supported by Victor
-    }
 
-    @Override
-    public void setSensor(FeedbackDevice device) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setAllowableClosedLoopError(int error) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setClosedLoopRamp(double secondsFromNeutralToFull) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setOpenLoopRamp(double secondsFromNeutralToFull) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public int getSensorVelocity() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
-    public int getSensorPosition() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
-    public void setSensorPosition(int absolutePosition) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public double getTargetPosition() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
-    public boolean getForwardLimitSwitch() {
-        return false; // Not supported by Victor
-    }
-
-    @Override
-    public boolean getReverseLimitSwitch() {
-        return false; // Not supported by Victor
-    }
-
-    @Override
-    public int getClosedLoopError() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
-    public int getPulseWidthPosition() {
-        return 0; // Not supported by Victor
-    }
-
-    @Override
-    public void set_kF(int slot, double kF) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setPeakOutputForward(double percentOut) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setPeakOutputReverse(double percentOut) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setNominalOutputForward(double percentOut) {
-        // Not supported by Victor
-    }
-
-    @Override
-    public void setNominalOutputReverse(double percentOut) {
-        // Not supported by Victor
-    }
 }

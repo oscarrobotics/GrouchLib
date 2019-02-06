@@ -4,13 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-public class OscarSmartMotorGroup implements IOscarSmartMotor {
+public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
 
-    private final IOscarSmartMotor m_masterMotor;
-    private final IOscarSmartMotor[] m_slaveMotors;
+    private final IOscarCANSmartMotor m_masterMotor;
+    private final IOscarCANMotor[] m_slaveMotors;
     private boolean m_isInverted = false;
 
-    public OscarSmartMotorGroup(IOscarSmartMotor masterMotor, IOscarSmartMotor... slaveMotors) {
+    public OscarCANSmartMotorGroup(IOscarCANSmartMotor masterMotor, IOscarCANMotor... slaveMotors) {
         m_masterMotor = masterMotor;
         m_slaveMotors = slaveMotors.clone();
         follow(masterMotor);
@@ -44,8 +44,8 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     @Override
     public void disable() {
         m_masterMotor.disable();
-        for (IOscarSmartMotor smartMotor : m_slaveMotors) {
-            smartMotor.disable();
+        for (IOscarCANMotor canMotor : m_slaveMotors) {
+            canMotor.disable();
         }
     }
 
@@ -61,14 +61,14 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
 
     @Override
     public void follow(int canID) {
-        for (IOscarSmartMotor slaveMotor : m_slaveMotors) {
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(canID);
         }
     }
 
     @Override
-    public void follow(IOscarSmartMotor masterMotor) {
-        for (IOscarSmartMotor slaveMotor : m_slaveMotors) {
+    public void follow(IOscarCANMotor masterMotor) {
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(masterMotor);
         }
     }
@@ -77,7 +77,7 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     public double getInputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getInputVoltage();
-        for (IOscarSmartMotor slaveMotor : m_slaveMotors) {
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getInputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -87,7 +87,7 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     public double getOutputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputVoltage();
-        for (IOscarSmartMotor slaveMotor : m_slaveMotors) {
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -97,7 +97,7 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     public double getOutputCurrent() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputCurrent();
-        for (IOscarSmartMotor slaveMotor : m_slaveMotors) {
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputCurrent();
         }
         return curTotal;
@@ -206,5 +206,45 @@ public class OscarSmartMotorGroup implements IOscarSmartMotor {
     @Override
     public void setNominalOutputReverse(double percentOut) {
         m_masterMotor.setNominalOutputReverse(percentOut);
+    }
+
+    @Override
+    public void setkP(double kP) {
+        m_masterMotor.setkP(kP);
+    }
+
+    @Override
+    public void setkI(double kI) {
+        m_masterMotor.setkI(kI);
+    }
+
+    @Override
+    public void setkD(double kD) {
+        m_masterMotor.setkD(kD);
+    }
+
+    @Override
+    public void setkF(double kF) {
+        m_masterMotor.setkF(kF);
+    }
+
+    @Override
+    public void setkP(double kP, int slotID) {
+        m_masterMotor.setkP(kP, slotID);
+    }
+
+    @Override
+    public void setkI(double kI, int slotID) {
+        m_masterMotor.setkI(kI, slotID);
+    }
+
+    @Override
+    public void setkD(double kD, int slotID) {
+        m_masterMotor.setkD(kD, slotID);
+    }
+
+    @Override
+    public void setkF(double kF, int slotID) {
+        m_masterMotor.setkF(kF, slotID);
     }
 }
