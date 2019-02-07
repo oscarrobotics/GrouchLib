@@ -1,6 +1,7 @@
 package frc.team832.GrouchLib.Mechanisms;
 
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPosition;
+import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPositionList;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,14 +10,14 @@ import java.util.Objects;
 public class OscarComplexMechanism {
 
 	private OscarSmartMechanism _primaryMech, _secondaryMech;
-	List<OscarMechanismComplexPosition> _positions;
+	OscarMechanismComplexPositionList _positions;
 
 	public OscarComplexMechanism(OscarSmartMechanism primaryMech,
-	                             OscarSmartMechanism secondaryMech,
-	                             OscarMechanismComplexPosition[] positions) {
+								 OscarSmartMechanism secondaryMech,
+								 OscarMechanismComplexPositionList positions) {
 		_primaryMech = primaryMech;
 		_secondaryMech = secondaryMech;
-		_positions = Arrays.asList(positions);
+		_positions = positions;
 	}
 
 	public void setPosition(OscarMechanismComplexPosition position) {
@@ -29,9 +30,10 @@ public class OscarComplexMechanism {
 	}
 
 	public OscarMechanismComplexPosition getPosition(String index) {
-		return _positions.stream()
-				.filter(pos -> Objects.equals(index, pos.getIndex()))
-				.findFirst()
-				.orElse(null);
+		return _positions.getByIndex(index);
+		//		return _positions.stream()
+//				.filter(pos -> Objects.equals(index, pos.getIndex()))
+//				.findFirst()
+//				.orElse(null);
 	}
 }
