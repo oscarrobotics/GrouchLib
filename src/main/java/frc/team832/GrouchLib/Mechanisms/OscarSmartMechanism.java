@@ -38,6 +38,10 @@ public abstract class OscarSmartMechanism {
 		setPosition(getPresetPosition(index));
 	}
 
+	public boolean getAtTarget(){
+		return _smartMotor.getClosedLoopError() <= 20;
+	}
+
 	public void stop() {
 		_smartMotor.stopMotor();
 	}
