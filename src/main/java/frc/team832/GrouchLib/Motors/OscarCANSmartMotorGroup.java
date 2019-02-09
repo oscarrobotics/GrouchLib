@@ -247,4 +247,14 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public void setkF(double kF, int slotID) {
         m_masterMotor.setkF(kF, slotID);
     }
+
+    @Override
+    public void setUpperLimit(int limit) {
+        m_masterMotor.setUpperLimit(limit);
+    }
+
+    @Override
+    public void setLowerLimit(int limit) {
+        m_masterMotor.setLowerLimit(limit);
+    }
 }

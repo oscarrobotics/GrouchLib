@@ -48,6 +48,14 @@ public abstract class OscarSmartMechanism {
 		_smartMotor.setkD(kD);
 	}
 
+	public void setUpperLimit(int limit){
+		_smartMotor.setUpperLimit(limit);
+	}
+
+	public void setLowerLimit(int limit){
+		_smartMotor.setLowerLimit(limit);
+	}
+
 	public void stop() {
 		_smartMotor.stopMotor();
 	}

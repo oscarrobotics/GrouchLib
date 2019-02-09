@@ -229,6 +229,16 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 	}
 
 	@Override
+	public void setUpperLimit(int limit) {
+		//not yet implemented
+	}
+
+	@Override
+	public void setLowerLimit(int limit) {
+		//not yet implemented
+	}
+
+	@Override
     public void set(double value) { _sparkMax.set(value); }
 
     @Override

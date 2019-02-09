@@ -127,4 +127,8 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void setkD(double kD, int slotID);
 
     void setkF(double kF, int slotID);
+
+    void setUpperLimit(int limit);
+
+    void setLowerLimit(int limit);
 }

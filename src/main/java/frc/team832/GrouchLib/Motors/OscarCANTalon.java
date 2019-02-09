@@ -3,6 +3,7 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
@@ -242,6 +243,16 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
         _talon.config_kF(slotID, kF);
     }
 
+    @Override
+    public void setUpperLimit(int limit) {
+        _talon.configForwardSoftLimitThreshold(limit);
+    }
+
+    @Override
+    public void setLowerLimit(int limit) {
+        _talon.configReverseSoftLimitThreshold(limit);
+    }
+
     public void setAllowableError(int allowableError){
         _talon.configAllowableClosedloopError(0, allowableError);
     }
@@ -250,3 +261,4 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
         _talon.configAllowableClosedloopError(slotID, allowableError);
     }
 }
+
