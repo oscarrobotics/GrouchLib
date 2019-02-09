@@ -42,6 +42,12 @@ public abstract class OscarSmartMechanism {
 		return _smartMotor.getClosedLoopError() <= 20;
 	}
 
+	public void setPID(double kP, double kI, double kD){
+		_smartMotor.setkP(kP);
+		_smartMotor.setkI(kI);
+		_smartMotor.setkD(kD);
+	}
+
 	public void stop() {
 		_smartMotor.stopMotor();
 	}
