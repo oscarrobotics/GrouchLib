@@ -30,8 +30,7 @@ public abstract class OscarSmartMechanism {
 	}
 
 	public void setPosition(OscarMechanismPosition position) {
-		_smartMotor.setMode(ControlMode.Position);
-		_smartMotor.set(position.getTarget());
+		_smartMotor.setPosition(position.getTarget());
 	}
 
 	public void setPosition(String index) {

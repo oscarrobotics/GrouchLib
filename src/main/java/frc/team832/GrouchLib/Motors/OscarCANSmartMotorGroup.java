@@ -55,16 +55,6 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     }
 
     @Override
-    public void setMode(ControlMode mode) {
-        m_masterMotor.setMode(mode);
-    }
-
-    @Override
-    public void setMode(ControlMode mode, double val) {
-
-    }
-
-    @Override
     public void follow(int canID) {
         for (IOscarCANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(canID);
@@ -269,5 +259,15 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void resetSensor() {
         m_masterMotor.resetSensor();
+    }
+
+    @Override
+    public void setVelocity(double rpmVal) {
+        m_masterMotor.setVelocity(rpmVal);
+    }
+
+    @Override
+    public void setPosition(double posVal) {
+        m_masterMotor.setPosition(posVal);
     }
 }

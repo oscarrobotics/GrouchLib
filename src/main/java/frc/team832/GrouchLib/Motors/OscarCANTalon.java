@@ -68,16 +68,6 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
     }
 
     @Override
-    public void setMode(ControlMode mode) {
-        _ctrlMode = mode;
-    }
-
-    @Override
-    public void setMode(ControlMode mode, double val) {
-
-    }
-
-    @Override
     public void follow(int masterMotorID) {
         _ctrlMode = ControlMode.Follower;
         set(masterMotorID);
@@ -268,6 +258,18 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
 
     public void resetSensor(){
         _talon.setSelectedSensorPosition(0);
+    }
+
+    @Override
+    public void setVelocity(double rpmVal) {
+        _ctrlMode = ControlMode.Velocity;
+        _talon.set(_ctrlMode, rpmVal);
+    }
+
+    @Override
+    public void setPosition(double posVal) {
+        _ctrlMode = ControlMode.Velocity;
+        _talon.set(_ctrlMode, posVal);
     }
 }
 

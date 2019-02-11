@@ -1,24 +1,26 @@
 package frc.team832.GrouchLib.Motion;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
 import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
-public class OscarDiffDrive extends OscarDriveBase {
+public class OscarSmartDiffDrive extends OscarDriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
-    private IOscarSimpleMotor m_leftMotor;
-    private IOscarSimpleMotor m_rightMotor;
+    private int _maxRpm;
+
+    private IOscarSmartMotor m_leftMotor;
+    private IOscarSmartMotor m_rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
 
-    public OscarDiffDrive(IOscarSimpleMotor leftMotor, IOscarSimpleMotor rightMotor) {
+
+    public OscarSmartDiffDrive(IOscarSmartMotor leftMotor, IOscarSmartMotor rightMotor, int maxRpm) {
         m_leftMotor = leftMotor;
         m_rightMotor = rightMotor;
+        _maxRpm = maxRpm;
     }
 
     /**
@@ -83,8 +85,11 @@ public class OscarDiffDrive extends OscarDriveBase {
             }
         }
 
-        m_leftMotor.set(limit(leftMotorOutput) * m_maxOutput);
-        m_rightMotor.set(-limit(rightMotorOutput) * m_maxOutput);
+        double leftOut = (limit(leftMotorOutput) * m_maxOutput) * _maxRpm;
+        double rightOut = (limit(rightMotorOutput) * m_maxOutput) * _maxRpm;
+
+        m_leftMotor.setVelocity(leftOut);
+        m_rightMotor.setVelocity(-rightOut);
     }
 
     /**
@@ -159,8 +164,11 @@ public class OscarDiffDrive extends OscarDriveBase {
             rightMotorOutput /= maxMagnitude;
         }
 
-        m_leftMotor.set(leftMotorOutput);
-        m_rightMotor.set(-rightMotorOutput);
+        leftMotorOutput *= _maxRpm;
+        rightMotorOutput *= _maxRpm;
+
+        m_leftMotor.setVelocity(leftMotorOutput);
+        m_rightMotor.setVelocity(-rightMotorOutput);
     }
 
     /**
@@ -199,8 +207,8 @@ public class OscarDiffDrive extends OscarDriveBase {
             rightSpeed = Math.copySign(rightSpeed * rightSpeed, rightSpeed);
         }
 
-        m_leftMotor.set(leftSpeed * m_maxOutput);
-        m_rightMotor.set(-rightSpeed * m_maxOutput);
+        m_leftMotor.set(leftSpeed * m_maxOutput * _maxRpm);
+        m_rightMotor.set(-rightSpeed * m_maxOutput * _maxRpm);
     }
 
     /**

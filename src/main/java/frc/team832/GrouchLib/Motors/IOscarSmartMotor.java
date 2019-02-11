@@ -10,14 +10,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public interface IOscarSmartMotor extends IOscarSimpleMotor {
 
     /**
-     * Sets the ControlMode of the controller.
-     *
-     * @param mode ControlMode to set.
-     */
-    void setMode(ControlMode mode);
-
-    void setMode(ControlMode mode, double val);
-    /**
      * Gets the current sensor position in it's native unit.
      *
      * @return Position.
@@ -134,4 +126,8 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void setLowerLimit(int limit);
 
     void resetSensor();
+
+    void setVelocity(double rpmVal);
+
+    void setPosition(double posVal);
 }

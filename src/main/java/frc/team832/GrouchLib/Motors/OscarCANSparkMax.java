@@ -25,36 +25,21 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
         m_encoder = _sparkMax.getEncoder();
     }
 
-    @Override
-    public void setMode(ControlMode mode) {
-    	setMode(mode, 0);
-    }
 
-    @Override
-    public void setMode(ControlMode mode, double val){
-		switch (mode) {
-			case PercentOutput:
-				_ctrlType = ControlType.kDutyCycle; // percentage of input
-				break;
-			case Position:
-				_ctrlType = ControlType.kPosition;
-				break;
-			case Velocity:
-				_ctrlType = ControlType.kVelocity;
-				break;
-			case Current:
-			case Follower:
-			case MotionProfile:
-			case MotionMagic:
-			case MotionProfileArc:
-			case Disabled:
-				// Not supported
-				break;
-		}
-		m_PIDController.setReference(val, _ctrlType);
+
+	@Override
+	public void setVelocity(double rpmVal) {
+    	_ctrlType = ControlType.kVelocity;
+		m_PIDController.setReference(rpmVal, _ctrlType);
 	}
 
-    public void setFollowType(CANSparkMax.ExternalFollower followType) {
+	@Override
+	public void setPosition(double posVal) {
+		_ctrlType = ControlType.kPosition;
+		m_PIDController.setReference(posVal, _ctrlType);
+	}
+
+	public void setFollowType(CANSparkMax.ExternalFollower followType) {
     	_followType = followType;
     }
 
@@ -259,7 +244,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
         //not yet implemented
     }
 
-    public CANSparkMax getInstance() {
+	public CANSparkMax getInstance() {
     	return _sparkMax;
 	}
 
