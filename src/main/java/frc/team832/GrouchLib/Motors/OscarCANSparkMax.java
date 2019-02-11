@@ -3,15 +3,8 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANDigitalInput;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.ControlType;
-
-/**
- * NOT IMPLEMENTED
- * Awaiting release of SPARK MAX API.
- */
+import com.revrobotics.*;
+import edu.wpi.first.wpilibj.PIDController;
 
 public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
@@ -22,35 +15,44 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     private CANSparkMax _sparkMax;
     private ControlType _ctrlType;
     private CANSparkMax.ExternalFollower _followType;
+    private CANEncoder m_encoder;
+    private CANPIDController m_PIDController;
 
     public OscarCANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
     	_id = canId;
         _sparkMax = new CANSparkMax(canId, mType);
+		m_PIDController = _sparkMax.getPIDController();
+        m_encoder = _sparkMax.getEncoder();
     }
 
     @Override
     public void setMode(ControlMode mode) {
-    	switch (mode) {
-		    case PercentOutput:
-		    	_ctrlType = ControlType.kDutyCycle; // percentage of input
-			    break;
-		    case Position:
-		    	_ctrlType = ControlType.kPosition;
-			    break;
-		    case Velocity:
-		    	_ctrlType = ControlType.kVelocity;
-			    break;
-		    case Current:
-		    case Follower:
-		    case MotionProfile:
-		    case MotionMagic:
-		    case MotionProfileArc:
-		    case Disabled:
-		    	// Not supported
-			    break;
-	    }
-	    _sparkMax.getPIDController().setReference(0, _ctrlType);
+    	setMode(mode, 0);
     }
+
+    @Override
+    public void setMode(ControlMode mode, double val){
+		switch (mode) {
+			case PercentOutput:
+				_ctrlType = ControlType.kDutyCycle; // percentage of input
+				break;
+			case Position:
+				_ctrlType = ControlType.kPosition;
+				break;
+			case Velocity:
+				_ctrlType = ControlType.kVelocity;
+				break;
+			case Current:
+			case Follower:
+			case MotionProfile:
+			case MotionMagic:
+			case MotionProfileArc:
+			case Disabled:
+				// Not supported
+				break;
+		}
+		m_PIDController.setReference(val, _ctrlType);
+	}
 
     public void setFollowType(CANSparkMax.ExternalFollower followType) {
     	_followType = followType;
@@ -66,7 +68,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 		} else if (masterMotor instanceof OscarCANSparkMax) {
 			_followType = CANSparkMax.ExternalFollower.kFollowerSparkMax;
 		} else _followType = CANSparkMax.ExternalFollower.kFollowerDisabled;
-		_sparkMax.follow(_followType, masterMotor.getBaseID());
+		_sparkMax.follow(_followType, masterMotor.getDeviceID());
 	}
 
 	@Override
@@ -103,7 +105,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setSensor(FeedbackDevice device) {
-		// Not supported
+		//not used
 	}
 
 	@Override
@@ -190,22 +192,22 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setkP(double kP) {
-		_sparkMax.getPIDController().setP(kP);
+		m_PIDController.setP(kP);
 	}
 
 	@Override
 	public void setkI(double kI) {
-		_sparkMax.getPIDController().setP(kI);
+		m_PIDController.setP(kI);
 	}
 
 	@Override
 	public void setkD(double kD) {
-		_sparkMax.getPIDController().setP(kD);
+		m_PIDController.setP(kD);
 	}
 
 	@Override
 	public void setkF(double kF) {
-		_sparkMax.getPIDController().setP(kF);
+		m_PIDController.setP(kF);
 	}
 
 	@Override
@@ -253,7 +255,19 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     @Override
     public void disable() { _sparkMax.disable(); }
 
+    public void resetSensor(){
+        //not yet implemented
+    }
+
+    public CANSparkMax getInstance() {
+    	return _sparkMax;
+	}
+
     @Override
     public void stopMotor() { _sparkMax.stopMotor(); }
+
+    public void setReference(double x, ControlType type){
+    	m_PIDController.setReference(x, type);
+	}
 }
 

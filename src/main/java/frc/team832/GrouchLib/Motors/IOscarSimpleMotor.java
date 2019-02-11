@@ -1,5 +1,7 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public interface IOscarSimpleMotor {
 
     /**
@@ -29,6 +31,8 @@ public interface IOscarSimpleMotor {
      * @param isInverted The get of inversion true is inverted.
      */
     void setInverted(boolean isInverted);
+
+    void setNeutralMode(NeutralMode mode);
 
     /**
      * Disable the speed controller.

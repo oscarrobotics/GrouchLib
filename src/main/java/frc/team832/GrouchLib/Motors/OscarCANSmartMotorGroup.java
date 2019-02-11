@@ -13,7 +13,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public OscarCANSmartMotorGroup(IOscarCANSmartMotor masterMotor, IOscarCANMotor... slaveMotors) {
         m_masterMotor = masterMotor;
         m_slaveMotors = slaveMotors.clone();
-        follow(masterMotor);
+//        follow(masterMotor);
     }
 
     @Override
@@ -57,6 +57,11 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void setMode(ControlMode mode) {
         m_masterMotor.setMode(mode);
+    }
+
+    @Override
+    public void setMode(ControlMode mode, double val) {
+
     }
 
     @Override
@@ -116,6 +121,9 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void setNeutralMode(NeutralMode mode) {
         m_masterMotor.setNeutralMode(mode);
+        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+            slaveMotor.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     @Override
@@ -256,5 +264,10 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void setLowerLimit(int limit) {
         m_masterMotor.setLowerLimit(limit);
+    }
+
+    @Override
+    public void resetSensor() {
+        m_masterMotor.resetSensor();
     }
 }

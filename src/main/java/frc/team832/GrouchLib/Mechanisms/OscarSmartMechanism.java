@@ -56,7 +56,13 @@ public abstract class OscarSmartMechanism {
 		_smartMotor.setLowerLimit(limit);
 	}
 
+	public void resetSensor(){
+		_smartMotor.resetSensor();
+	}
+
 	public void stop() {
 		_smartMotor.stopMotor();
 	}
+
+
 }

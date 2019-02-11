@@ -9,17 +9,17 @@ public class OscarDiffDrive extends OscarDriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
-    private IOscarSimpleMotor m_leftMotor;
-    private IOscarSimpleMotor m_rightMotor;
+    private IOscarSmartMotor m_leftMotor;
+    private IOscarSmartMotor m_rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
 
-    public OscarDiffDrive(IOscarSimpleMotor leftMotor, IOscarSimpleMotor rightMotor) {
-        m_leftMotor = leftMotor;
-        m_rightMotor = rightMotor;
-    }
+//    public OscarDiffDrive(IOscarSimpleMotor leftMotor, IOscarSimpleMotor rightMotor) {
+//        m_leftMotor = leftMotor;
+//        m_rightMotor = rightMotor;
+//    }
 
     public OscarDiffDrive(IOscarSmartMotor leftMotor, IOscarSmartMotor rightMotor) {
         m_leftMotor = leftMotor;
@@ -167,8 +167,11 @@ public class OscarDiffDrive extends OscarDriveBase {
             rightMotorOutput /= maxMagnitude;
         }
 
-        m_leftMotor.set(leftMotorOutput * m_maxOutput);
-        m_rightMotor.set(-rightMotorOutput * m_maxOutput);
+        m_leftMotor.set(leftMotorOutput);
+        m_rightMotor.set(-rightMotorOutput);
+
+//        m_leftMotor.setMode(ControlMode.Velocity, leftMotorOutput * 3000);
+//        m_rightMotor.setMode(ControlMode.Velocity, -rightMotorOutput* 3000);
     }
 
     /**

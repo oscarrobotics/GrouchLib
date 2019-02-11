@@ -1,5 +1,7 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
 
     private final IOscarSimpleMotor[] m_simpleMotors;
@@ -36,6 +38,13 @@ public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
     @Override
     public void setInverted(boolean isInverted) {
         m_isInverted = isInverted;
+    }
+
+    @Override
+    public void setNeutralMode(NeutralMode mode) {
+        for (IOscarSimpleMotor simpleMotor : m_simpleMotors) {
+            simpleMotor.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     @Override

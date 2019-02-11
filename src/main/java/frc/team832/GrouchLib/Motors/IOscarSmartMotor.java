@@ -16,6 +16,7 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
      */
     void setMode(ControlMode mode);
 
+    void setMode(ControlMode mode, double val);
     /**
      * Gets the current sensor position in it's native unit.
      *
@@ -131,4 +132,6 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
     void setUpperLimit(int limit);
 
     void setLowerLimit(int limit);
+
+    void resetSensor();
 }
