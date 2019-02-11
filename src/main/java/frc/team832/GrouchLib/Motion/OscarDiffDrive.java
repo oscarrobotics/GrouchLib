@@ -167,11 +167,11 @@ public class OscarDiffDrive extends OscarDriveBase {
             rightMotorOutput /= maxMagnitude;
         }
 
-        m_leftMotor.set(leftMotorOutput);
-        m_rightMotor.set(-rightMotorOutput);
+//        m_leftMotor.set(leftMotorOutput);
+//        m_rightMotor.set(-rightMotorOutput);
 
-//        m_leftMotor.setMode(ControlMode.Velocity, leftMotorOutput * 3000);
-//        m_rightMotor.setMode(ControlMode.Velocity, -rightMotorOutput* 3000);
+        m_leftMotor.setMode(ControlMode.Velocity, leftMotorOutput * 3000);
+        m_rightMotor.setMode(ControlMode.Velocity, -rightMotorOutput* 3000);
     }
 
     /**

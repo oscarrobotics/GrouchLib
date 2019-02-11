@@ -269,5 +269,9 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     public void setReference(double x, ControlType type){
     	m_PIDController.setReference(x, type);
 	}
+
+	public void setOutputRange(double min, double max) {
+		m_PIDController.setOutputRange(min, max);
+	}
 }
 
