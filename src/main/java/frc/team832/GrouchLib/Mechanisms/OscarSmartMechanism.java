@@ -22,10 +22,15 @@ public abstract class OscarSmartMechanism {
 	public double getTargetPosition() { return _smartMotor.getTargetPosition(); }
 
 	public double getCurrentPosition() {
-		return _smartMotor.getCurrentPosition();
+		return _smartMotor.getSensorPosition();
+	}
+
+	public double getVelocity() {
+		return _smartMotor.getSensorVelocity();
 	}
 
 	public OscarMechanismPosition getPresetPosition(String index) {
+		OscarMechanismPosition presetPos = _presetPositions.getByIndex(index);
 		return _presetPositions.getByIndex(index);
 	}
 
@@ -34,6 +39,7 @@ public abstract class OscarSmartMechanism {
 	}
 
 	public void setPosition(String index) {
+		System.out.println("INDEX REQ: " + index);
 		setPosition(getPresetPosition(index));
 	}
 

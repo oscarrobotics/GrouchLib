@@ -114,7 +114,7 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
     }
 
     @Override
-    public void setSensor(FeedbackDevice device) {
+    public void setSensorType(FeedbackDevice device) {
         _talon.configSelectedFeedbackSensor(device, 0, 0);
     }
 
@@ -268,7 +268,7 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
 
     @Override
     public void setPosition(double posVal) {
-        _ctrlMode = ControlMode.Velocity;
+        _ctrlMode = ControlMode.Position;
         _talon.set(_ctrlMode, posVal);
     }
 }

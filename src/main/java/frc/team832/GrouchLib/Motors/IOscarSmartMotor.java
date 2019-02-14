@@ -56,7 +56,7 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
      *
      * @param device FeedbackDevice to set.
      */
-    void setSensor(FeedbackDevice device);
+    void setSensorType(FeedbackDevice device);
 
     /**
      * Sets the allowed error for a closed-loop system to consider itself "stable".

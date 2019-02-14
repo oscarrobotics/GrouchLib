@@ -17,4 +17,8 @@ public class OscarMath {
     public static double clip(double value, double min, double max) {
         return Math.min(Math.max(value, min), max);
     }
+
+    public static double mid(double x, double y) {
+        return x/2 + y/2 + (x%2 + y%2)/2;
+    }
 }

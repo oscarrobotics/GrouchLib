@@ -13,9 +13,13 @@ public class OscarMechanismPositionList {
 	}
 
 	public OscarMechanismPosition getByIndex(String index) {
-		return _presetPositions.stream()
+		OscarMechanismPosition presetPos = _presetPositions.stream()
 				.filter(pos -> Objects.equals(index, pos.getIndex()))
 				.findFirst()
-				.orElse(null );
+				.orElse(null);
+		if (presetPos == null) {
+			throw new IndexOutOfBoundsException("Position index not defined: " + index);
+		}
+		return presetPos;
 	}
 }

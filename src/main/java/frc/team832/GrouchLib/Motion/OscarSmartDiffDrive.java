@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Motion;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
 public class OscarSmartDiffDrive extends OscarDriveBase {
@@ -9,17 +9,22 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
 
     private int _maxRpm;
 
-    private IOscarSmartMotor m_leftMotor;
-    private IOscarSmartMotor m_rightMotor;
+    private IOscarSmartMotor _leftMotor;
+    private IOscarSmartMotor _rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
 
+    public enum LoopMode {
+        PERCENTAGE,
+        VELOCITY,
+        POSITION
+    }
 
     public OscarSmartDiffDrive(IOscarSmartMotor leftMotor, IOscarSmartMotor rightMotor, int maxRpm) {
-        m_leftMotor = leftMotor;
-        m_rightMotor = rightMotor;
+        _leftMotor = leftMotor;
+        _rightMotor = rightMotor;
         _maxRpm = maxRpm;
     }
 
@@ -32,8 +37,8 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
      *                  positive.
      */
     @SuppressWarnings("ParameterName")
-    public void arcadeDrive(double xSpeed, double zRotation) {
-        arcadeDrive(xSpeed, zRotation, false);
+    public void arcadeDrive(double xSpeed, double zRotation, LoopMode loopMode) {
+        arcadeDrive(xSpeed, zRotation, false, loopMode);
     }
 
     /**
@@ -45,7 +50,7 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
      * @param squaredInputs If set, decreases the input sensitivity at low speeds.
      */
     @SuppressWarnings("ParameterName")
-    public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs) {
+    public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
 
         xSpeed = limit(xSpeed);
         xSpeed = applyDeadband(xSpeed, m_deadband);
@@ -85,11 +90,21 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
             }
         }
 
-        double leftOut = (limit(leftMotorOutput) * m_maxOutput) * _maxRpm;
-        double rightOut = (limit(rightMotorOutput) * m_maxOutput) * _maxRpm;
+        double leftPowerOut = limit(leftMotorOutput) * _maxOutput;
+        double rightPowerOut = -(limit(rightMotorOutput) * _maxOutput);
 
-        m_leftMotor.setVelocity(leftOut);
-        m_rightMotor.setVelocity(-rightOut);
+        switch (loopMode) {
+            case PERCENTAGE:
+                _leftMotor.set(leftPowerOut);
+                _rightMotor.set(-rightPowerOut);
+                break;
+            case VELOCITY:
+                _leftMotor.setVelocity(leftPowerOut * _maxRpm);
+                _rightMotor.setVelocity(rightPowerOut * _maxRpm);
+                break;
+            case POSITION:
+                break;
+        }
     }
 
     /**
@@ -107,7 +122,7 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
      *                    turn-in-place maneuvers.
      */
     @SuppressWarnings("ParameterName")
-    public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+    public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode) {
         xSpeed = limit(xSpeed);
         xSpeed = applyDeadband(xSpeed, m_deadband);
 
@@ -164,11 +179,20 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
             rightMotorOutput /= maxMagnitude;
         }
 
-        leftMotorOutput *= _maxRpm;
-        rightMotorOutput *= _maxRpm;
+        rightMotorOutput *= -1; // invert right side
 
-        m_leftMotor.setVelocity(leftMotorOutput);
-        m_rightMotor.setVelocity(-rightMotorOutput);
+        switch (loopMode) {
+            case PERCENTAGE:
+                _leftMotor.set(leftMotorOutput);
+                _rightMotor.set(rightMotorOutput);
+                break;
+            case VELOCITY:
+                _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
+                _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
+                break;
+            case POSITION:
+                break;
+        }
     }
 
     /**
@@ -180,8 +204,8 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
      * @param rightSpeed The robot's right side speed along the X axis [-1.0..1.0]. Forward is
      *                   positive.
      */
-    public void tankDrive(double leftSpeed, double rightSpeed) {
-        tankDrive(leftSpeed, rightSpeed, false);
+    public void tankDrive(double leftSpeed, double rightSpeed, LoopMode loopMode) {
+        tankDrive(leftSpeed, rightSpeed, false, loopMode);
     }
 
     /**
@@ -193,7 +217,7 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
      *                      positive.
      * @param squaredInputs If set, decreases the input sensitivity at low speeds.
      */
-    public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs) {
+    public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs, LoopMode loopMode) {
         leftSpeed = limit(leftSpeed);
         leftSpeed = applyDeadband(leftSpeed, m_deadband);
 
@@ -207,8 +231,21 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
             rightSpeed = Math.copySign(rightSpeed * rightSpeed, rightSpeed);
         }
 
-        m_leftMotor.set(leftSpeed * m_maxOutput * _maxRpm);
-        m_rightMotor.set(-rightSpeed * m_maxOutput * _maxRpm);
+        double leftPowerOut = leftSpeed * _maxOutput;
+        double rightPowerOut = -rightSpeed * _maxOutput;
+
+        switch (loopMode) {
+            case PERCENTAGE:
+                _leftMotor.set(leftPowerOut);
+                _rightMotor.set(rightPowerOut);
+                break;
+            case VELOCITY:
+                _leftMotor.setVelocity(leftPowerOut * _maxRpm);
+                _rightMotor.setVelocity(rightPowerOut * _maxRpm);
+                break;
+            case POSITION:
+                break;
+        }
     }
 
     /**
@@ -244,7 +281,23 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
 
     @Override
     public void stopMotor() {
-        m_leftMotor.stopMotor();
-        m_rightMotor.stopMotor();
+        _leftMotor.stopMotor();
+        _rightMotor.stopMotor();
     }
+
+    @Override
+    public double getLeftOutput() {
+        return _leftMotor.get();
+    }
+
+    @Override
+    public double getRightOutput() {
+        return _rightMotor.get();
+    }
+
+    public double getLeftPosition() { return _leftMotor.getSensorPosition(); }
+    public double getRightPosition() { return _rightMotor.getSensorPosition(); }
+
+    public double getLeftVelocity() { return _leftMotor.getSensorVelocity(); }
+    public double getRightVelocity() { return _rightMotor.getSensorVelocity(); }
 }

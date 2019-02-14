@@ -1,15 +1,13 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.*;
-import edu.wpi.first.wpilibj.PIDController;
 
 public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	private int _id;
-
+	private double _setpoint;
 	private double _forwardOutputRange = 0, _reverseOutputRange = 0;
 
     private CANSparkMax _sparkMax;
@@ -21,20 +19,23 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     public OscarCANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
     	_id = canId;
         _sparkMax = new CANSparkMax(canId, mType);
+
+        if (_sparkMax.getFirmwareString() == null) throw new NullPointerException("Missing SPARK MAX, ID: " + canId);
+
 		m_PIDController = _sparkMax.getPIDController();
         m_encoder = _sparkMax.getEncoder();
     }
 
-
-
 	@Override
 	public void setVelocity(double rpmVal) {
+    	_setpoint = rpmVal;
     	_ctrlType = ControlType.kVelocity;
 		m_PIDController.setReference(rpmVal, _ctrlType);
 	}
 
 	@Override
 	public void setPosition(double posVal) {
+    	_setpoint = posVal;
 		_ctrlType = ControlType.kPosition;
 		m_PIDController.setReference(posVal, _ctrlType);
 	}
@@ -89,7 +90,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 	}
 
 	@Override
-	public void setSensor(FeedbackDevice device) {
+	public void setSensorType(FeedbackDevice device) {
 		//not used
 	}
 
@@ -109,18 +110,18 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 	}
 
 	@Override
-	public int getSensorVelocity() {
-		return (int) _sparkMax.getEncoder().getVelocity();
-	}
-
-	@Override
 	public int getSensorPosition() {
 		return (int) _sparkMax.getEncoder().getPosition();
 	}
 
 	@Override
+	public int getSensorVelocity() {
+		return (int) _sparkMax.getEncoder().getVelocity();
+	}
+
+	@Override
 	public void setSensorPosition(int absolutePosition) {
-		// Not supported, coming in future API
+    	// NOT SUPPORTED YET
 	}
 
 	@Override
@@ -226,7 +227,10 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 	}
 
 	@Override
-    public void set(double value) { _sparkMax.set(value); }
+    public void set(double value) {
+    	_setpoint = value;
+    	_sparkMax.set(value);
+    }
 
     @Override
     public double get() { return _sparkMax.get(); }

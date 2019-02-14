@@ -1,6 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -112,7 +111,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public void setNeutralMode(NeutralMode mode) {
         m_masterMotor.setNeutralMode(mode);
         for (IOscarCANMotor slaveMotor : m_slaveMotors) {
-            slaveMotor.setNeutralMode(NeutralMode.Coast);
+            slaveMotor.setNeutralMode(mode);
         }
     }
 
@@ -122,8 +121,8 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     }
 
     @Override
-    public void setSensor(FeedbackDevice device) {
-        m_masterMotor.setSensor(device);
+    public void setSensorType(FeedbackDevice device) {
+        m_masterMotor.setSensorType(device);
     }
 
     @Override

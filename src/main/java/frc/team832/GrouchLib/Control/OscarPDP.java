@@ -27,4 +27,8 @@ public class OscarPDP {
     public double getTemperature() { return _pdp.getTemperature(); }
 
     public double getVoltage() { return _pdp.getVoltage(); }
+
+    public PowerDistributionPanel getInstance() {
+        return _pdp;
+    }
 }

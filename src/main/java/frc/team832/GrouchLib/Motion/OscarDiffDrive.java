@@ -1,9 +1,6 @@
 package frc.team832.GrouchLib.Motion;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
-import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
 
 public class OscarDiffDrive extends OscarDriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
@@ -83,8 +80,8 @@ public class OscarDiffDrive extends OscarDriveBase {
             }
         }
 
-        m_leftMotor.set(limit(leftMotorOutput) * m_maxOutput);
-        m_rightMotor.set(-limit(rightMotorOutput) * m_maxOutput);
+        m_leftMotor.set(limit(leftMotorOutput) * _maxOutput);
+        m_rightMotor.set(-limit(rightMotorOutput) * _maxOutput);
     }
 
     /**
@@ -199,8 +196,8 @@ public class OscarDiffDrive extends OscarDriveBase {
             rightSpeed = Math.copySign(rightSpeed * rightSpeed, rightSpeed);
         }
 
-        m_leftMotor.set(leftSpeed * m_maxOutput);
-        m_rightMotor.set(-rightSpeed * m_maxOutput);
+        m_leftMotor.set(leftSpeed * _maxOutput);
+        m_rightMotor.set(-rightSpeed * _maxOutput);
     }
 
     /**
@@ -238,5 +235,15 @@ public class OscarDiffDrive extends OscarDriveBase {
     public void stopMotor() {
         m_leftMotor.stopMotor();
         m_rightMotor.stopMotor();
+    }
+
+    @Override
+    public double getLeftOutput() {
+        return m_leftMotor.get();
+    }
+
+    @Override
+    public double getRightOutput() {
+        return m_rightMotor.get();
     }
 }

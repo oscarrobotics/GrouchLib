@@ -8,11 +8,9 @@ public abstract class OscarDriveBase
     public static final double kDefaultMaxOutput = 1.0;
 
     protected double m_deadband = kDefaultDeadband;
-    protected double m_maxOutput = kDefaultMaxOutput;
+    protected double _maxOutput = kDefaultMaxOutput;
 
     public OscarDriveBase() {
-
-//        setSafetyEnabled(true);
     }
 
     /**
@@ -37,7 +35,7 @@ public abstract class OscarDriveBase
      * @param maxOutput Multiplied with the output percentage computed by the drive functions.
      */
     public void setMaxOutput(double maxOutput) {
-        m_maxOutput = maxOutput;
+        _maxOutput = maxOutput;
     }
 
     //    @Override
@@ -92,4 +90,7 @@ public abstract class OscarDriveBase
             }
         }
     }
+
+    public abstract double getLeftOutput();
+    public abstract double getRightOutput();
 }
