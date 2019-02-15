@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import frc.team832.GrouchLib.OscarCANDevice;
 
 public class OscarCANVictor implements IOscarCANMotor {
 
@@ -17,7 +18,9 @@ public class OscarCANVictor implements IOscarCANMotor {
     public OscarCANVictor(int canId) {
         _victor = new VictorSPX(canId);
         _ctrlMode = ControlMode.Disabled;
-        set(0);
+
+        boolean onBus = !(_victor.getFirmwareVersion() > 0x0102); // TODO: better way to do this?
+        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Talon SRX"));
     }
 
     @Override

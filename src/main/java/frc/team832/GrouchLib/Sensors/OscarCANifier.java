@@ -3,6 +3,8 @@ package frc.team832.GrouchLib.Sensors;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import frc.team832.GrouchLib.Motors.OscarCANSparkMax;
+import frc.team832.GrouchLib.OscarCANDevice;
+import frc.team832.GrouchLib.Util.OscarMath;
 
 import java.awt.*;
 import java.security.InvalidParameterException;
@@ -20,72 +22,40 @@ public class OscarCANifier {
 	private CANifier.LEDChannel _ledGChannel = CANifier.LEDChannel.LEDChannelB;
 	private CANifier.LEDChannel _ledBChannel = CANifier.LEDChannel.LEDChannelA;
 
-	private double _ledVoltage = 12;
-	private double _ledMaxOutput = 1;
+	private double _ledMaxOutput = 1; //
 
-	public OscarCANifier(CANifier canifier) {
-		_canifier = canifier;
-	}
+	private boolean onBus;
 
 	public OscarCANifier(int canID) {
-		this(new CANifier(canID));
+		_canifier = new CANifier(canID);
+
+		onBus = !(_canifier.getFirmwareVersion() > 0); // TODO: better way to do this?
+		OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "CANifier"));
 	}
 
-	public boolean addDigitalInput(GeneralPin pin) throws UnsupportedOperationException {
-		if (_outputPins.contains(pin)) throw new UnsupportedOperationException("Pin is already assigned as an output!");
-		if (_pwmPins.contains(pin)) throw new UnsupportedOperationException("Pin is already assigned as a PWM Channel!");
-		if (!_inputPins.contains(pin)) return _inputPins.add(pin);
-		else throw new UnsupportedOperationException("Pin is already assigned as an input!");
-	}
-
-	public boolean addDigitalOutput(GeneralPin pin) throws UnsupportedOperationException {
-		return addDigitalOutput(pin, false);
-	}
-
-	public boolean addDigitalOutput(GeneralPin pin, boolean initialState) throws UnsupportedOperationException {
-		if (_inputPins.contains(pin)) throw new UnsupportedOperationException("Pin is already assigned as an input!");
-		if (_pwmPins.contains(pin)) throw new UnsupportedOperationException("Pin is already assigned as a PWM Channel!");
-		if (!_outputPins.contains(pin)) {
-			_canifier.setGeneralOutput(pin, initialState, true);
-			return _outputPins.add(pin);
-		}
-		else throw new UnsupportedOperationException("Pin is already assigned as an output!");
-	}
+	public int getQuadVelocity() { return _canifier.getQuadratureVelocity(); }
+	public int getQuadPosition() { return _canifier.getQuadraturePosition(); }
 
 	public boolean getPinState(GeneralPin pin) {
 		return _canifier.getGeneralInput(pin);
 	}
 
-	public void setDigitalOutputOn(GeneralPin pin) throws UnsupportedOperationException  {
+	public void setDigitalOutputOn(GeneralPin pin) {
 		setDigitalOutput(pin, true);
 	}
 
-	public void setDigitalOutputOff(GeneralPin pin) throws UnsupportedOperationException {
+	public void setDigitalOutputOff(GeneralPin pin) {
 		setDigitalOutput(pin, false);
 	}
 
-	public void setDigitalOutput(GeneralPin pin, boolean state) throws UnsupportedOperationException {
-		if (_inputPins.contains(pin)) throw new UnsupportedOperationException("Pin is assigned as an input!");
-		if (_pwmPins.contains(pin)) throw new UnsupportedOperationException("Pin is already assigned as a PWM Channel!");
-		if (!_outputPins.contains(pin)) throw new UnsupportedOperationException("Pin is not assigned as an output!");
-		else {
+	public void setDigitalOutput(GeneralPin pin, boolean state) {
+		if (onBus) {
 			_canifier.setGeneralOutput(pin, state, true);
 		}
 	}
 
-	public Ultrasonic addUltrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin) {
-		// don't check trigger pin, as we can use the same trigger for multiple ultrasonics
-		GeneralPin t_triggerPin = GeneralPinFromPWMChannel(triggerPin);
-		GeneralPin t_echoPin = GeneralPinFromPWMChannel(echoPin);
-		if (_outputPins.contains(t_echoPin) || _inputPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a digital channel!");
-		if (_pwmPins.contains(t_echoPin)) throw new UnsupportedOperationException("Echo pin is already assigned as a PWM Channel!");
-
-		if (!_pwmPins.contains(t_triggerPin)) {
-			_pwmPins.add(t_triggerPin);
-		}
-		_pwmPins.add(t_echoPin);
-
-		return new Ultrasonic(triggerPin, echoPin, _canifier);
+	public Ultrasonic getUltrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin) {
+		return new Ultrasonic(triggerPin, echoPin, this);
 	}
 
 	/* RGB channel assignment is as follows
@@ -101,11 +71,12 @@ public class OscarCANifier {
 	}
 
 	public void setLedRGB(double rValue, double gValue, double bValue) {
-		double trueOutput = (_ledVoltage / 12) * _ledMaxOutput;
-		System.out.println("Setting LED Output: " + trueOutput);
-		_canifier.setLEDOutput(rValue * trueOutput, _ledRChannel);
-		_canifier.setLEDOutput(gValue * trueOutput, _ledGChannel);
-		_canifier.setLEDOutput(bValue * trueOutput, _ledBChannel);
+		if (onBus) {
+			System.out.println("Setting LED Output: " + _ledMaxOutput);
+			_canifier.setLEDOutput(rValue * _ledMaxOutput, _ledRChannel);
+			_canifier.setLEDOutput(gValue * _ledMaxOutput, _ledGChannel);
+			_canifier.setLEDOutput(bValue * _ledMaxOutput, _ledBChannel);
+		}
 	}
 
 	public void setLedColor(Color color) {
@@ -113,14 +84,17 @@ public class OscarCANifier {
 	}
 
 	public void setLedR(double value) {
+		value = OscarMath.clip(value, 0, 255);
 		setLedRGB(value, 0, 0);
 	}
 
 	public void setLedG(double value) {
+		value = OscarMath.clip(value, 0, 255);
 		setLedRGB(0, value, 0);
 	}
 
 	public void setLedB(double value) {
+		value = OscarMath.clip(value, 0, 255);
 		setLedRGB(0, 0, value);
 	}
 
@@ -128,32 +102,26 @@ public class OscarCANifier {
 		setLedRGB(0, 0, 0);
 	}
 
-	public void setLedVoltage(double volts) {
-		_ledVoltage = volts;
-	}
-
 	public void setLedMaxOutput(double maxOutput) {
-		_ledMaxOutput = maxOutput;
+		_ledMaxOutput = OscarMath.clip(maxOutput, 0, 1);
 	}
 
 	public static class Ultrasonic {
-		private static final double kPingTime = 10 * 1e-6;
-		private static final double kSpeedOfSoundInchesPerSec = 1130.0 * 12.0;
+		private static final double kTriggerPulseTime = 0.00238095238;
 
-		private CANifier _canifier;
+		private OscarCANifier _canifier;
 		private CANifier.PWMChannel _triggerPin, _echoPin;
-		private long lastPing;
 
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 
-		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin, CANifier canifier) {
+		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin, OscarCANifier canifier) {
 			_triggerPin = triggerPin;
 			_echoPin = echoPin;
 			_canifier = canifier;
 		}
 
 		public void start() {
-			_canifier.setPWMOutput(_triggerPin.value, 0.00238095238); // attempt to hit 10us pulse exactly
+			_canifier.setPWMOutput(_triggerPin.value, kTriggerPulseTime); // attempt to hit 10us pulse exactly
 			_canifier.enablePWMOutput(_triggerPin.value, true);
 		}
 
@@ -181,7 +149,7 @@ public class OscarCANifier {
 		}
 
 		public double getRangeInches() {
-			return isRangeValid() ? getMeasuredPulseWidthUs() * 0.0133 / 2.0 : 0;
+			return isRangeValid() ? getMeasuredPulseWidthUs() * 0.0133 / 2.0 : -1;
 		}
 
 		public double getRangeMM() {
@@ -189,33 +157,21 @@ public class OscarCANifier {
 		}
 	}
 
-	private static GeneralPin GeneralPinFromPWMChannel(CANifier.PWMChannel channel) {
-		switch (channel) {
-			case PWMChannel0:
-				return GeneralPin.SPI_CLK_PWM0P;
-			case PWMChannel1:
-				return GeneralPin.SPI_MOSI_PWM1P;
-			case PWMChannel2:
-				return GeneralPin.SPI_MISO_PWM2P;
-			case PWMChannel3:
-				return GeneralPin.SPI_CS;
-			default:
-				throw new IllegalArgumentException("Pin \"" + channel.toString() + "\" is not a PWM Channel!");
+	private void getPWMInput(CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
+		if (onBus) {
+			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
 		}
 	}
 
-	private static CANifier.PWMChannel PWMChannelFromGeneralPin(GeneralPin pin) {
-		switch (pin) {
-			case SPI_CS: // PWM 3
-				return CANifier.PWMChannel.PWMChannel3;
-			case SPI_MISO_PWM2P: // PWM2
-				return CANifier.PWMChannel.PWMChannel2;
-			case SPI_MOSI_PWM1P: // PWM1
-				return CANifier.PWMChannel.PWMChannel1;
-			case SPI_CLK_PWM0P: // PWM0
-				return CANifier.PWMChannel.PWMChannel0;
-			default:
-				throw new IllegalArgumentException("Pin \"" + pin.toString() + "\" is not a PWM Channel!");
+	private void enablePWMOutput(int pwmChannel, boolean enable) {
+		if (onBus) {
+			_canifier.enablePWMOutput(pwmChannel, enable);
+		}
+	}
+
+	private void setPWMOutput(int pwmChannel, double dutyCycle) {
+		if (onBus) {
+			_canifier.setPWMOutput(pwmChannel, dutyCycle);
 		}
 	}
 }

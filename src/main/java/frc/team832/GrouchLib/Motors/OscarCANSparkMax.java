@@ -3,6 +3,7 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.*;
+import frc.team832.GrouchLib.OscarCANDevice;
 
 public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
@@ -20,7 +21,8 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     	_id = canId;
         _sparkMax = new CANSparkMax(canId, mType);
 
-        if (_sparkMax.getFirmwareString() == null) throw new NullPointerException("Missing SPARK MAX, ID: " + canId);
+	    boolean onBus = _sparkMax.getFirmwareString() == null;
+        OscarCANDevice.addDevice(new OscarCANDevice(_id, onBus, "Spark MAX"));
 
 		m_PIDController = _sparkMax.getPIDController();
         m_encoder = _sparkMax.getEncoder();

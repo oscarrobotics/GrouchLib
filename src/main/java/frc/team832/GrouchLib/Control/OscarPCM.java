@@ -2,31 +2,44 @@ package frc.team832.GrouchLib.Control;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
+import frc.team832.GrouchLib.OscarCANDevice;
 
 public class OscarPCM {
 
     private Compressor _pcm;
     private int _id;
 
+    private boolean onBus;
+
     public OscarPCM(int canID) {
         _id = canID;
         _pcm = new Compressor(canID);
+
+        try {
+            setEnabled(false);
+            onBus = true;
+        } catch (Exception ex) {
+            onBus = false;
+        }
+        OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "PCM"));
     }
 
     public void setEnabled(boolean value) {
-        _pcm.setClosedLoopControl(value);
+        if (onBus) {
+            _pcm.setClosedLoopControl(value);
+        }
     }
 
     public boolean isEnabled() {
-        return _pcm.enabled();
+        return onBus && _pcm.enabled();
     }
 
     public double getCurrent() {
-        return _pcm.getCompressorCurrent();
+        return onBus ? _pcm.getCompressorCurrent() : -1;
     }
 
     public boolean getPressureSwitch() {
-        return _pcm.getPressureSwitchValue();
+        return onBus && _pcm.getPressureSwitchValue();
     }
 
     public int getDeviceID() {
@@ -34,7 +47,9 @@ public class OscarPCM {
     }
 
     public void setOutput(int channel, boolean value) {
-        Solenoid tempSolenoid = new Solenoid(_id, channel);
-        tempSolenoid.set(value);
+        if (onBus) {
+            Solenoid tempSolenoid = new Solenoid(_id, channel);
+            tempSolenoid.set(value);
+        }
     }
 }

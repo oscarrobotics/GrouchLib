@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import frc.team832.GrouchLib.OscarCANDevice;
 
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
@@ -22,7 +23,10 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
     public OscarCANTalon(int canId) {
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.Disabled;
-        set(0);
+
+        boolean onBus = !(_talon.getFirmwareVersion() > 0x0102); // TODO: better way to do this?
+        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Talon SRX"));
+
     }
 
     @Override
