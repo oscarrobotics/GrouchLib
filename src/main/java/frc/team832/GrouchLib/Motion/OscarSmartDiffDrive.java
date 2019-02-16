@@ -189,6 +189,12 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
             case VELOCITY:
                 _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
                 _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
+
+                System.out.println("left tar; " + leftMotorOutput * _maxRpm);
+                System.out.println("right tar; " + rightMotorOutput * _maxRpm);
+
+                System.out.println("left; " + _leftMotor.getSensorVelocity());
+                System.out.println("right; " + _rightMotor.getSensorVelocity());
                 break;
             case POSITION:
                 break;
@@ -300,4 +306,31 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
 
     public double getLeftVelocity() { return _leftMotor.getSensorVelocity(); }
     public double getRightVelocity() { return _rightMotor.getSensorVelocity(); }
+
+    public void setPIDF(double kP, double kI, double kD, double kF){
+        setP(kP);
+        setI(kI);
+        setD(kD);
+        setF(kF);
+    }
+    
+    public void setP(double kP) {
+        _leftMotor.setkP(kP);
+        _rightMotor.setkP(kP);
+    }
+    
+    public void setI(double kI) {
+        _leftMotor.setkI(kI);
+        _rightMotor.setkI(kI);
+    }
+
+    public void setD(double kD) {
+        _leftMotor.setkD(kD);
+        _rightMotor.setkD(kD);
+    }
+
+    public void setF(double kF) {
+        _leftMotor.setkF(kF);
+        _rightMotor.setkF(kF);
+    }
 }

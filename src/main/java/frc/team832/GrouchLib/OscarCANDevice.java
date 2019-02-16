@@ -26,15 +26,11 @@ public class OscarCANDevice {
 	 * @return boolean
 	 */
 	public static boolean hasMissingDevices() {
-		return getDevices().stream().anyMatch(device -> !device._onBus);
+		return getDevices().stream().anyMatch(device -> device._onBus);
 	}
 
 	public static List<OscarCANDevice> getDevices() {
 		return new ArrayList<>(_canDevices.values());
-	}
-
-	public static String getDeviceDescription(int id) {
-		return _canDevices.get(id).toString();
 	}
 
 	@Override

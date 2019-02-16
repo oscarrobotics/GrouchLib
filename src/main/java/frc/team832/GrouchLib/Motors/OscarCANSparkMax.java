@@ -21,7 +21,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     	_id = canId;
         _sparkMax = new CANSparkMax(canId, mType);
 
-	    boolean onBus = _sparkMax.getFirmwareString() == null;
+	    boolean onBus = _sparkMax.getFirmwareString() != null;
         OscarCANDevice.addDevice(new OscarCANDevice(_id, onBus, "Spark MAX"));
 
 		m_PIDController = _sparkMax.getPIDController();
@@ -33,6 +33,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     	_setpoint = rpmVal;
     	_ctrlType = ControlType.kVelocity;
 		m_PIDController.setReference(rpmVal, _ctrlType);
+		System.out.println(m_PIDController.getP());
 	}
 
 	@Override
@@ -103,12 +104,12 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setClosedLoopRamp(double secondsFromNeutralToFull) {
-		_sparkMax.setRampRate(secondsFromNeutralToFull);
+		_sparkMax.setClosedLoopRampRate(secondsFromNeutralToFull);
 	}
 
 	@Override
 	public void setOpenLoopRamp(double secondsFromNeutralToFull) {
-		_sparkMax.setRampRate(secondsFromNeutralToFull);
+		_sparkMax.setOpenLoopRampRate(secondsFromNeutralToFull);
 	}
 
 	@Override
@@ -185,17 +186,17 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setkI(double kI) {
-		m_PIDController.setP(kI);
+		m_PIDController.setI(kI);
 	}
 
 	@Override
 	public void setkD(double kD) {
-		m_PIDController.setP(kD);
+		m_PIDController.setD(kD);
 	}
 
 	@Override
 	public void setkF(double kF) {
-		m_PIDController.setP(kF);
+		m_PIDController.setFF(kF);
 	}
 
 	@Override
@@ -205,17 +206,17 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setkI(double kI, int slotID) {
-		_sparkMax.getPIDController().setP(kI, slotID);
+		_sparkMax.getPIDController().setI(kI, slotID);
 	}
 
 	@Override
 	public void setkD(double kD, int slotID) {
-		_sparkMax.getPIDController().setP(kD, slotID);
+		_sparkMax.getPIDController().setD(kD, slotID);
 	}
 
 	@Override
 	public void setkF(double kF, int slotID) {
-		_sparkMax.getPIDController().setP(kF, slotID);
+		_sparkMax.getPIDController().setFF(kF, slotID);
 	}
 
 	@Override

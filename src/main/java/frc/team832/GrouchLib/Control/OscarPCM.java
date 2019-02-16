@@ -15,13 +15,8 @@ public class OscarPCM {
         _id = canID;
         _pcm = new Compressor(canID);
 
-        try {
-            setEnabled(false);
-            onBus = true;
-        } catch (Exception ex) {
-            onBus = false;
-        }
-        OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "PCM"));
+//        onBus = !(_pcm.enabled());
+//        OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "PCM"));
     }
 
     public void setEnabled(boolean value) {

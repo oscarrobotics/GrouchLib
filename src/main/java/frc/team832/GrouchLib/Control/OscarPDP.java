@@ -12,7 +12,7 @@ public class OscarPDP {
     public OscarPDP(int canID) {
         _pdp = new PowerDistributionPanel(canID);
 
-        onBus = !(_pdp.getVoltage() > 0); // TODO: better way to do this?
+        onBus = _pdp.getVoltage() > 0; // TODO: better way to do this?
         OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "PDP"));
     }
 

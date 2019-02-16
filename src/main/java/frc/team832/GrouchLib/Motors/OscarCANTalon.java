@@ -24,7 +24,7 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.Disabled;
 
-        boolean onBus = !(_talon.getFirmwareVersion() > 0x0102); // TODO: better way to do this?
+        boolean onBus = _talon.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
         OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Talon SRX"));
 
     }

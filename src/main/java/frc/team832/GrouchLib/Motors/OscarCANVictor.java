@@ -19,8 +19,8 @@ public class OscarCANVictor implements IOscarCANMotor {
         _victor = new VictorSPX(canId);
         _ctrlMode = ControlMode.Disabled;
 
-        boolean onBus = !(_victor.getFirmwareVersion() > 0x0102); // TODO: better way to do this?
-        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Talon SRX"));
+        boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
+        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Victor SPX"));
     }
 
     @Override

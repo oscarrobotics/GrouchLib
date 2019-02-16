@@ -29,7 +29,7 @@ public class OscarCANifier {
 	public OscarCANifier(int canID) {
 		_canifier = new CANifier(canID);
 
-		onBus = !(_canifier.getFirmwareVersion() > 0); // TODO: better way to do this?
+		onBus = _canifier.getFirmwareVersion() > 0; // TODO: better way to do this?
 		OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "CANifier"));
 	}
 
