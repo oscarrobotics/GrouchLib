@@ -10,6 +10,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 	private int _id;
 	private double _setpoint;
 	private double _forwardOutputRange = 0, _reverseOutputRange = 0;
+	private int _allowableError = 0;
 
     private CANSparkMax _sparkMax;
     private ControlType _ctrlType;
@@ -17,7 +18,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     private CANEncoder m_encoder;
     private CANPIDController m_PIDController;
 
-    public OscarCANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
+	public OscarCANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
     	_id = canId;
         _sparkMax = new CANSparkMax(canId, mType);
 
@@ -99,7 +100,12 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setAllowableClosedLoopError(int error) {
-		// Not supported
+		_allowableError = error;
+	}
+
+	@Override
+	public int getAllowableClosedLoopError() {
+		return _allowableError;
 	}
 
 	@Override
