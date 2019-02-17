@@ -65,6 +65,8 @@ public interface IOscarSmartMotor extends IOscarSimpleMotor {
      */
     void setAllowableClosedLoopError(int error);
 
+    int getAllowableClosedLoopError();
+
     /**
      * Sets the closed-loop ramp rate of throttle output.
      *

@@ -131,6 +131,11 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     }
 
     @Override
+    public int getAllowableClosedLoopError() {
+        return m_masterMotor.getAllowableClosedLoopError();
+    }
+
+    @Override
     public void setClosedLoopRamp(double secondsFromNeutralToFull) {
         m_masterMotor.setClosedLoopRamp(secondsFromNeutralToFull);
     }

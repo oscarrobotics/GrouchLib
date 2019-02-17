@@ -4,7 +4,6 @@ import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismMotionProfile;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
 import frc.team832.GrouchLib.Motors.IOscarGeniusMotor;
-import jaci.pathfinder.Trajectory;
 
 public class OscarGeniusMechanism {
 
@@ -44,10 +43,16 @@ public class OscarGeniusMechanism {
         return _geniusMotor.getClosedLoopError() <= 20;
     }
 
-    public void setPID(double kP, double kI, double kD){
+    public void setPIDF(double kP, double kI, double kD, double kF){
         _geniusMotor.setkP(kP);
         _geniusMotor.setkI(kI);
         _geniusMotor.setkD(kD);
+        _geniusMotor.setkF(kF);
+    }
+
+    public void setLimits(int lowerLimit, int upperLimit) {
+        _geniusMotor.setLowerLimit(lowerLimit);
+        _geniusMotor.setUpperLimit(upperLimit);
     }
 
     public void setUpperLimit(int limit){
@@ -70,8 +75,8 @@ public class OscarGeniusMechanism {
         return  _geniusMotor;
     }
 
-    public void startFillingTrajectory(Trajectory traj){
-        _geniusMotor.startFilling(OscarMechanismMotionProfile.pathfinderFormatToTalon(traj), traj.length());
+    public void bufferTrajectory(OscarMechanismMotionProfile profile){
+        _geniusMotor.fillProfileBuffer(profile.talonTrajectory(), profile.length());
     }
 
     public void setMotionProfile(int value){

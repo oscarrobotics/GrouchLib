@@ -1,15 +1,13 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import frc.team832.GrouchLib.OscarCANDevice;
-import jaci.pathfinder.Trajectory;
-
-import java.lang.annotation.Documented;
 
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
@@ -19,6 +17,9 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
     private int _curPidIdx = 0;
+    private int _allowableError = 0;
+
+    BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
 
     /***
      * Create an OscarCANTalon at the specified CAN ID.
@@ -128,7 +129,13 @@ public class OscarCANTalon implements IOscarGeniusMotor {
 
     @Override
     public void setAllowableClosedLoopError(int error) {
+        _allowableError = error;
         _talon.configAllowableClosedloopError(0, error, 0);
+    }
+
+    @Override
+    public int getAllowableClosedLoopError() {
+        return _allowableError;
     }
 
     @Override
@@ -256,14 +263,7 @@ public class OscarCANTalon implements IOscarGeniusMotor {
         _talon.configReverseSoftLimitThreshold(limit);
     }
 
-    public void setAllowableError(int allowableError){
-        _talon.configAllowableClosedloopError(0, allowableError);
-    }
-
-    public void setAllowableError(int slotID,int allowableError){
-        _talon.configAllowableClosedloopError(slotID, allowableError);
-    }
-
+    @Override
     public void resetSensor(){
         _talon.setSelectedSensorPosition(0);
     }
@@ -281,36 +281,36 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     }
 
     @Override
-    public void startFilling(double[][] profile, int size) {
-        _talon.clearMotionProfileTrajectories();
+    public void fillProfileBuffer(double[][] profile, int totalCnt) {
+        _bufferedStream.Clear();
         TrajectoryPoint point = new TrajectoryPoint();
 
-        _talon.changeMotionControlFramePeriod(10);
-        _talon.configMotionProfileTrajectoryPeriod(10, 10);
-
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < totalCnt; ++i) {
             double positionRot = profile[i][0];
             double velocityRPM = profile[i][1];
-            /* for each point, fill our structure and pass it to API */
-            point.position = -positionRot; // Convert Revolutions to Units
-            point.velocity = velocityRPM; // Convert RPS to Units/100ms
-            point.headingDeg = 0; /* future feature - not used in this example*/
-            point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
-            point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
-            point.timeDur = 10;
-            point.zeroPos = i == 0;
-            point.isLastPoint = false; // HACK: isLastPoint points seem to not play nice with MP
 
-            _talon.pushMotionProfileTrajectory(point);
+            /* for each point, fill our structure and pass it to API */
+            point.timeDur = (int) profile[i][2];
+            point.position = positionRot; //* Constants.kSensorUnitsPerRotation; // Convert Revolutions to Units
+            point.velocity = velocityRPM; //* Constants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
+            point.auxiliaryPos = 0;
+            point.auxiliaryVel = 0;
+            point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
+            point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
+            point.zeroPos = (i == 0); /* set this to true on the first point */
+            point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
+            point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
+
+            _bufferedStream.Write(point);
         }
+
         System.out.println("LP: " + point.isLastPoint);
-        System.out.println(String.format("Pushed %d points to left.", size));
+        System.out.println(String.format("Pushed %d points to Talon %d.", totalCnt, getBaseID()));
     }
 
     @Override
     public void setMotionProfile(int value) {
         _talon.set(ControlMode.MotionProfile, value);
     }
-
 }
 
