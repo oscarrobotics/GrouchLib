@@ -1,6 +1,7 @@
 package frc.team832.GrouchLib.Mechanisms.Positions;
 
 public class OscarMechanismPosition {
+
 	private String _index;
 	private double _target;
 

@@ -1,16 +1,20 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team832.GrouchLib.OscarCANDevice;
+import jaci.pathfinder.Trajectory;
+
+import java.lang.annotation.Documented;
 
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
  */
-public class OscarCANTalon implements IOscarCANSmartMotor {
+public class OscarCANTalon implements IOscarGeniusMotor {
 
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
@@ -275,5 +279,38 @@ public class OscarCANTalon implements IOscarCANSmartMotor {
         _ctrlMode = ControlMode.Position;
         _talon.set(_ctrlMode, posVal);
     }
+
+    @Override
+    public void startFilling(double[][] profile, int size) {
+        _talon.clearMotionProfileTrajectories();
+        TrajectoryPoint point = new TrajectoryPoint();
+
+        _talon.changeMotionControlFramePeriod(10);
+        _talon.configMotionProfileTrajectoryPeriod(10, 10);
+
+        for (int i = 0; i < size; i++) {
+            double positionRot = profile[i][0];
+            double velocityRPM = profile[i][1];
+            /* for each point, fill our structure and pass it to API */
+            point.position = -positionRot; // Convert Revolutions to Units
+            point.velocity = velocityRPM; // Convert RPS to Units/100ms
+            point.headingDeg = 0; /* future feature - not used in this example*/
+            point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
+            point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
+            point.timeDur = 10;
+            point.zeroPos = i == 0;
+            point.isLastPoint = false; // HACK: isLastPoint points seem to not play nice with MP
+
+            _talon.pushMotionProfileTrajectory(point);
+        }
+        System.out.println("LP: " + point.isLastPoint);
+        System.out.println(String.format("Pushed %d points to left.", size));
+    }
+
+    @Override
+    public void setMotionProfile(int value) {
+        _talon.set(ControlMode.MotionProfile, value);
+    }
+
 }
 

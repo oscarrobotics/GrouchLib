@@ -7,14 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class OscarComplexMechanism {
+public class OscarGeniusComplexMechanism {
 
-	private OscarSmartMechanism _primaryMech, _secondaryMech;
+	private OscarGeniusMechanism _primaryMech, _secondaryMech;
 	OscarMechanismComplexPositionList _positions;
 
-	public OscarComplexMechanism(OscarSmartMechanism primaryMech,
-								 OscarSmartMechanism secondaryMech,
-								 OscarMechanismComplexPositionList positions) {
+	public OscarGeniusComplexMechanism(OscarGeniusMechanism primaryMech,
+									   OscarGeniusMechanism secondaryMech,
+									   OscarMechanismComplexPositionList positions) {
 		_primaryMech = primaryMech;
 		_secondaryMech = secondaryMech;
 		_positions = positions;
@@ -29,11 +29,11 @@ public class OscarComplexMechanism {
 		setPosition(getPosition(index));
 	}
 
-	public OscarSmartMechanism getPrimaryMechanism(){
+	public OscarGeniusMechanism getPrimaryMechanism(){
 		return _primaryMech;
 	}
 
-	public OscarSmartMechanism getSecondaryMechanism(){
+	public OscarGeniusMechanism getSecondaryMechanism(){
 		return _secondaryMech;
 	}
 

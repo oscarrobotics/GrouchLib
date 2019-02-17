@@ -69,5 +69,8 @@ public abstract class OscarSmartMechanism {
 		_smartMotor.stopMotor();
 	}
 
+	public IOscarSmartMotor getMotor(){
+		return  _smartMotor;
+	}
 
 }
