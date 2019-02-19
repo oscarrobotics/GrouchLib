@@ -82,4 +82,8 @@ public class OscarGeniusMechanism {
     public void setMotionProfile(int value){
         _geniusMotor.setMotionProfile(value);
     }
+
+    public void startMP() {
+        _geniusMotor.startMP();
+    }
 }

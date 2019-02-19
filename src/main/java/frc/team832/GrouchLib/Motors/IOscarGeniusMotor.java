@@ -5,4 +5,6 @@ public interface IOscarGeniusMotor extends IOscarCANSmartMotor {
     void fillProfileBuffer(double[][] profile, int size);
 
     void setMotionProfile(int value);
+
+    void startMP();
 }

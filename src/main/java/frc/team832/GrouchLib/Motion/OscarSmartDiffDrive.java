@@ -190,11 +190,6 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
                 _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
                 _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
 
-                System.out.println("left tar; " + leftMotorOutput * _maxRpm);
-                System.out.println("right tar; " + rightMotorOutput * _maxRpm);
-
-                System.out.println("left; " + _leftMotor.getSensorVelocity());
-                System.out.println("right; " + _rightMotor.getSensorVelocity());
                 break;
             case POSITION:
                 break;

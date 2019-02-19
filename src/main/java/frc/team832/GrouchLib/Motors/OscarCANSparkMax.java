@@ -34,7 +34,6 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     	_setpoint = rpmVal;
     	_ctrlType = ControlType.kVelocity;
 		m_PIDController.setReference(rpmVal, _ctrlType);
-		System.out.println(m_PIDController.getP());
 	}
 
 	@Override
