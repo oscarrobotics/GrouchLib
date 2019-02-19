@@ -2,14 +2,14 @@ package frc.team832.GrouchLib.Sensors;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
-import frc.team832.GrouchLib.Motors.OscarCANSparkMax;
 import frc.team832.GrouchLib.OscarCANDevice;
 import frc.team832.GrouchLib.Util.OscarMath;
 
 import java.awt.*;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.sin;
 
 public class OscarCANifier {
 
@@ -18,22 +18,17 @@ public class OscarCANifier {
 	private List<GeneralPin> _outputPins = new ArrayList<>();
 	private List<GeneralPin> _pwmPins = new ArrayList<>();
 
-	private CANifier.LEDChannel _ledRChannel = CANifier.LEDChannel.LEDChannelC;
-	private CANifier.LEDChannel _ledGChannel = CANifier.LEDChannel.LEDChannelB;
-	private CANifier.LEDChannel _ledBChannel = CANifier.LEDChannel.LEDChannelA;
-
-	private double _ledMaxOutput = 1; //
-
 	private boolean onBus;
 
 	public OscarCANifier(int canID) {
 		_canifier = new CANifier(canID);
 
-		onBus = _canifier.getFirmwareVersion() > 0; // TODO: better way to do this?
+		onBus = _canifier.getBusVoltage() > 0;
 		OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "CANifier"));
 	}
 
 	public int getQuadVelocity() { return _canifier.getQuadratureVelocity(); }
+
 	public int getQuadPosition() { return _canifier.getQuadraturePosition(); }
 
 	public boolean getPinState(GeneralPin pin) {
@@ -58,61 +53,36 @@ public class OscarCANifier {
 		return new Ultrasonic(triggerPin, echoPin, this);
 	}
 
-	/* RGB channel assignment is as follows
-	 * Red = LEDChannelC
-	 * Green = LEDChannelA
-	 * Blue = LEDChannelB
-	 */
-
-	public void setLedChannels(CANifier.LEDChannel ledRChannel, CANifier.LEDChannel ledGChannel, CANifier.LEDChannel ledBChannel) {
-		_ledRChannel = ledRChannel;
-		_ledGChannel = ledGChannel;
-		_ledBChannel = ledBChannel;
-	}
-
-	public void setLedRGB(double rValue, double gValue, double bValue) {
+	private void getPWMInput(CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
 		if (onBus) {
-			System.out.println("Setting LED Output: " + _ledMaxOutput);
-			_canifier.setLEDOutput(rValue * _ledMaxOutput, _ledRChannel);
-			_canifier.setLEDOutput(gValue * _ledMaxOutput, _ledGChannel);
-			_canifier.setLEDOutput(bValue * _ledMaxOutput, _ledBChannel);
+			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
 		}
 	}
 
-	public void setLedColor(Color color) {
-		setLedRGB((double)color.getRed() / 256.0, (double)color.getGreen() / 256.0, (double)color.getBlue() / 256.0);
+	private void enablePWMOutput(int pwmChannel, boolean enable) {
+		if (onBus) {
+			_canifier.enablePWMOutput(pwmChannel, enable);
+		}
 	}
 
-	public void setLedR(double value) {
-		value = OscarMath.clip(value, 0, 255);
-		setLedRGB(value, 0, 0);
+	private void setPWMOutput(int pwmChannel, double dutyCycle) {
+		if (onBus) {
+			_canifier.setPWMOutput(pwmChannel, dutyCycle);
+		}
 	}
 
-	public void setLedG(double value) {
-		value = OscarMath.clip(value, 0, 255);
-		setLedRGB(0, value, 0);
-	}
-
-	public void setLedB(double value) {
-		value = OscarMath.clip(value, 0, 255);
-		setLedRGB(0, 0, value);
-	}
-
-	public void setLedOff() {
-		setLedRGB(0, 0, 0);
-	}
-
-	public void setLedMaxOutput(double maxOutput) {
-		_ledMaxOutput = OscarMath.clip(maxOutput, 0, 1);
+	public enum LEDMode {
+		STATIC,
+		ALTERNATE_GREEN,
+		FADE,
+		RAINBOW
 	}
 
 	public static class Ultrasonic {
 		private static final double kTriggerPulseTime = 0.00238095238;
-
+		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 		private OscarCANifier _canifier;
 		private CANifier.PWMChannel _triggerPin, _echoPin;
-
-		double[] _dutyCycleAndPeriod = new double[]{0, 0};
 
 		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin, OscarCANifier canifier) {
 			_triggerPin = triggerPin;
@@ -142,7 +112,7 @@ public class OscarCANifier {
 			return _dutyCycleAndPeriod[0];
 		}
 
-		public double getPulsePeriod() { return _dutyCycleAndPeriod[1];	}
+		public double getPulsePeriod() { return _dutyCycleAndPeriod[1]; }
 
 		private boolean isRangeValid() {
 			return _dutyCycleAndPeriod[1] > 1;
@@ -157,21 +127,104 @@ public class OscarCANifier {
 		}
 	}
 
-	private void getPWMInput(CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
-		if (onBus) {
-			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
-		}
-	}
+	public class LEDs {
+		private LEDMode ledMode;
+		private Color curColor;
+		private CANifier.LEDChannel _rChannel = CANifier.LEDChannel.LEDChannelC;
+		private CANifier.LEDChannel _gChannel = CANifier.LEDChannel.LEDChannelB;
+		private CANifier.LEDChannel _bChannel = CANifier.LEDChannel.LEDChannelA;
+		private double _maxOutput = 1;
 
-	private void enablePWMOutput(int pwmChannel, boolean enable) {
-		if (onBus) {
-			_canifier.enablePWMOutput(pwmChannel, enable);
+		public void setLedChannels(CANifier.LEDChannel ledRChannel, CANifier.LEDChannel ledGChannel, CANifier.LEDChannel ledBChannel) {
+			_rChannel = ledRChannel;
+			_gChannel = ledGChannel;
+			_bChannel = ledBChannel;
 		}
-	}
 
-	private void setPWMOutput(int pwmChannel, double dutyCycle) {
-		if (onBus) {
-			_canifier.setPWMOutput(pwmChannel, dutyCycle);
+		public void setRGB(int rValue, int gValue, int bValue) {
+			rValue = OscarMath.clip(rValue, 0, 255);
+			gValue = OscarMath.clip(gValue, 0, 255);
+			bValue = OscarMath.clip(bValue, 0, 255);
+			curColor = new Color(rValue, gValue, bValue);
+
+		}
+
+		public void setLEDs(LEDMode mode, Color color) {
+			setMode(mode);
+			setColor(color);
+		}
+
+		public void setMode(LEDMode mode) {
+			ledMode = mode;
+		}
+
+		public void setColor(Color color) {
+			curColor = color;
+		}
+
+		private void sendColor(int r, int g, int b) {
+			sendColor(new Color(r, g, b));
+		}
+
+		private void sendColor(Color color) {
+			double[] vals = ColorToPercentRGB(color);
+			if (onBus) {
+				_canifier.setLEDOutput(vals[0] * _maxOutput, _rChannel);
+				_canifier.setLEDOutput(vals[1] * _maxOutput, _gChannel);
+				_canifier.setLEDOutput(vals[2] * _maxOutput, _bChannel);
+			}
+		}
+
+		private double[] ColorToPercentRGB(Color color) {
+			return new double[]{
+					color.getRed() / 255D,
+					color.getGreen() / 255D,
+					color.getBlue() / 255D
+			};
+		}
+
+		private double[] RGBToPercentRGB(int r, int g, int b) {
+			return new double[]{
+					r / 255D,
+					g / 255D,
+					b / 255D};
+		}
+
+		public void turnOff() {
+			setRGB(0, 0, 0);
+		}
+
+		public void setMaxOutput(double maxOutput) {
+			_maxOutput = OscarMath.clip(maxOutput, 0, 1);
+		}
+
+		private class LEDRunner implements Runnable {
+			@Override
+			public void run() {
+				while (true) {
+					switch (ledMode) {
+						case STATIC:
+							sendColor(curColor);
+							break;
+						case ALTERNATE_GREEN:
+
+							break;
+						case FADE:
+							break;
+						case RAINBOW:
+							int n = 256; // number of steps
+							float TWO_PI = (3.14159f * 2);
+
+							for (int i = 0; i < n; ++i) {
+								int red = (int) (128 + sin(i * TWO_PI / n + 0) + 127);
+								int grn = (int) (128 + sin(i * TWO_PI / n + TWO_PI / 3) + 127);
+								int blu = (int) (128 + sin(i * TWO_PI / n + 2 * TWO_PI / 3) + 127);
+								setColor(new Color(red, grn, blu));
+							}
+							break;
+					}
+				}
+			}
 		}
 	}
 }
