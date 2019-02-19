@@ -1,31 +1,28 @@
 package frc.team832.GrouchLib.Mechanisms.Positions;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class OscarMechanismMotionProfile {
 
     private String startIndex, stopIndex;
-    private Trajectory targetTraj;
     private double[][] talonTraj;
 
     public OscarMechanismMotionProfile(String currentIndex, String targetIndex, String mechanism) {
         startIndex = currentIndex;
         stopIndex = targetIndex;
-        String targetTrajName = String.format("%s_To_%s_%s.csv", currentIndex, targetIndex, mechanism);
-        String targetTrajPath = Filesystem.getDeployDirectory() + targetTrajName;
-
-        System.out.println("Loading profile: " + targetTrajName);
-
-        targetTraj = Pathfinder.readFromCSV(new File(targetTrajPath));
-        talonTraj = pathfinderFormatToTalon(targetTraj);
-    }
-
-    public Trajectory pathfinderTrajectory() {
-        return targetTraj;
+        String targetTrajName = String.format("%s_to_%s_%s.csv", currentIndex, targetIndex, mechanism);
+        String targetTrajPath = String.format("%s/%s",Filesystem.getDeployDirectory(), targetTrajName);
+        System.out.println("Loading profile: " + targetTrajPath);
+        File pathFile = new File(targetTrajPath);
+        talonTraj = loadProfileFromCSV(pathFile);
+        System.out.println("Successfully loaded profile: " + targetTrajName);
     }
 
     public double[][] talonTrajectory() {
@@ -33,7 +30,7 @@ public class OscarMechanismMotionProfile {
     }
 
     public int length(){
-        return targetTraj.length();
+        return talonTraj.length;
     }
 
     // gets the final position based on the index from the positionlist the profile was based on.
@@ -42,15 +39,45 @@ public class OscarMechanismMotionProfile {
         return mechanismPositionList.getByIndex(stopIndex).getTarget();
     }
 
-    private static double[][] pathfinderFormatToTalon(Trajectory t) {
-        int i = 0;
-        double[][] list = new double[t.length()][3];
-        for (Trajectory.Segment s : t.segments) {
-            list[i][0] = s.position;
-            list[i][1] = s.velocity;
-            list[i][2] = s.dt;
-            i++;
+
+    private static double[][] loadProfileFromCSV(File file) {
+        BufferedReader fileReader;
+
+        //Delimiter used in CSV file
+        final String DELIMITER = ",";
+        try
+        {
+            String line;
+            //Create the file reader
+            fileReader = new BufferedReader(new FileReader(file));
+
+            int lineCounter = 0;
+            int lineCount = (int) fileReader.lines().count();
+            double[][] csvData = new double[lineCount][3];
+
+            //Read the file line by line
+            while ((line = fileReader.readLine()) != null)
+            {
+                //Get all tokens available in line
+                String[] tokens = line.split(DELIMITER);
+                double[] doubleValues = Arrays.stream(tokens)
+                        .mapToDouble(Double::parseDouble)
+                        .toArray();
+                System.arraycopy(doubleValues, 0, csvData[lineCounter], 0, 3);
+                lineCounter++;
+            }
+
+            try {
+                fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return csvData;
         }
-        return list;
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

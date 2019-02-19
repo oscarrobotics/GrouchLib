@@ -256,11 +256,13 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     @Override
     public void setUpperLimit(int limit) {
         _talon.configForwardSoftLimitThreshold(limit);
+        _talon.configForwardSoftLimitEnable(true);
     }
 
     @Override
     public void setLowerLimit(int limit) {
         _talon.configReverseSoftLimitThreshold(limit);
+        _talon.configReverseSoftLimitEnable(true);
     }
 
     @Override
@@ -286,11 +288,11 @@ public class OscarCANTalon implements IOscarGeniusMotor {
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < totalCnt; ++i) {
-            double positionRot = profile[i][0];
-            double velocityRPM = profile[i][1];
+            double positionRot = profile[i][1];
+            double velocityRPM = profile[i][2];
 
             /* for each point, fill our structure and pass it to API */
-            point.timeDur = (int) profile[i][2];
+            point.timeDur = (int) profile[i][0]*1000;
             point.position = positionRot; //* Constants.kSensorUnitsPerRotation; // Convert Revolutions to Units
             point.velocity = velocityRPM; //* Constants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
             point.auxiliaryPos = 0;
@@ -311,6 +313,11 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     @Override
     public void setMotionProfile(int value) {
         _talon.set(ControlMode.MotionProfile, value);
+    }
+
+    @Override
+    public void startMP() {
+        _talon.startMotionProfile(_bufferedStream, 10, ControlMode.MotionProfile);
     }
 }
 
