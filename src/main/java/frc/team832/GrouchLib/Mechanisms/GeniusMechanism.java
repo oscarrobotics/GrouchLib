@@ -3,14 +3,14 @@ package frc.team832.GrouchLib.Mechanisms;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismMotionProfile;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
-import frc.team832.GrouchLib.Motors.IOscarGeniusMotor;
+import frc.team832.GrouchLib.Motors.IGeniusMotor;
 
-public class OscarGeniusMechanism {
+public class GeniusMechanism {
 
-    private IOscarGeniusMotor _geniusMotor;
+    private IGeniusMotor _geniusMotor;
     private OscarMechanismPositionList _presetPositions;
 
-    public OscarGeniusMechanism(IOscarGeniusMotor geniusMotor, OscarMechanismPositionList presetPositions) {
+    public GeniusMechanism(IGeniusMotor geniusMotor, OscarMechanismPositionList presetPositions) {
         _geniusMotor = geniusMotor;
         _presetPositions = presetPositions;
     }
@@ -71,7 +71,7 @@ public class OscarGeniusMechanism {
         _geniusMotor.stopMotor();
     }
 
-    public IOscarGeniusMotor getMotor(){
+    public IGeniusMotor getMotor(){
         return  _geniusMotor;
     }
 

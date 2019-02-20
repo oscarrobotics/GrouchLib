@@ -1,13 +1,12 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
  * Interface describing all methods a SmartMotor (CAN-based controller) must implement
  */
-public interface IOscarSmartMotor extends IOscarSimpleMotor {
+public interface ISmartMotor extends ISimpleMotor {
 
     /**
      * Gets the current sensor position in it's native unit.

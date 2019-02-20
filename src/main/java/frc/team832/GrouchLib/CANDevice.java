@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OscarCANDevice {
-	private static HashMap<Integer, OscarCANDevice> _canDevices = new HashMap<>();
+public class CANDevice {
+	private static HashMap<Integer, CANDevice> _canDevices = new HashMap<>();
 
 	private int _id;
 	private boolean _onBus;
 	private String _deviceName;
 
-	public OscarCANDevice(int id, boolean foundOnBus, String deviceName){
+	public CANDevice(int id, boolean foundOnBus, String deviceName){
 		_id = id;
 		_onBus = foundOnBus;
 		_deviceName = deviceName;
 	}
 
-	public static void addDevice(OscarCANDevice device) {
+	public static void addDevice(CANDevice device) {
 		_canDevices.putIfAbsent(device._id, device);
 	}
 
@@ -29,7 +29,7 @@ public class OscarCANDevice {
 		return getDevices().stream().anyMatch(device -> device._onBus);
 	}
 
-	public static List<OscarCANDevice> getDevices() {
+	public static List<CANDevice> getDevices() {
 		return new ArrayList<>(_canDevices.values());
 	}
 

@@ -6,13 +6,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import frc.team832.GrouchLib.OscarCANDevice;
+import frc.team832.GrouchLib.CANDevice;
 
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
  */
-public class OscarCANTalon implements IOscarGeniusMotor {
+public class CANTalon implements IGeniusMotor {
 
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
@@ -25,12 +24,12 @@ public class OscarCANTalon implements IOscarGeniusMotor {
      * Create an OscarCANTalon at the specified CAN ID.
      * @param canId CAN ID of controller to attach.
      */
-    public OscarCANTalon(int canId) {
+    public CANTalon(int canId) {
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.Disabled;
 
         boolean onBus = _talon.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
-        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Talon SRX"));
+        CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
 
     }
 
@@ -83,7 +82,7 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     }
 
     @Override
-    public void follow(IOscarCANMotor masterMotor) {
+    public void follow(ICANMotor masterMotor) {
         follow(masterMotor.getDeviceID());
     }
 

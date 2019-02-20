@@ -1,12 +1,11 @@
 package frc.team832.GrouchLib.Motors;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import frc.team832.GrouchLib.OscarCANDevice;
+import frc.team832.GrouchLib.CANDevice;
 
-public class OscarCANVictor implements IOscarCANMotor {
+public class CANVictor implements ICANMotor {
 
     private VictorSPX _victor;
     private ControlMode _ctrlMode;
@@ -15,12 +14,12 @@ public class OscarCANVictor implements IOscarCANMotor {
      * Create an OscarCANTalon at the specified CAN ID.
      * @param canId CAN ID of controller to attach.
      */
-    public OscarCANVictor(int canId) {
+    public CANVictor(int canId) {
         _victor = new VictorSPX(canId);
         _ctrlMode = ControlMode.Disabled;
 
         boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
-        OscarCANDevice.addDevice(new OscarCANDevice(canId, onBus, "Victor SPX"));
+        CANDevice.addDevice(new CANDevice(canId, onBus, "Victor SPX"));
     }
 
     @Override
@@ -70,7 +69,7 @@ public class OscarCANVictor implements IOscarCANMotor {
         set((double) masterMotorID);
     }
 
-    public void follow(IOscarCANMotor motor) {
+    public void follow(ICANMotor motor) {
         int id32 = motor.getBaseID();
         int id24 = id32;
         id24 >>= 16;

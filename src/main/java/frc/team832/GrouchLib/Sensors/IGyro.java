@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Sensors;
 
-public interface IOscarGyro {
+public interface IGyro {
 
     /**
      * Initialize the gyro.

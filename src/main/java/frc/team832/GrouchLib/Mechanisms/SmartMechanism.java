@@ -1,20 +1,15 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
-import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
+import frc.team832.GrouchLib.Motors.ISmartMotor;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+public abstract class SmartMechanism {
 
-public abstract class OscarSmartMechanism {
-
-	private IOscarSmartMotor _smartMotor;
+	private ISmartMotor _smartMotor;
 	private OscarMechanismPositionList _presetPositions;
 
-	public OscarSmartMechanism(IOscarSmartMotor smartMotor, OscarMechanismPositionList presetPositions) {
+	public SmartMechanism(ISmartMotor smartMotor, OscarMechanismPositionList presetPositions) {
 		_smartMotor = smartMotor;
 		_presetPositions = presetPositions;
 	}
@@ -69,7 +64,7 @@ public abstract class OscarSmartMechanism {
 		_smartMotor.stopMotor();
 	}
 
-	public IOscarSmartMotor getMotor(){
+	public ISmartMotor getMotor(){
 		return  _smartMotor;
 	}
 

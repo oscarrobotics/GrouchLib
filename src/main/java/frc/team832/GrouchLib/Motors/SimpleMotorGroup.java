@@ -2,13 +2,13 @@ package frc.team832.GrouchLib.Motors;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
+public class SimpleMotorGroup implements ISimpleMotor {
 
-    private final IOscarSimpleMotor[] m_simpleMotors;
+    private final ISimpleMotor[] m_simpleMotors;
     private boolean m_isInverted = false;
 
-    public OscarSimpleMotorGroup(IOscarSimpleMotor simpleMotor, IOscarSimpleMotor... simpleMotors) {
-        m_simpleMotors = new IOscarSimpleMotor[simpleMotors.length + 1];
+    public SimpleMotorGroup(ISimpleMotor simpleMotor, ISimpleMotor... simpleMotors) {
+        m_simpleMotors = new ISimpleMotor[simpleMotors.length + 1];
         m_simpleMotors[0] = simpleMotor;
         for (int i = 0; i < simpleMotors.length; i++) {
             m_simpleMotors[i + 1] = simpleMotors[i];
@@ -17,7 +17,7 @@ public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
 
     @Override
     public void set(double speed) {
-        for (IOscarSimpleMotor simpleMotor : m_simpleMotors) {
+        for (ISimpleMotor simpleMotor : m_simpleMotors) {
             simpleMotor.set(m_isInverted ? -speed : speed);
         }
     }
@@ -42,21 +42,21 @@ public class OscarSimpleMotorGroup implements IOscarSimpleMotor {
 
     @Override
     public void setNeutralMode(NeutralMode mode) {
-        for (IOscarSimpleMotor simpleMotor : m_simpleMotors) {
+        for (ISimpleMotor simpleMotor : m_simpleMotors) {
             simpleMotor.setNeutralMode(NeutralMode.Coast);
         }
     }
 
     @Override
     public void disable() {
-        for (IOscarSimpleMotor simpleMotor : m_simpleMotors) {
+        for (ISimpleMotor simpleMotor : m_simpleMotors) {
             simpleMotor.disable();
         }
     }
 
     @Override
     public void stopMotor() {
-        for (IOscarSimpleMotor simpleMotor : m_simpleMotors) {
+        for (ISimpleMotor simpleMotor : m_simpleMotors) {
             simpleMotor.stopMotor();
         }
     }
