@@ -1,16 +1,15 @@
 package frc.team832.GrouchLib.Motion;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team832.GrouchLib.Motors.IOscarSmartMotor;
+import frc.team832.GrouchLib.Motors.ISmartMotor;
 
-public class OscarSmartDiffDrive extends OscarDriveBase {
+public class SmartDifferentialDrive extends DriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
     private int _maxRpm;
 
-    private IOscarSmartMotor _leftMotor;
-    private IOscarSmartMotor _rightMotor;
+    private ISmartMotor _leftMotor;
+    private ISmartMotor _rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
@@ -22,7 +21,7 @@ public class OscarSmartDiffDrive extends OscarDriveBase {
         POSITION
     }
 
-    public OscarSmartDiffDrive(IOscarSmartMotor leftMotor, IOscarSmartMotor rightMotor, int maxRpm) {
+    public SmartDifferentialDrive(ISmartMotor leftMotor, ISmartMotor rightMotor, int maxRpm) {
         _leftMotor = leftMotor;
         _rightMotor = rightMotor;
         _maxRpm = maxRpm;

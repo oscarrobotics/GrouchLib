@@ -3,18 +3,14 @@ package frc.team832.GrouchLib.Mechanisms;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPositionList;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+public class GeniusComplexMechanism {
 
-public class OscarGeniusComplexMechanism {
-
-	private OscarGeniusMechanism _primaryMech, _secondaryMech;
+	private GeniusMechanism _primaryMech, _secondaryMech;
 	OscarMechanismComplexPositionList _positions;
 
-	public OscarGeniusComplexMechanism(OscarGeniusMechanism primaryMech,
-									   OscarGeniusMechanism secondaryMech,
-									   OscarMechanismComplexPositionList positions) {
+	public GeniusComplexMechanism(GeniusMechanism primaryMech,
+	                              GeniusMechanism secondaryMech,
+	                              OscarMechanismComplexPositionList positions) {
 		_primaryMech = primaryMech;
 		_secondaryMech = secondaryMech;
 		_positions = positions;
@@ -29,11 +25,11 @@ public class OscarGeniusComplexMechanism {
 		setPosition(getPosition(index));
 	}
 
-	public OscarGeniusMechanism getPrimaryMechanism(){
+	public GeniusMechanism getPrimaryMechanism(){
 		return _primaryMech;
 	}
 
-	public OscarGeniusMechanism getSecondaryMechanism(){
+	public GeniusMechanism getSecondaryMechanism(){
 		return _secondaryMech;
 	}
 

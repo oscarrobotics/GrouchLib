@@ -2,16 +2,15 @@ package frc.team832.GrouchLib.Control;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
-import frc.team832.GrouchLib.OscarCANDevice;
 
-public class OscarPCM {
+public class PCM {
 
     private Compressor _pcm;
     private int _id;
 
     private boolean onBus;
 
-    public OscarPCM(int canID) {
+    public PCM(int canID) {
         _id = canID;
         _pcm = new Compressor(canID);
 

@@ -2,11 +2,11 @@ package frc.team832.GrouchLib.Mechanisms;
 
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
 
-public class OscarComboMechanism{
+public class ComboMechanism {
 
-    private OscarSmartMechanism _primaryMech, _secondaryMech;
+    private SmartMechanism _primaryMech, _secondaryMech;
 
-    public OscarComboMechanism(OscarSmartMechanism primaryMech, OscarSmartMechanism secondaryMech) {
+    public ComboMechanism(SmartMechanism primaryMech, SmartMechanism secondaryMech) {
         _primaryMech = primaryMech;
         _secondaryMech = secondaryMech;
     }

@@ -4,27 +4,27 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class OscarNavX implements IOscarIMU {
+public class NavX implements IIMU {
 
     private AHRS _ahrs;
     private I2C.Port i2cPort;
     private SerialPort.Port serialPort;
     private byte _updateRate = 60;
 
-    public OscarNavX(I2C.Port port) {
+    public NavX(I2C.Port port) {
         i2cPort = port;
     }
 
-    public OscarNavX(I2C.Port port, byte updateRate) {
+    public NavX(I2C.Port port, byte updateRate) {
         _updateRate = updateRate;
         i2cPort = port;
     }
 
-    public OscarNavX(SerialPort.Port port) {
+    public NavX(SerialPort.Port port) {
         serialPort = port;
     }
 
-    public OscarNavX(SerialPort.Port port, byte updateRate) {
+    public NavX(SerialPort.Port port, byte updateRate) {
         _updateRate = updateRate;
         serialPort = port;
     }

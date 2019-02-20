@@ -3,27 +3,27 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.*;
-import frc.team832.GrouchLib.OscarCANDevice;
+import frc.team832.GrouchLib.CANDevice;
 
-public class OscarCANSparkMax implements IOscarCANSmartMotor {
+public class CANSparkMax implements ICANSmartMotor {
 
 	private int _id;
 	private double _setpoint;
 	private double _forwardOutputRange = 0, _reverseOutputRange = 0;
 	private int _allowableError = 0;
 
-    private CANSparkMax _sparkMax;
+    private com.revrobotics.CANSparkMax _sparkMax;
     private ControlType _ctrlType;
-    private CANSparkMax.ExternalFollower _followType;
+    private com.revrobotics.CANSparkMax.ExternalFollower _followType;
     private CANEncoder m_encoder;
     private CANPIDController m_PIDController;
 
-	public OscarCANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
+	public CANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
     	_id = canId;
-        _sparkMax = new CANSparkMax(canId, mType);
+        _sparkMax = new com.revrobotics.CANSparkMax(canId, mType);
 
 	    boolean onBus = _sparkMax.getFirmwareString() != null;
-        OscarCANDevice.addDevice(new OscarCANDevice(_id, onBus, "Spark MAX"));
+        CANDevice.addDevice(new CANDevice(_id, onBus, "Spark MAX"));
 
 		m_PIDController = _sparkMax.getPIDController();
         m_encoder = _sparkMax.getEncoder();
@@ -44,7 +44,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 		m_PIDController.setReference(posVal, _ctrlType);
 	}
 
-	public void setFollowType(CANSparkMax.ExternalFollower followType) {
+	public void setFollowType(com.revrobotics.CANSparkMax.ExternalFollower followType) {
     	_followType = followType;
     }
 
@@ -52,12 +52,12 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
     public void follow(int masterMotorID) { _sparkMax.follow(_followType, masterMotorID); }
 
 	@Override
-	public void follow(IOscarCANMotor masterMotor) {
-		if (masterMotor instanceof OscarCANTalon || masterMotor instanceof OscarCANVictor) {
-			_followType = CANSparkMax.ExternalFollower.kFollowerPhoenix;
-		} else if (masterMotor instanceof OscarCANSparkMax) {
-			_followType = CANSparkMax.ExternalFollower.kFollowerSparkMax;
-		} else _followType = CANSparkMax.ExternalFollower.kFollowerDisabled;
+	public void follow(ICANMotor masterMotor) {
+		if (masterMotor instanceof CANTalon || masterMotor instanceof CANVictor) {
+			_followType = com.revrobotics.CANSparkMax.ExternalFollower.kFollowerPhoenix;
+		} else if (masterMotor instanceof CANSparkMax) {
+			_followType = com.revrobotics.CANSparkMax.ExternalFollower.kFollowerSparkMax;
+		} else _followType = com.revrobotics.CANSparkMax.ExternalFollower.kFollowerDisabled;
 		_sparkMax.follow(_followType, masterMotor.getDeviceID());
 	}
 
@@ -85,7 +85,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
 
 	@Override
 	public void setNeutralMode(NeutralMode mode) {
-		_sparkMax.setIdleMode(mode == NeutralMode.Brake ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast);
+		_sparkMax.setIdleMode(mode == NeutralMode.Brake ? com.revrobotics.CANSparkMax.IdleMode.kBrake : com.revrobotics.CANSparkMax.IdleMode.kCoast);
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class OscarCANSparkMax implements IOscarCANSmartMotor {
         //not yet implemented
     }
 
-	public CANSparkMax getInstance() {
+	public com.revrobotics.CANSparkMax getInstance() {
     	return _sparkMax;
 	}
 

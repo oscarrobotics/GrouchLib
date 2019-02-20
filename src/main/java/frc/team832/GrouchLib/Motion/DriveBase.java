@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Motion;
 
-public abstract class OscarDriveBase
+public abstract class DriveBase
 //        extends MotorSafety
 {
 
@@ -10,7 +10,7 @@ public abstract class OscarDriveBase
     protected double m_deadband = kDefaultDeadband;
     protected double _maxOutput = kDefaultMaxOutput;
 
-    public OscarDriveBase() {
+    public DriveBase() {
     }
 
     /**

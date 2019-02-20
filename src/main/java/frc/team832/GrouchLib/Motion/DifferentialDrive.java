@@ -1,19 +1,19 @@
 package frc.team832.GrouchLib.Motion;
 
-import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
+import frc.team832.GrouchLib.Motors.ISimpleMotor;
 
-public class OscarDiffDrive extends OscarDriveBase {
+public class DifferentialDrive extends DriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
-    private IOscarSimpleMotor m_leftMotor;
-    private IOscarSimpleMotor m_rightMotor;
+    private ISimpleMotor m_leftMotor;
+    private ISimpleMotor m_rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
 
-    public OscarDiffDrive(IOscarSimpleMotor leftMotor, IOscarSimpleMotor rightMotor) {
+    public DifferentialDrive(ISimpleMotor leftMotor, ISimpleMotor rightMotor) {
         m_leftMotor = leftMotor;
         m_rightMotor = rightMotor;
     }

@@ -1,19 +1,19 @@
 package frc.team832.GrouchLib.Control;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import frc.team832.GrouchLib.OscarCANDevice;
+import frc.team832.GrouchLib.CANDevice;
 
-public class OscarPDP {
+public class PDP {
 
     private PowerDistributionPanel _pdp;
 
     private boolean onBus;
 
-    public OscarPDP(int canID) {
+    public PDP(int canID) {
         _pdp = new PowerDistributionPanel(canID);
 
         onBus = _pdp.getVoltage() > 0; // TODO: better way to do this?
-        OscarCANDevice.addDevice(new OscarCANDevice(canID, onBus, "PDP"));
+        CANDevice.addDevice(new CANDevice(canID, onBus, "PDP"));
     }
 
     public double getTotalCurrent() {

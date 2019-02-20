@@ -3,13 +3,13 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
+public class CANSmartMotorGroup implements ICANSmartMotor {
 
-    private final IOscarCANSmartMotor m_masterMotor;
-    private final IOscarCANMotor[] m_slaveMotors;
+    private final ICANSmartMotor m_masterMotor;
+    private final ICANMotor[] m_slaveMotors;
     private boolean m_isInverted = false;
 
-    public OscarCANSmartMotorGroup(IOscarCANSmartMotor masterMotor, IOscarCANMotor... slaveMotors) {
+    public CANSmartMotorGroup(ICANSmartMotor masterMotor, ICANMotor... slaveMotors) {
         m_masterMotor = masterMotor;
         m_slaveMotors = slaveMotors.clone();
 //        follow(masterMotor);
@@ -43,7 +43,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void disable() {
         m_masterMotor.disable();
-        for (IOscarCANMotor canMotor : m_slaveMotors) {
+        for (ICANMotor canMotor : m_slaveMotors) {
             canMotor.disable();
         }
     }
@@ -55,14 +55,14 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
 
     @Override
     public void follow(int canID) {
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(canID);
         }
     }
 
     @Override
-    public void follow(IOscarCANMotor masterMotor) {
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+    public void follow(ICANMotor masterMotor) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(masterMotor);
         }
     }
@@ -71,7 +71,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public double getInputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getInputVoltage();
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getInputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -81,7 +81,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public double getOutputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputVoltage();
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -91,7 +91,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     public double getOutputCurrent() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputCurrent();
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputCurrent();
         }
         return curTotal;
@@ -110,7 +110,7 @@ public class OscarCANSmartMotorGroup implements IOscarCANSmartMotor {
     @Override
     public void setNeutralMode(NeutralMode mode) {
         m_masterMotor.setNeutralMode(mode);
-        for (IOscarCANMotor slaveMotor : m_slaveMotors) {
+        for (ICANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.setNeutralMode(mode);
         }
     }

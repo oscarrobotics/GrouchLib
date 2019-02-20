@@ -1,12 +1,12 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Motors.IOscarSimpleMotor;
+import frc.team832.GrouchLib.Motors.ISimpleMotor;
 
-public class OscarSimpleMechanism {
+public class SimpleMechanism {
 
-    private IOscarSimpleMotor _motor;
+    private ISimpleMotor _motor;
 
-    public OscarSimpleMechanism(IOscarSimpleMotor motor) {
+    public SimpleMechanism(ISimpleMotor motor) {
         _motor = motor;
     }
 
