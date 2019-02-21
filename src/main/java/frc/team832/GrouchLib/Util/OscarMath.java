@@ -14,7 +14,15 @@ public class OscarMath {
         return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
+    public static int map(int value, int in_min, int in_max, int out_min, int out_max) {
+        return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
     public static double clip(double value, double min, double max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    public static int clip(int value, int min, int max) {
         return Math.min(Math.max(value, min), max);
     }
 
