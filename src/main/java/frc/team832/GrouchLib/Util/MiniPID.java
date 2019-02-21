@@ -168,7 +168,7 @@ public class MiniPID {
 	 * @param d Derivative gain. Responds quickly to large changes in error. Small values prevents P and I terms from causing overshoot.
 	 * @param f Feed-forward gain. Open loop "best guess" for the output should be. Only useful if setpoint represents a rate.
 	 */
-	public void setPID(double p, double i, double d,double f){
+	public void setPID(double p, double i, double d, double f){
 		P=p;D=d;F=f;
 		//Note: the I term has additional calculations, so we need to use it's
 		//specific method for setting it.
