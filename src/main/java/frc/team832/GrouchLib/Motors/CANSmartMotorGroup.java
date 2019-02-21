@@ -249,4 +249,9 @@ public class CANSmartMotorGroup implements CANSmartMotor {
     public void setPosition(double posVal) {
         m_masterMotor.setPosition(posVal);
     }
+
+    @Override
+    public boolean atTarget() {
+        return Math.abs(getTargetPosition() - getSensorPosition()) < 20;
+    }
 }

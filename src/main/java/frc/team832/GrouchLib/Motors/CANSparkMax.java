@@ -42,6 +42,11 @@ public class CANSparkMax implements CANSmartMotor {
 		_pidController.setReference(posVal, _ctrlType);
 	}
 
+	@Override
+	public boolean atTarget() {
+		return Math.abs(getTargetPosition() - getSensorPosition()) < 20;
+	}
+
 	public void setFollowType(com.revrobotics.CANSparkMax.ExternalFollower followType) {
     	_followType = followType;
     }

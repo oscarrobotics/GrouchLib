@@ -1,15 +1,19 @@
 package frc.team832.GrouchLib.Motors;
 
 import frc.team832.GrouchLib.Sensors.RemoteEncoder;
+import frc.team832.GrouchLib.Util.MiniPID;
 
 public class SimplySmartMotor implements PIDMotor{
 
 	SimpleMotor _motor;
 	RemoteEncoder _encoder;
+	MiniPID PID;
+	double targetPos;
 
 	public SimplySmartMotor(SimpleMotor motor, RemoteEncoder encoder) {
 		_motor = motor;
 		_encoder = encoder;
+		PID = new MiniPID(0,0,0);
 	}
 
 	@Override
@@ -28,23 +32,35 @@ public class SimplySmartMotor implements PIDMotor{
 	}
 
 	@Override
+	public void setPosition(double pos){
+		targetPos = pos;
+		double output = PID.getOutput(_encoder.getSensorPosition(), pos);
+		_motor.set(output);
+	}
+
+	@Override
+	public boolean atTarget(){
+		return Math.abs(targetPos - _encoder.getSensorPosition()) < 20;
+	}
+
+	@Override
 	public void resetSensor() {
 		setSensorPosition(0);
 	}
 
 	@Override
 	public void setkP(double kP) {
-
+		PID.setP(kP);
 	}
 
 	@Override
 	public void setkI(double kI) {
-
+		PID.setI(kI);
 	}
 
 	@Override
 	public void setkD(double kD) {
-
+		PID.setD(kD);
 	}
 
 	@Override

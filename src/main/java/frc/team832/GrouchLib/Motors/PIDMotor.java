@@ -13,6 +13,10 @@ public interface PIDMotor {
 
 	void setSensorPosition(int absolutePosition);
 
+	void setPosition(double pos);
+
+	boolean atTarget();
+
 	void resetSensor();
 
 	void setkP(double kP);

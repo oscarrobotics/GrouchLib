@@ -11,7 +11,7 @@ public class RemoteEncoder {
 		_getEncVelocity = getEncVelocity;
 	}
 
-	public RemoteEncoder(CANifier canifier) {
+	public RemoteEncoder(OscarCANifier canifier) {
 		_getEncPosition = () -> (double) canifier.getQuadPosition();
 		_getEncVelocity = () -> (double) canifier.getQuadVelocity();
 	}
