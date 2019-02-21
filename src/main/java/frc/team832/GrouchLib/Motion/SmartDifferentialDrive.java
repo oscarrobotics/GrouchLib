@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Motion;
 
-import frc.team832.GrouchLib.Motors.ISmartMotor;
+import frc.team832.GrouchLib.Motors.SmartMotor;
 
 public class SmartDifferentialDrive extends DriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
@@ -8,8 +8,8 @@ public class SmartDifferentialDrive extends DriveBase {
 
     private int _maxRpm;
 
-    private ISmartMotor _leftMotor;
-    private ISmartMotor _rightMotor;
+    private SmartMotor _leftMotor;
+    private SmartMotor _rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
@@ -21,7 +21,7 @@ public class SmartDifferentialDrive extends DriveBase {
         POSITION
     }
 
-    public SmartDifferentialDrive(ISmartMotor leftMotor, ISmartMotor rightMotor, int maxRpm) {
+    public SmartDifferentialDrive(SmartMotor leftMotor, SmartMotor rightMotor, int maxRpm) {
         _leftMotor = leftMotor;
         _rightMotor = rightMotor;
         _maxRpm = maxRpm;

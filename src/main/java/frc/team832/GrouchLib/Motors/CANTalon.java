@@ -11,14 +11,13 @@ import frc.team832.GrouchLib.CANDevice;
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
  */
-public class CANTalon implements IGeniusMotor {
+public class CANTalon implements GeniusMotor {
 
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
-    private int _curPidIdx = 0;
     private int _allowableError = 0;
 
-    BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
+    private BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
 
     /***
      * Create an OscarCANTalon at the specified CAN ID.
@@ -28,7 +27,7 @@ public class CANTalon implements IGeniusMotor {
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.Disabled;
 
-        boolean onBus = _talon.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
+        boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
 
     }
@@ -48,10 +47,6 @@ public class CANTalon implements IGeniusMotor {
         return _talon.getMotorOutputPercent();
     }
 
-    @Override
-    public int getCurrentPosition() {
-        return _talon.getSelectedSensorPosition(_curPidIdx);
-    }
 
     @Override
     public boolean getInverted() {
@@ -82,7 +77,7 @@ public class CANTalon implements IGeniusMotor {
     }
 
     @Override
-    public void follow(ICANMotor masterMotor) {
+    public void follow(CANMotor masterMotor) {
         follow(masterMotor.getDeviceID());
     }
 
@@ -116,20 +111,18 @@ public class CANTalon implements IGeniusMotor {
         _talon.setNeutralMode(mode);
     }
 
-    @Override
     public void setSensorPhase(boolean phase) {
         _talon.setSensorPhase(phase);
     }
 
-    @Override
     public void setSensorType(FeedbackDevice device) {
-        _talon.configSelectedFeedbackSensor(device, 0, 0);
+        _talon.configSelectedFeedbackSensor(device);
     }
 
     @Override
     public void setAllowableClosedLoopError(int error) {
         _allowableError = error;
-        _talon.configAllowableClosedloopError(0, error, 0);
+        _talon.configAllowableClosedloopError(0, error);
     }
 
     @Override
@@ -139,32 +132,32 @@ public class CANTalon implements IGeniusMotor {
 
     @Override
     public void setClosedLoopRamp(double secondsFromNeutralToFull) {
-        _talon.configClosedloopRamp(secondsFromNeutralToFull, 0);
+        _talon.configClosedloopRamp(secondsFromNeutralToFull);
     }
 
     @Override
     public void setOpenLoopRamp(double secondsFromNeutralToFull) {
-        _talon.configOpenloopRamp(secondsFromNeutralToFull, 0);
+        _talon.configOpenloopRamp(secondsFromNeutralToFull);
     }
 
     @Override
-    public int getSensorVelocity() {
+    public double getSensorVelocity() {
        return _talon.getSelectedSensorVelocity();
     }
 
     @Override
-    public int getSensorPosition() {
-        return _talon.getSelectedSensorPosition(0);
+    public double getSensorPosition() {
+        return _talon.getSelectedSensorPosition();
     }
 
     @Override
     public void setSensorPosition(int absolutePosition) {
-        _talon.setSelectedSensorPosition(absolutePosition, 0, 0);
+        _talon.setSelectedSensorPosition(absolutePosition);
     }
 
     @Override
     public double getTargetPosition() {
-        return _talon.getClosedLoopTarget(0);
+        return _talon.getClosedLoopTarget();
     }
 
     @Override
@@ -179,27 +172,16 @@ public class CANTalon implements IGeniusMotor {
 
     @Override
     public int getClosedLoopError() {
-        return _talon.getClosedLoopError(0);
-    }
-
-    @Override
-    public int getPulseWidthPosition() {
-        return _talon.getSensorCollection().getPulseWidthPosition();
-    }
-
-    @Override
-    public void set_kF(int slot, double kF) {
-        _talon.config_kF(0, kF, 0);
+        return _talon.getClosedLoopError();
     }
 
     @Override
     public void setPeakOutputForward(double percentOut) {
-        _talon.configPeakOutputForward(percentOut, 0);
+        _talon.configPeakOutputForward(percentOut);
     }
 
     @Override
-    public void setPeakOutputReverse(double percentOut) {
-
+    public void setPeakOutputReverse(double percentOut) { _talon.configPeakOutputReverse(percentOut);
     }
 
     @Override
@@ -253,12 +235,12 @@ public class CANTalon implements IGeniusMotor {
     }
 
     @Override
-    public void setUpperLimit(int limit) {
+    public void setForwardSoftLimit(int limit) {
         _talon.configForwardSoftLimitThreshold(limit);
     }
 
     @Override
-    public void setLowerLimit(int limit) {
+    public void setReverseSoftLimit(int limit) {
         _talon.configReverseSoftLimitThreshold(limit);
     }
 
@@ -296,7 +278,7 @@ public class CANTalon implements IGeniusMotor {
             point.auxiliaryVel = 0;
             point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
             point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-            point.zeroPos = (i == 0); /* set this to true on the first point */
+            point.zeroPos = false; /* set this to true on the first point if you want to zero the sensor*/
             point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
             point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 

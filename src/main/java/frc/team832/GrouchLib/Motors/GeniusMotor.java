@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Motors;
 
-public interface IGeniusMotor extends ICANSmartMotor {
+public interface GeniusMotor extends CANSmartMotor {
 
     void fillProfileBuffer(double[][] profile, int size);
 

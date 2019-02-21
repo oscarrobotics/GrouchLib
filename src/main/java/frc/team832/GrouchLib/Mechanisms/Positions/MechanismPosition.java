@@ -1,11 +1,11 @@
 package frc.team832.GrouchLib.Mechanisms.Positions;
 
-public class OscarMechanismPosition {
+public class MechanismPosition {
 
 	private String _index;
 	private double _target;
 
-	public OscarMechanismPosition(String index, double target) {
+	public MechanismPosition(String index, double target) {
 		_index = index;
 		_target = target;
 	}

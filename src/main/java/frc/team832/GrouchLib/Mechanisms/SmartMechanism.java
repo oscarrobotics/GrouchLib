@@ -1,15 +1,15 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
-import frc.team832.GrouchLib.Motors.ISmartMotor;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPosition;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPositionList;
+import frc.team832.GrouchLib.Motors.SmartMotor;
 
 public abstract class SmartMechanism {
 
-	private ISmartMotor _smartMotor;
-	private OscarMechanismPositionList _presetPositions;
+	private SmartMotor _smartMotor;
+	private MechanismPositionList _presetPositions;
 
-	public SmartMechanism(ISmartMotor smartMotor, OscarMechanismPositionList presetPositions) {
+	public SmartMechanism(SmartMotor smartMotor, MechanismPositionList presetPositions) {
 		_smartMotor = smartMotor;
 		_presetPositions = presetPositions;
 	}
@@ -24,12 +24,12 @@ public abstract class SmartMechanism {
 		return _smartMotor.getSensorVelocity();
 	}
 
-	public OscarMechanismPosition getPresetPosition(String index) {
-		OscarMechanismPosition presetPos = _presetPositions.getByIndex(index);
+	public MechanismPosition getPresetPosition(String index) {
+		MechanismPosition presetPos = _presetPositions.getByIndex(index);
 		return _presetPositions.getByIndex(index);
 	}
 
-	public void setPosition(OscarMechanismPosition position) {
+	public void setPosition(MechanismPosition position) {
 		_smartMotor.setPosition(position.getTarget());
 	}
 
@@ -49,11 +49,11 @@ public abstract class SmartMechanism {
 	}
 
 	public void setUpperLimit(int limit){
-		_smartMotor.setUpperLimit(limit);
+		_smartMotor.setForwardSoftLimit(limit);
 	}
 
 	public void setLowerLimit(int limit){
-		_smartMotor.setLowerLimit(limit);
+		_smartMotor.setReverseSoftLimit(limit);
 	}
 
 	public void resetSensor(){
@@ -64,7 +64,7 @@ public abstract class SmartMechanism {
 		_smartMotor.stopMotor();
 	}
 
-	public ISmartMotor getMotor(){
+	public SmartMotor getMotor(){
 		return  _smartMotor;
 	}
 

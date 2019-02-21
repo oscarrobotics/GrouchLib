@@ -1,16 +1,16 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismMotionProfile;
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
-import frc.team832.GrouchLib.Motors.IGeniusMotor;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismMotionProfile;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPosition;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPositionList;
+import frc.team832.GrouchLib.Motors.GeniusMotor;
 
 public class GeniusMechanism {
 
-    private IGeniusMotor _geniusMotor;
-    private OscarMechanismPositionList _presetPositions;
+    private GeniusMotor _geniusMotor;
+    private MechanismPositionList _presetPositions;
 
-    public GeniusMechanism(IGeniusMotor geniusMotor, OscarMechanismPositionList presetPositions) {
+    public GeniusMechanism(GeniusMotor geniusMotor, MechanismPositionList presetPositions) {
         _geniusMotor = geniusMotor;
         _presetPositions = presetPositions;
     }
@@ -25,12 +25,12 @@ public class GeniusMechanism {
         return _geniusMotor.getSensorVelocity();
     }
 
-    public OscarMechanismPosition getPresetPosition(String index) {
-        OscarMechanismPosition presetPos = _presetPositions.getByIndex(index);
+    public MechanismPosition getPresetPosition(String index) {
+        MechanismPosition presetPos = _presetPositions.getByIndex(index);
         return _presetPositions.getByIndex(index);
     }
 
-    public void setPosition(OscarMechanismPosition position) {
+    public void setPosition(MechanismPosition position) {
         _geniusMotor.setPosition(position.getTarget());
     }
 
@@ -51,16 +51,16 @@ public class GeniusMechanism {
     }
 
     public void setLimits(int lowerLimit, int upperLimit) {
-        _geniusMotor.setLowerLimit(lowerLimit);
-        _geniusMotor.setUpperLimit(upperLimit);
+        _geniusMotor.setReverseSoftLimit(lowerLimit);
+        _geniusMotor.setForwardSoftLimit(upperLimit);
     }
 
     public void setUpperLimit(int limit){
-        _geniusMotor.setUpperLimit(limit);
+        _geniusMotor.setForwardSoftLimit(limit);
     }
 
     public void setLowerLimit(int limit){
-        _geniusMotor.setLowerLimit(limit);
+        _geniusMotor.setReverseSoftLimit(limit);
     }
 
     public void resetSensor(){
@@ -71,11 +71,11 @@ public class GeniusMechanism {
         _geniusMotor.stopMotor();
     }
 
-    public IGeniusMotor getMotor(){
+    public GeniusMotor getMotor(){
         return  _geniusMotor;
     }
 
-    public void bufferTrajectory(OscarMechanismMotionProfile profile){
+    public void bufferTrajectory(MechanismMotionProfile profile){
         _geniusMotor.fillProfileBuffer(profile.talonTrajectory(), profile.length());
     }
 

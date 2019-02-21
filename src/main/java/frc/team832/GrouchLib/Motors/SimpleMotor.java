@@ -2,7 +2,7 @@ package frc.team832.GrouchLib.Motors;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-public interface ISimpleMotor {
+public interface SimpleMotor {
 
     /**
      * Common interface for setting the speed of a speed controller.
