@@ -1,5 +1,7 @@
 package frc.team832.GrouchLib.Mechanisms;
 
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismMotionProfile;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPositionList;
@@ -83,7 +85,15 @@ public class OscarGeniusMechanism {
         _geniusMotor.setMotionProfile(value);
     }
 
-    public void startMP() {
-        _geniusMotor.startMP();
+    public void bufferAndSendMP() {
+        _geniusMotor.bufferAndSendMP();
+    }
+
+    public ErrorCode getMotionProfileStatus(MotionProfileStatus status) {
+        return _geniusMotor.getMotionProfileStatus(status);
+    }
+
+    public boolean isMPFinished() {
+        return _geniusMotor.isMPFinished();
     }
 }
