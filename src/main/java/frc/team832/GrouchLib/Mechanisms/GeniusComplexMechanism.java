@@ -1,22 +1,22 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPosition;
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismComplexPositionList;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismComplexPosition;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismComplexPositionList;
 
 public class GeniusComplexMechanism {
 
 	private GeniusMechanism _primaryMech, _secondaryMech;
-	OscarMechanismComplexPositionList _positions;
+	MechanismComplexPositionList _positions;
 
 	public GeniusComplexMechanism(GeniusMechanism primaryMech,
 	                              GeniusMechanism secondaryMech,
-	                              OscarMechanismComplexPositionList positions) {
+	                              MechanismComplexPositionList positions) {
 		_primaryMech = primaryMech;
 		_secondaryMech = secondaryMech;
 		_positions = positions;
 	}
 
-	public void setPosition(OscarMechanismComplexPosition position) {
+	public void setPosition(MechanismComplexPosition position) {
 		_primaryMech.setPosition(position.getPrimaryPosition());
 		_secondaryMech.setPosition(position.getSecondaryPosition());
 	}
@@ -58,7 +58,7 @@ public class GeniusComplexMechanism {
 	}
 
 
-	public OscarMechanismComplexPosition getPosition(String index) {
+	public MechanismComplexPosition getPosition(String index) {
 		return _positions.getByIndex(index);
 		//		return _positions.stream()
 //				.filter(pos -> Objects.equals(index, pos.getIndex()))

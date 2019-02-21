@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.team832.GrouchLib.CANDevice;
 
-public class CANVictor implements ICANMotor {
+public class CANVictor implements CANMotor {
 
     private VictorSPX _victor;
     private ControlMode _ctrlMode;
@@ -69,7 +69,7 @@ public class CANVictor implements ICANMotor {
         set((double) masterMotorID);
     }
 
-    public void follow(ICANMotor motor) {
+    public void follow(CANMotor motor) {
         int id32 = motor.getBaseID();
         int id24 = id32;
         id24 >>= 16;
@@ -106,6 +106,4 @@ public class CANVictor implements ICANMotor {
     public void setNeutralMode(NeutralMode mode) {
         _victor.setNeutralMode(mode);
     }
-
-
 }

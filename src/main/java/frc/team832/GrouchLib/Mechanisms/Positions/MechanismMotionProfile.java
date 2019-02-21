@@ -6,13 +6,13 @@ import jaci.pathfinder.Trajectory;
 
 import java.io.File;
 
-public class OscarMechanismMotionProfile {
+public class MechanismMotionProfile {
 
     private String startIndex, stopIndex;
     private Trajectory targetTraj;
     private double[][] talonTraj;
 
-    public OscarMechanismMotionProfile(String currentIndex, String targetIndex, String mechanism) {
+    public MechanismMotionProfile(String currentIndex, String targetIndex, String mechanism) {
         startIndex = currentIndex;
         stopIndex = targetIndex;
         String targetTrajName = String.format("%s_To_%s_%s.csv", currentIndex, targetIndex, mechanism);
@@ -38,7 +38,7 @@ public class OscarMechanismMotionProfile {
 
     // gets the final position based on the index from the positionlist the profile was based on.
     // should work? just have to be sure indexes are all the same...
-    public double finalPosition(OscarMechanismPositionList mechanismPositionList)  {
+    public double finalPosition(MechanismPositionList mechanismPositionList)  {
         return mechanismPositionList.getByIndex(stopIndex).getTarget();
     }
 

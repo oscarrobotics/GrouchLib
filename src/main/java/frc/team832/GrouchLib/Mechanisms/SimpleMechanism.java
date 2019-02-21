@@ -1,12 +1,12 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Motors.ISimpleMotor;
+import frc.team832.GrouchLib.Motors.SimpleMotor;
 
 public class SimpleMechanism {
 
-    private ISimpleMotor _motor;
+    private SimpleMotor _motor;
 
-    public SimpleMechanism(ISimpleMotor motor) {
+    public SimpleMechanism(SimpleMotor motor) {
         _motor = motor;
     }
 

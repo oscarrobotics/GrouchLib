@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Motors;
 
-public interface ICANMotor extends ISimpleMotor {
+public interface CANMotor extends SimpleMotor {
     /**
      * Sets this motor controller to follow the output of another controller.
      *
@@ -13,7 +13,7 @@ public interface ICANMotor extends ISimpleMotor {
      *
      * @param masterMotor IOscarSmartMotor to follow.
      */
-    void follow(ICANMotor masterMotor);
+    void follow(CANMotor masterMotor);
 
     /**
      * Gets the CAN Id of the device.

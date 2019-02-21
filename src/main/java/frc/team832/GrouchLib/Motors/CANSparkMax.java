@@ -1,11 +1,10 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.*;
 import frc.team832.GrouchLib.CANDevice;
 
-public class CANSparkMax implements ICANSmartMotor {
+public class CANSparkMax implements CANSmartMotor {
 
 	private int _id;
 	private double _setpoint;
@@ -15,8 +14,8 @@ public class CANSparkMax implements ICANSmartMotor {
     private com.revrobotics.CANSparkMax _sparkMax;
     private ControlType _ctrlType;
     private com.revrobotics.CANSparkMax.ExternalFollower _followType;
-    private CANEncoder m_encoder;
-    private CANPIDController m_PIDController;
+    private CANEncoder _encoder;
+    private CANPIDController _pidController;
 
 	public CANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
     	_id = canId;
@@ -25,23 +24,23 @@ public class CANSparkMax implements ICANSmartMotor {
 	    boolean onBus = _sparkMax.getFirmwareString() != null;
         CANDevice.addDevice(new CANDevice(_id, onBus, "Spark MAX"));
 
-		m_PIDController = _sparkMax.getPIDController();
-        m_encoder = _sparkMax.getEncoder();
+		_pidController = _sparkMax.getPIDController();
+        _encoder = _sparkMax.getEncoder();
     }
 
 	@Override
 	public void setVelocity(double rpmVal) {
     	_setpoint = rpmVal;
     	_ctrlType = ControlType.kVelocity;
-		m_PIDController.setReference(rpmVal, _ctrlType);
-		System.out.println(m_PIDController.getP());
+		_pidController.setReference(rpmVal, _ctrlType);
+		System.out.println(_pidController.getP());
 	}
 
 	@Override
 	public void setPosition(double posVal) {
     	_setpoint = posVal;
 		_ctrlType = ControlType.kPosition;
-		m_PIDController.setReference(posVal, _ctrlType);
+		_pidController.setReference(posVal, _ctrlType);
 	}
 
 	public void setFollowType(com.revrobotics.CANSparkMax.ExternalFollower followType) {
@@ -52,7 +51,7 @@ public class CANSparkMax implements ICANSmartMotor {
     public void follow(int masterMotorID) { _sparkMax.follow(_followType, masterMotorID); }
 
 	@Override
-	public void follow(ICANMotor masterMotor) {
+	public void follow(CANMotor masterMotor) {
 		if (masterMotor instanceof CANTalon || masterMotor instanceof CANVictor) {
 			_followType = com.revrobotics.CANSparkMax.ExternalFollower.kFollowerPhoenix;
 		} else if (masterMotor instanceof CANSparkMax) {
@@ -60,9 +59,6 @@ public class CANSparkMax implements ICANSmartMotor {
 		} else _followType = com.revrobotics.CANSparkMax.ExternalFollower.kFollowerDisabled;
 		_sparkMax.follow(_followType, masterMotor.getDeviceID());
 	}
-
-	@Override
-    public int getCurrentPosition() { return (int) _sparkMax.getEncoder().getPosition(); }
 
     @Override
     public double getInputVoltage() { return _sparkMax.getBusVoltage(); }
@@ -89,16 +85,6 @@ public class CANSparkMax implements ICANSmartMotor {
 	}
 
 	@Override
-	public void setSensorPhase(boolean phase) {
-		// Not supported
-	}
-
-	@Override
-	public void setSensorType(FeedbackDevice device) {
-		//not used
-	}
-
-	@Override
 	public void setAllowableClosedLoopError(int error) {
 		_allowableError = error;
 	}
@@ -119,23 +105,23 @@ public class CANSparkMax implements ICANSmartMotor {
 	}
 
 	@Override
-	public int getSensorPosition() {
-		return (int) _sparkMax.getEncoder().getPosition();
+	public double getSensorPosition() {
+		return _encoder.getPosition();
 	}
 
 	@Override
-	public int getSensorVelocity() {
-		return (int) _sparkMax.getEncoder().getVelocity();
+	public double getSensorVelocity() {
+		return _encoder.getVelocity();
 	}
 
 	@Override
 	public void setSensorPosition(int absolutePosition) {
-    	// NOT SUPPORTED YET
+    	_encoder.setPosition(absolutePosition);
 	}
 
 	@Override
 	public double getTargetPosition() {
-    	return 0.0; // Not supported
+    	return _setpoint; // Not supported in firmware
 	}
 
 	@Override
@@ -151,16 +137,6 @@ public class CANSparkMax implements ICANSmartMotor {
 	@Override
 	public int getClosedLoopError() {
 		return 0; // Not supported
-	}
-
-	@Override
-	public int getPulseWidthPosition() {
-		return (int) _sparkMax.getEncoder().getPosition(); // Is this correct?
-	}
-
-	@Override
-	public void set_kF(int slot, double kF) {
-		_sparkMax.getPIDController().setFF(kF, slot);
 	}
 
 	@Override
@@ -187,22 +163,22 @@ public class CANSparkMax implements ICANSmartMotor {
 
 	@Override
 	public void setkP(double kP) {
-		m_PIDController.setP(kP);
+		_pidController.setP(kP);
 	}
 
 	@Override
 	public void setkI(double kI) {
-		m_PIDController.setI(kI);
+		_pidController.setI(kI);
 	}
 
 	@Override
 	public void setkD(double kD) {
-		m_PIDController.setD(kD);
+		_pidController.setD(kD);
 	}
 
 	@Override
 	public void setkF(double kF) {
-		m_PIDController.setFF(kF);
+		_pidController.setFF(kF);
 	}
 
 	@Override
@@ -226,13 +202,18 @@ public class CANSparkMax implements ICANSmartMotor {
 	}
 
 	@Override
-	public void setUpperLimit(int limit) {
+	public void setForwardSoftLimit(int limit) {
 		//not yet implemented
 	}
 
 	@Override
-	public void setLowerLimit(int limit) {
+	public void setReverseSoftLimit(int limit) {
 		//not yet implemented
+	}
+
+	@Override
+	public void resetSensor() {
+		setSensorPosition(0);
 	}
 
 	@Override
@@ -253,10 +234,6 @@ public class CANSparkMax implements ICANSmartMotor {
     @Override
     public void disable() { _sparkMax.disable(); }
 
-    public void resetSensor(){
-        //not yet implemented
-    }
-
 	public com.revrobotics.CANSparkMax getInstance() {
     	return _sparkMax;
 	}
@@ -264,12 +241,8 @@ public class CANSparkMax implements ICANSmartMotor {
     @Override
     public void stopMotor() { _sparkMax.stopMotor(); }
 
-    public void setReference(double x, ControlType type){
-    	m_PIDController.setReference(x, type);
-	}
-
 	public void setOutputRange(double min, double max) {
-		m_PIDController.setOutputRange(min, max);
+		_pidController.setOutputRange(min, max);
 	}
 }
 

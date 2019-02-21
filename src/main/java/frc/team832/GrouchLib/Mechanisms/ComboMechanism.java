@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Mechanisms;
 
-import frc.team832.GrouchLib.Mechanisms.Positions.OscarMechanismPosition;
+import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPosition;
 
 public class ComboMechanism {
 
@@ -31,11 +31,11 @@ public class ComboMechanism {
         return _secondaryMech.getVelocity();
     }
 
-    public OscarMechanismPosition getPresetPosition(String index) {
+    public MechanismPosition getPresetPosition(String index) {
         return _primaryMech.getPresetPosition(index);
     }
 
-    public void setPosition(OscarMechanismPosition position) {
+    public void setPosition(MechanismPosition position) {
         _secondaryMech.setPosition(position);
         _primaryMech.setPosition(position);
     }

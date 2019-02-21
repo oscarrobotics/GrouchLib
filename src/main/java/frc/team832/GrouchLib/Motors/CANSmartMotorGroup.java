@@ -3,13 +3,13 @@ package frc.team832.GrouchLib.Motors;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-public class CANSmartMotorGroup implements ICANSmartMotor {
+public class CANSmartMotorGroup implements CANSmartMotor {
 
-    private final ICANSmartMotor m_masterMotor;
-    private final ICANMotor[] m_slaveMotors;
+    private final CANSmartMotor m_masterMotor;
+    private final CANMotor[] m_slaveMotors;
     private boolean m_isInverted = false;
 
-    public CANSmartMotorGroup(ICANSmartMotor masterMotor, ICANMotor... slaveMotors) {
+    public CANSmartMotorGroup(CANSmartMotor masterMotor, CANMotor... slaveMotors) {
         m_masterMotor = masterMotor;
         m_slaveMotors = slaveMotors.clone();
 //        follow(masterMotor);
@@ -26,11 +26,6 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     }
 
     @Override
-    public int getCurrentPosition() {
-        return m_masterMotor.getCurrentPosition();
-    }
-
-    @Override
     public boolean getInverted() {
         return m_isInverted;
     }
@@ -43,7 +38,7 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     @Override
     public void disable() {
         m_masterMotor.disable();
-        for (ICANMotor canMotor : m_slaveMotors) {
+        for (CANMotor canMotor : m_slaveMotors) {
             canMotor.disable();
         }
     }
@@ -55,14 +50,14 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
 
     @Override
     public void follow(int canID) {
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(canID);
         }
     }
 
     @Override
-    public void follow(ICANMotor masterMotor) {
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+    public void follow(CANMotor masterMotor) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.follow(masterMotor);
         }
     }
@@ -71,7 +66,7 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     public double getInputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getInputVoltage();
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getInputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -81,7 +76,7 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     public double getOutputVoltage() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputVoltage();
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputVoltage();
         }
         return curTotal / (m_slaveMotors.length + 1);
@@ -91,7 +86,7 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     public double getOutputCurrent() {
         double curTotal = 0.0;
         curTotal += m_masterMotor.getOutputCurrent();
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             curTotal += slaveMotor.getOutputCurrent();
         }
         return curTotal;
@@ -110,19 +105,9 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     @Override
     public void setNeutralMode(NeutralMode mode) {
         m_masterMotor.setNeutralMode(mode);
-        for (ICANMotor slaveMotor : m_slaveMotors) {
+        for (CANMotor slaveMotor : m_slaveMotors) {
             slaveMotor.setNeutralMode(mode);
         }
-    }
-
-    @Override
-    public void setSensorPhase(boolean phase) {
-        m_masterMotor.setSensorPhase(phase);
-    }
-
-    @Override
-    public void setSensorType(FeedbackDevice device) {
-        m_masterMotor.setSensorType(device);
     }
 
     @Override
@@ -146,12 +131,12 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     }
 
     @Override
-    public int getSensorVelocity() {
+    public double getSensorVelocity() {
         return m_masterMotor.getSensorVelocity();
     }
 
     @Override
-    public int getSensorPosition() {
+    public double getSensorPosition() {
         return m_masterMotor.getSensorPosition();
     }
 
@@ -178,16 +163,6 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     @Override
     public int getClosedLoopError() {
         return m_masterMotor.getClosedLoopError();
-    }
-
-    @Override
-    public int getPulseWidthPosition() {
-        return m_masterMotor.getPulseWidthPosition();
-    }
-
-    @Override
-    public void set_kF(int slot, double kF) {
-        m_masterMotor.set_kF(slot, kF);
     }
 
     @Override
@@ -251,13 +226,13 @@ public class CANSmartMotorGroup implements ICANSmartMotor {
     }
 
     @Override
-    public void setUpperLimit(int limit) {
-        m_masterMotor.setUpperLimit(limit);
+    public void setForwardSoftLimit(int limit) {
+        m_masterMotor.setForwardSoftLimit(limit);
     }
 
     @Override
-    public void setLowerLimit(int limit) {
-        m_masterMotor.setLowerLimit(limit);
+    public void setReverseSoftLimit(int limit) {
+        m_masterMotor.setReverseSoftLimit(limit);
     }
 
     @Override

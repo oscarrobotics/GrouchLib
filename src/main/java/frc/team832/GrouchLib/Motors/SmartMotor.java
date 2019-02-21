@@ -1,19 +1,11 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
  * Interface describing all methods a SmartMotor (CAN-based controller) must implement
  */
-public interface ISmartMotor extends ISimpleMotor {
-
-    /**
-     * Gets the current sensor position in it's native unit.
-     *
-     * @return Position.
-     */
-    int getCurrentPosition();
+public interface SmartMotor extends SimpleMotor, PIDMotor {
 
     /**
      * Gets the current input voltage of the controller.
@@ -44,29 +36,6 @@ public interface ISmartMotor extends ISimpleMotor {
     void setNeutralMode(NeutralMode mode);
 
     /**
-     * Sets the phase of the sensor on this IOscarSmartMotor.
-     *
-     * @param phase Phase to set. (true = positive, false = negative)
-     */
-    void setSensorPhase(boolean phase);
-
-    /**
-     * Sets the feedback sensor type for any "smart" actions
-     *
-     * @param device FeedbackDevice to set.
-     */
-    void setSensorType(FeedbackDevice device);
-
-    /**
-     * Sets the allowed error for a closed-loop system to consider itself "stable".
-     *
-     * @param error Value of the allowable closed-loop error.
-     */
-    void setAllowableClosedLoopError(int error);
-
-    int getAllowableClosedLoopError();
-
-    /**
      * Sets the closed-loop ramp rate of throttle output.
      *
      * @param secondsFromNeutralToFull Minimum desired time to go from neutral to full throttle. A value of '0' will disable the ramp.
@@ -80,23 +49,9 @@ public interface ISmartMotor extends ISimpleMotor {
      */
     void setOpenLoopRamp(double secondsFromNeutralToFull);
 
-    int getSensorVelocity();
-
-    int getSensorPosition();
-
-    void setSensorPosition(int absolutePosition);
-
-    double getTargetPosition();
-
     boolean getForwardLimitSwitch();
 
     boolean getReverseLimitSwitch();
-
-    int getClosedLoopError();
-
-    int getPulseWidthPosition();
-
-    void set_kF(int slot, double kF);
 
     void setPeakOutputForward(double percentOut);
 
@@ -106,27 +61,9 @@ public interface ISmartMotor extends ISimpleMotor {
 
     void setNominalOutputReverse(double percentOut);
 
-    void setkP(double kP);
+    void setForwardSoftLimit(int limit);
 
-    void setkI(double kI);
-
-    void setkD(double kD);
-
-    void setkF(double kF);
-
-    void setkP(double kP, int slotID);
-
-    void setkI(double kI, int slotID);
-
-    void setkD(double kD, int slotID);
-
-    void setkF(double kF, int slotID);
-
-    void setUpperLimit(int limit);
-
-    void setLowerLimit(int limit);
-
-    void resetSensor();
+    void setReverseSoftLimit(int limit);
 
     void setVelocity(double rpmVal);
 

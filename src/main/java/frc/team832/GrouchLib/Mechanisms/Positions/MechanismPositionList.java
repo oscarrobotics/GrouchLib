@@ -4,16 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class OscarMechanismPositionList {
+public class MechanismPositionList {
 
-	List<OscarMechanismPosition> _presetPositions;
+	List<MechanismPosition> _presetPositions;
 
-	public OscarMechanismPositionList(OscarMechanismPosition[] presetPositions) {
+	public MechanismPositionList(MechanismPosition[] presetPositions) {
 		_presetPositions = Arrays.asList(presetPositions);
 	}
 
-	public OscarMechanismPosition getByIndex(String index) {
-		OscarMechanismPosition presetPos = _presetPositions.stream()
+	public MechanismPosition getByIndex(String index) {
+		MechanismPosition presetPos = _presetPositions.stream()
 				.filter(pos -> Objects.equals(index, pos.getIndex()))
 				.findFirst()
 				.orElse(null);

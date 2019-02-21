@@ -4,15 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class OscarMechanismComplexPositionList {
+public class MechanismComplexPositionList {
 
-	List<OscarMechanismComplexPosition> _presetPositions;
+	List<MechanismComplexPosition> _presetPositions;
 
-	public OscarMechanismComplexPositionList(OscarMechanismComplexPosition[] presetPositions) {
+	public MechanismComplexPositionList(MechanismComplexPosition[] presetPositions) {
 		_presetPositions = Arrays.asList(presetPositions);
 	}
 
-	public OscarMechanismComplexPosition getByIndex(String index) {
+	public MechanismComplexPosition getByIndex(String index) {
 		return _presetPositions.stream()
 				.filter(pos -> Objects.equals(index, pos.getIndex()))
 				.findFirst()
