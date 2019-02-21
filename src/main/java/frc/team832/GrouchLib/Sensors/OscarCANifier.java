@@ -2,6 +2,7 @@ package frc.team832.GrouchLib.Sensors;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
+import edu.wpi.first.wpilibj.Timer;
 import frc.team832.GrouchLib.OscarCANDevice;
 import frc.team832.GrouchLib.Util.OscarMath;
 
@@ -74,7 +75,9 @@ public class OscarCANifier {
 	public enum LEDMode {
 		STATIC,
 		ALTERNATE_GREEN,
+		ALTERNATE_2,
 		FADE,
+		FADE_2,
 		RAINBOW
 	}
 
@@ -130,6 +133,9 @@ public class OscarCANifier {
 	public class LEDs {
 		private LEDMode ledMode;
 		private Color curColor;
+		private Color color1, color2, color3;
+
+
 		private CANifier.LEDChannel _rChannel = CANifier.LEDChannel.LEDChannelC;
 		private CANifier.LEDChannel _gChannel = CANifier.LEDChannel.LEDChannelB;
 		private CANifier.LEDChannel _bChannel = CANifier.LEDChannel.LEDChannelA;
@@ -141,26 +147,27 @@ public class OscarCANifier {
 			_bChannel = ledBChannel;
 		}
 
-		public void setRGB(int rValue, int gValue, int bValue) {
-			rValue = OscarMath.clip(rValue, 0, 255);
-			gValue = OscarMath.clip(gValue, 0, 255);
-			bValue = OscarMath.clip(bValue, 0, 255);
-			curColor = new Color(rValue, gValue, bValue);
-
-		}
+//		public void setRGB(int rValue, int gValue, int bValue) {
+//			rValue = OscarMath.clip(rValue, 0, 255);
+//			gValue = OscarMath.clip(gValue, 0, 255);
+//			bValue = OscarMath.clip(bValue, 0, 255);
+//			color1 = new Color(rValue, gValue, bValue);
+//		}
 
 		public void setLEDs(LEDMode mode, Color color) {
 			setMode(mode);
-			setColor(color);
+			setPrimaryColor(color);
 		}
 
 		public void setMode(LEDMode mode) {
 			ledMode = mode;
 		}
 
-		public void setColor(Color color) {
-			curColor = color;
+		public void setPrimaryColor(Color color) {
+			color1 = color;
 		}
+		public void setSecondaryColor(Color color) { color2 = color; }
+		public void setTertiaryColor(Color color) { color3 = color; }
 
 		private void sendColor(int r, int g, int b) {
 			sendColor(new Color(r, g, b));
@@ -191,7 +198,7 @@ public class OscarCANifier {
 		}
 
 		public void turnOff() {
-			setRGB(0, 0, 0);
+			sendColor(Color.black);
 		}
 
 		public void setMaxOutput(double maxOutput) {
@@ -201,25 +208,49 @@ public class OscarCANifier {
 		private class LEDRunner implements Runnable {
 			@Override
 			public void run() {
+				int brightness = 0;
+				int fadeAmount = 3;
+
+				Timer timer = new Timer();
+				timer.start();
+
 				while (true) {
 					switch (ledMode) {
 						case STATIC:
 							sendColor(curColor);
 							break;
 						case ALTERNATE_GREEN:
-
+							if(timer.hasPeriodPassed(0.125)) {
+								Color newColor = curColor != Color.green ? color1 : Color.green;
+								sendColor(newColor);
+							}
 							break;
 						case FADE:
-							break;
-						case RAINBOW:
-							int n = 256; // number of steps
-							float TWO_PI = (3.14159f * 2);
+							if (timer.hasPeriodPassed(0.125)) {
+								brightness = brightness + fadeAmount;
 
-							for (int i = 0; i < n; ++i) {
-								int red = (int) (128 + sin(i * TWO_PI / n + 0) + 127);
-								int grn = (int) (128 + sin(i * TWO_PI / n + TWO_PI / 3) + 127);
-								int blu = (int) (128 + sin(i * TWO_PI / n + 2 * TWO_PI / 3) + 127);
-								setColor(new Color(red, grn, blu));
+								// reverse the direction of the fading at the ends of the fade:
+								if (brightness <= 0 || brightness >= 255) {
+									fadeAmount = -fadeAmount;
+
+								}
+								sendColor(new Color(curColor.getRed() - brightness, curColor.getGreen() - brightness, curColor.getRed() - brightness));
+
+							}
+							break;
+						case FADE_2:
+
+						case RAINBOW:
+							if (timer.hasPeriodPassed(0.05)) {
+								int n = 256; // number of steps
+								float TWO_PI = (3.14159f * 2);
+
+								for (int i = 0; i < n; ++i) {
+									int red = (int) (128 + sin(i * TWO_PI / n + 0) + 127);
+									int grn = (int) (128 + sin(i * TWO_PI / n + TWO_PI / 3) + 127);
+									int blu = (int) (128 + sin(i * TWO_PI / n + 2 * TWO_PI / 3) + 127);
+									sendColor(new Color(red, grn, blu));
+								}
 							}
 							break;
 					}
