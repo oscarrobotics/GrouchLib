@@ -1,12 +1,13 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import frc.team832.GrouchLib.OscarCANDevice;
 
 /**
@@ -20,6 +21,7 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     private int _allowableError = 0;
 
     BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
+    int profilePointCount = 0;
 
     /***
      * Create an OscarCANTalon at the specified CAN ID.
@@ -285,6 +287,7 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     @Override
     public void fillProfileBuffer(double[][] profile, int totalCnt) {
         _bufferedStream.Clear();
+        profilePointCount = totalCnt;
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < totalCnt; ++i) {
@@ -299,7 +302,7 @@ public class OscarCANTalon implements IOscarGeniusMotor {
             point.auxiliaryVel = 0;
             point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
             point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
-            point.zeroPos = (i == 0); /* set this to true on the first point */
+            point.zeroPos = false; /* set this to true on the first point */
             point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
             point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 
@@ -316,8 +319,18 @@ public class OscarCANTalon implements IOscarGeniusMotor {
     }
 
     @Override
-    public void startMP() {
+    public void bufferAndSendMP() {
         _talon.startMotionProfile(_bufferedStream, 10, ControlMode.MotionProfile);
+    }
+
+    @Override
+    public ErrorCode getMotionProfileStatus(MotionProfileStatus status) {
+        return _talon.getMotionProfileStatus(status);
+    }
+
+    @Override
+    public boolean isMPFinished() {
+        return _talon.isMotionProfileFinished();
     }
 }
 
