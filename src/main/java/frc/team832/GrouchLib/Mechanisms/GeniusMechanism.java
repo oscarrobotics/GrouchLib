@@ -4,6 +4,8 @@ import frc.team832.GrouchLib.Mechanisms.Positions.MechanismMotionProfile;
 import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPosition;
 import frc.team832.GrouchLib.Mechanisms.Positions.MechanismPositionList;
 import frc.team832.GrouchLib.Motors.GeniusMotor;
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motion.MotionProfileStatus;
 
 public class GeniusMechanism {
 
@@ -81,5 +83,17 @@ public class GeniusMechanism {
 
     public void setMotionProfile(int value){
         _geniusMotor.setMotionProfile(value);
+    }
+
+    public void bufferAndSendMP() {
+        _geniusMotor.bufferAndSendMP();
+    }
+
+    public ErrorCode getMotionProfileStatus(MotionProfileStatus status) {
+        return _geniusMotor.getMotionProfileStatus(status);
+    }
+
+    public boolean isMPFinished() {
+        return _geniusMotor.isMPFinished();
     }
 }

@@ -33,7 +33,6 @@ public class CANSparkMax implements CANSmartMotor {
     	_setpoint = rpmVal;
     	_ctrlType = ControlType.kVelocity;
 		_pidController.setReference(rpmVal, _ctrlType);
-		System.out.println(_pidController.getP());
 	}
 
 	@Override
