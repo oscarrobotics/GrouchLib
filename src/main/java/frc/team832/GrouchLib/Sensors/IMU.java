@@ -1,6 +1,6 @@
 package frc.team832.GrouchLib.Sensors;
 
-public interface IIMU extends IGyro {
+public interface IMU extends IGyro {
 
     double getXAccel();
 

@@ -2,31 +2,22 @@ package frc.team832.GrouchLib.Sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class NavX implements IIMU {
+public class NavXMicro implements IMU {
 
     private AHRS _ahrs;
-    private I2C.Port i2cPort;
-    private SerialPort.Port serialPort;
+    private NavXPort _port;
     private byte _updateRate = 60;
 
-    public NavX(I2C.Port port) {
-        i2cPort = port;
+    public NavXMicro(NavXPort port) {
+        _port = port;
     }
 
-    public NavX(I2C.Port port, byte updateRate) {
+    public NavXMicro(NavXPort port, byte updateRate) {
+        _port = port;
         _updateRate = updateRate;
-        i2cPort = port;
-    }
-
-    public NavX(SerialPort.Port port) {
-        serialPort = port;
-    }
-
-    public NavX(SerialPort.Port port, byte updateRate) {
-        _updateRate = updateRate;
-        serialPort = port;
     }
 
     @Override
@@ -77,20 +68,35 @@ public class NavX implements IIMU {
     @Override
     public boolean init() {
         try {
-            if (i2cPort == null) {
-                _ahrs = new AHRS(serialPort, AHRS.SerialDataType.kProcessedData, _updateRate);
-            } else {
-                _ahrs = new AHRS(i2cPort, _updateRate);
+            switch (_port) {
+                case I2C_onboard:
+                    _ahrs = new AHRS(I2C.Port.kOnboard, _updateRate);
+                    break;
+                case I2C_mxp:
+                    _ahrs = new AHRS(I2C.Port.kMXP, _updateRate);
+                    break;
+                case SPI_onboard:
+                    _ahrs = new AHRS(SPI.Port.kOnboardCS0, _updateRate);
+                    break;
+                case SPI_mxp:
+                    _ahrs = new AHRS(SPI.Port.kMXP, _updateRate);
+                    break;
+                case USB_onboard:
+                    _ahrs = new AHRS(SerialPort.Port.kUSB, AHRS.SerialDataType.kProcessedData, _updateRate);
+                    break;
+                case Serial_mxp:
+                    _ahrs = new AHRS(SerialPort.Port.kMXP, AHRS.SerialDataType.kProcessedData, _updateRate);
+                    break;
             }
+
+            _ahrs.reset();
+            _ahrs.resetDisplacement();
+            return true;
         } catch (Exception ex) {
-            System.out.println("Failed to init gyro:\n");
+            System.out.println(String.format("Failed to init NavX on port %s:\n", _port.toString()));
             System.out.println(ex.getMessage());
             return false;
         }
-
-        _ahrs.reset();
-        _ahrs.resetDisplacement();
-        return true;
     }
 
     @Override
@@ -116,5 +122,14 @@ public class NavX implements IIMU {
     @Override
     public double getRoll() {
         return _ahrs.getRoll();
+    }
+
+    public enum NavXPort {
+        I2C_onboard,
+        I2C_mxp,
+        SPI_onboard,
+        SPI_mxp,
+        USB_onboard,
+        Serial_mxp
     }
 }
