@@ -33,6 +33,10 @@ public abstract class SmartMechanism {
 		_smartMotor.setPosition(position.getTarget());
 	}
 
+	public void setPosition(double pos){
+		_smartMotor.setPosition(pos);
+	}
+
 	public void setPosition(String index) {
 		System.out.println("INDEX REQ: " + index);
 		setPosition(getPresetPosition(index));

@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.lang.Math.sin;
 
-public class CANifier {
+public class OscarCANifier {
 
 	private com.ctre.phoenix.CANifier _canifier;
 	private List<GeneralPin> _inputPins = new ArrayList<>();
@@ -20,12 +20,13 @@ public class CANifier {
 	private List<GeneralPin> _pwmPins = new ArrayList<>();
 
 	private boolean onBus;
+	private RemoteEncoder quadEnc;
 
-	public CANifier(int canID) {
+	public OscarCANifier(int canID) {
 		_canifier = new com.ctre.phoenix.CANifier(canID);
 
 		onBus = _canifier.getBusVoltage() > 0;
-		CANDevice.addDevice(new CANDevice(canID, onBus, "CANifier"));
+		CANDevice.addDevice(new CANDevice(canID, onBus, "OscarCANifier"));
 	}
 
 	public int getQuadVelocity() { return _canifier.getQuadratureVelocity(); }
@@ -84,10 +85,10 @@ public class CANifier {
 	public static class Ultrasonic {
 		private static final double kTriggerPulseTime = 0.00238095238;
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
-		private CANifier _canifier;
+		private OscarCANifier _canifier;
 		private com.ctre.phoenix.CANifier.PWMChannel _triggerPin, _echoPin;
 
-		public Ultrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin, CANifier canifier) {
+		public Ultrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin, OscarCANifier canifier) {
 			_triggerPin = triggerPin;
 			_echoPin = echoPin;
 			_canifier = canifier;

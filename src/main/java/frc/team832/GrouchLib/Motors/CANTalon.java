@@ -267,6 +267,11 @@ public class CANTalon implements GeniusMotor {
     }
 
     @Override
+    public boolean atTarget() {
+        return Math.abs(getTargetPosition()- getSensorPosition()) < 20;
+    }
+
+    @Override
     public void fillProfileBuffer(double[][] profile, int totalCnt) {
         _bufferedStream.Clear();
         profilePointCount = totalCnt;
@@ -302,7 +307,7 @@ public class CANTalon implements GeniusMotor {
 
     @Override
     public void bufferAndSendMP() {
-        _talon.startMotionProfile(_bufferedStream, 10, ControlMode.MotionProfile);
+        _talon.startMotionProfile(_bufferedStream, 25, ControlMode.MotionProfile);
     }
 
     @Override
