@@ -1,6 +1,8 @@
 package frc.team832.GrouchLib.Motors;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -18,7 +20,8 @@ public class CANTalon implements GeniusMotor {
     private int _allowableError = 0;
 
     private BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
-
+    int profilePointCount = 0;
+	
     /***
      * Create an OscarCANTalon at the specified CAN ID.
      * @param canId CAN ID of controller to attach.
@@ -237,11 +240,13 @@ public class CANTalon implements GeniusMotor {
     @Override
     public void setForwardSoftLimit(int limit) {
         _talon.configForwardSoftLimitThreshold(limit);
+        _talon.configForwardSoftLimitEnable(true);
     }
 
     @Override
     public void setReverseSoftLimit(int limit) {
         _talon.configReverseSoftLimitThreshold(limit);
+        _talon.configReverseSoftLimitEnable(true);
     }
 
     @Override
@@ -264,14 +269,15 @@ public class CANTalon implements GeniusMotor {
     @Override
     public void fillProfileBuffer(double[][] profile, int totalCnt) {
         _bufferedStream.Clear();
+        profilePointCount = totalCnt;
         TrajectoryPoint point = new TrajectoryPoint();
 
         for (int i = 0; i < totalCnt; ++i) {
-            double positionRot = profile[i][0];
-            double velocityRPM = profile[i][1];
+            double positionRot = profile[i][1];
+            double velocityRPM = profile[i][2];
 
             /* for each point, fill our structure and pass it to API */
-            point.timeDur = (int) profile[i][2];
+            point.timeDur = (int) profile[i][0]*1000;
             point.position = positionRot; //* Constants.kSensorUnitsPerRotation; // Convert Revolutions to Units
             point.velocity = velocityRPM; //* Constants.kSensorUnitsPerRotation / 600.0; // Convert RPM to Units/100ms
             point.auxiliaryPos = 0;
@@ -292,6 +298,21 @@ public class CANTalon implements GeniusMotor {
     @Override
     public void setMotionProfile(int value) {
         _talon.set(ControlMode.MotionProfile, value);
+    }
+
+    @Override
+    public void bufferAndSendMP() {
+        _talon.startMotionProfile(_bufferedStream, 10, ControlMode.MotionProfile);
+    }
+
+    @Override
+    public ErrorCode getMotionProfileStatus(MotionProfileStatus status) {
+        return _talon.getMotionProfileStatus(status);
+    }
+
+    @Override
+    public boolean isMPFinished() {
+        return _talon.isMotionProfileFinished();
     }
 }
 
