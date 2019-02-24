@@ -319,5 +319,10 @@ public class CANTalon implements GeniusMotor {
     public boolean isMPFinished() {
         return _talon.isMotionProfileFinished();
     }
+
+    @Override
+    public void setIZone(int iZone) {
+        _talon.config_IntegralZone(0, iZone);
+    }
 }
 

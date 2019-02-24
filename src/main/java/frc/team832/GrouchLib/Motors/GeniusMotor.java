@@ -14,4 +14,6 @@ public interface GeniusMotor extends CANSmartMotor {
     ErrorCode getMotionProfileStatus(MotionProfileStatus status);
 
     boolean isMPFinished();
+
+    void setIZone(int iZone);
 }

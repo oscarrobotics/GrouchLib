@@ -11,33 +11,33 @@ public class CANSparkMax implements CANSmartMotor {
 	private double _forwardOutputRange = 0, _reverseOutputRange = 0;
 	private int _allowableError = 0;
 
-    private com.revrobotics.CANSparkMax _sparkMax;
-    private ControlType _ctrlType;
-    private com.revrobotics.CANSparkMax.ExternalFollower _followType;
-    private CANEncoder _encoder;
-    private CANPIDController _pidController;
+	private com.revrobotics.CANSparkMax _sparkMax;
+	private ControlType _ctrlType;
+	private com.revrobotics.CANSparkMax.ExternalFollower _followType;
+	private CANEncoder _encoder;
+	private CANPIDController _pidController;
 
-	public CANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType){
-    	_id = canId;
-        _sparkMax = new com.revrobotics.CANSparkMax(canId, mType);
+	public CANSparkMax(int canId, CANSparkMaxLowLevel.MotorType mType) {
+		_id = canId;
+		_sparkMax = new com.revrobotics.CANSparkMax(canId, mType);
 
-	    boolean onBus = _sparkMax.getFirmwareString() != null;
-        CANDevice.addDevice(new CANDevice(_id, onBus, "Spark MAX"));
+		boolean onBus = _sparkMax.getFirmwareString() != null;
+		CANDevice.addDevice(new CANDevice(_id, onBus, "Spark MAX"));
 
 		_pidController = _sparkMax.getPIDController();
-        _encoder = _sparkMax.getEncoder();
-    }
+		_encoder = _sparkMax.getEncoder();
+	}
 
 	@Override
 	public void setVelocity(double rpmVal) {
-    	_setpoint = rpmVal;
-    	_ctrlType = ControlType.kVelocity;
+		_setpoint = rpmVal;
+		_ctrlType = ControlType.kVelocity;
 		_pidController.setReference(rpmVal, _ctrlType);
 	}
 
 	@Override
 	public void setPosition(double posVal) {
-    	_setpoint = posVal;
+		_setpoint = posVal;
 		_ctrlType = ControlType.kPosition;
 		_pidController.setReference(posVal, _ctrlType);
 	}
@@ -48,11 +48,13 @@ public class CANSparkMax implements CANSmartMotor {
 	}
 
 	public void setFollowType(com.revrobotics.CANSparkMax.ExternalFollower followType) {
-    	_followType = followType;
-    }
+		_followType = followType;
+	}
 
-    @Override
-    public void follow(int masterMotorID) { _sparkMax.follow(_followType, masterMotorID); }
+	@Override
+	public void follow(int masterMotorID) {
+		_sparkMax.follow(_followType, masterMotorID);
+	}
 
 	@Override
 	public void follow(CANMotor masterMotor) {
@@ -64,14 +66,20 @@ public class CANSparkMax implements CANSmartMotor {
 		_sparkMax.follow(_followType, masterMotor.getDeviceID());
 	}
 
-    @Override
-    public double getInputVoltage() { return _sparkMax.getBusVoltage(); }
+	@Override
+	public double getInputVoltage() {
+		return _sparkMax.getBusVoltage();
+	}
 
-    @Override
-    public double getOutputVoltage() { return _sparkMax.getAppliedOutput(); }
+	@Override
+	public double getOutputVoltage() {
+		return _sparkMax.getAppliedOutput();
+	}
 
-    @Override
-    public double getOutputCurrent() { return _sparkMax.getOutputCurrent(); }
+	@Override
+	public double getOutputCurrent() {
+		return _sparkMax.getOutputCurrent();
+	}
 
 	@Override
 	public int getDeviceID() {
@@ -120,12 +128,12 @@ public class CANSparkMax implements CANSmartMotor {
 
 	@Override
 	public void setSensorPosition(int absolutePosition) {
-    	_encoder.setPosition(absolutePosition);
+		_encoder.setPosition(absolutePosition);
 	}
 
 	@Override
 	public double getTargetPosition() {
-    	return _setpoint; // Not supported in firmware
+		return _setpoint; // Not supported in firmware
 	}
 
 	@Override
@@ -145,7 +153,7 @@ public class CANSparkMax implements CANSmartMotor {
 
 	@Override
 	public void setPeakOutputForward(double percentOut) {
-    	_forwardOutputRange = percentOut;
+		_forwardOutputRange = percentOut;
 		_sparkMax.getPIDController().setOutputRange(_forwardOutputRange, _reverseOutputRange);
 	}
 
@@ -221,32 +229,43 @@ public class CANSparkMax implements CANSmartMotor {
 	}
 
 	@Override
-    public void set(double value) {
-    	_setpoint = value;
-    	_sparkMax.set(value);
-    }
-
-    @Override
-    public double get() { return _sparkMax.get(); }
-
-    @Override
-    public void setInverted(boolean isInverted) { _sparkMax.setInverted(isInverted); }
-
-    @Override
-    public boolean getInverted() { return _sparkMax.getInverted(); }
-
-    @Override
-    public void disable() { _sparkMax.disable(); }
-
-	public com.revrobotics.CANSparkMax getInstance() {
-    	return _sparkMax;
+	public void set(double value) {
+		_setpoint = value;
+		_sparkMax.set(value);
 	}
 
-    @Override
-    public void stopMotor() { _sparkMax.stopMotor(); }
+	@Override
+	public double get() {
+		return _sparkMax.get();
+	}
+
+	@Override
+	public void setInverted(boolean isInverted) {
+		_sparkMax.setInverted(isInverted);
+	}
+
+	@Override
+	public boolean getInverted() {
+		return _sparkMax.getInverted();
+	}
+
+	@Override
+	public void disable() {
+		_sparkMax.disable();
+	}
+
+	public com.revrobotics.CANSparkMax getInstance() {
+		return _sparkMax;
+	}
+
+	@Override
+	public void stopMotor() {
+		_sparkMax.stopMotor();
+	}
 
 	public void setOutputRange(double min, double max) {
 		_pidController.setOutputRange(min, max);
 	}
 }
+
 

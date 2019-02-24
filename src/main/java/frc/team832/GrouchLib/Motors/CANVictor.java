@@ -16,7 +16,7 @@ public class CANVictor implements CANMotor {
      */
     public CANVictor(int canId) {
         _victor = new VictorSPX(canId);
-        _ctrlMode = ControlMode.Disabled;
+        _ctrlMode = ControlMode.PercentOutput;
 
         boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
         CANDevice.addDevice(new CANDevice(canId, onBus, "Victor SPX"));
