@@ -96,4 +96,8 @@ public class GeniusMechanism {
     public boolean isMPFinished() {
         return _geniusMotor.isMPFinished();
     }
+
+    public void setIZone(int iZone) {
+        _geniusMotor.setIZone(iZone);
+    }
 }

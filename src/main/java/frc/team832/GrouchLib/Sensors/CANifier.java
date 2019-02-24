@@ -1,6 +1,5 @@
 package frc.team832.GrouchLib.Sensors;
 
-import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team832.GrouchLib.CANDevice;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import static java.lang.Math.sin;
 
-public class OscarCANifier {
+public class CANifier {
 
 	private com.ctre.phoenix.CANifier _canifier;
 	private List<GeneralPin> _inputPins = new ArrayList<>();
@@ -22,11 +21,11 @@ public class OscarCANifier {
 	private boolean onBus;
 	private RemoteEncoder quadEnc;
 
-	public OscarCANifier(int canID) {
+	public CANifier(int canID) {
 		_canifier = new com.ctre.phoenix.CANifier(canID);
 
 		onBus = _canifier.getBusVoltage() > 0;
-		CANDevice.addDevice(new CANDevice(canID, onBus, "OscarCANifier"));
+		CANDevice.addDevice(new CANDevice(canID, onBus, "CANifier"));
 	}
 
 	public int getQuadVelocity() { return _canifier.getQuadratureVelocity(); }
@@ -85,10 +84,10 @@ public class OscarCANifier {
 	public static class Ultrasonic {
 		private static final double kTriggerPulseTime = 0.00238095238;
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
-		private OscarCANifier _canifier;
+		private CANifier _canifier;
 		private com.ctre.phoenix.CANifier.PWMChannel _triggerPin, _echoPin;
 
-		public Ultrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin, OscarCANifier canifier) {
+		public Ultrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin, CANifier canifier) {
 			_triggerPin = triggerPin;
 			_echoPin = echoPin;
 			_canifier = canifier;
@@ -136,12 +135,12 @@ public class OscarCANifier {
 		private Color curColor;
 		private Color color1, color2, color3;
 
-		private CANifier.LEDChannel _rChannel = CANifier.LEDChannel.LEDChannelC;
-		private CANifier.LEDChannel _gChannel = CANifier.LEDChannel.LEDChannelB;
-		private CANifier.LEDChannel _bChannel = CANifier.LEDChannel.LEDChannelA;
+		private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
+		private com.ctre.phoenix.CANifier.LEDChannel _gChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelB;
+		private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
 		private double _maxOutput = 1;
 
-		public void setLedChannels(CANifier.LEDChannel ledRChannel, CANifier.LEDChannel ledGChannel, CANifier.LEDChannel ledBChannel) {
+		public void setLedChannels(com.ctre.phoenix.CANifier.LEDChannel ledRChannel, com.ctre.phoenix.CANifier.LEDChannel ledGChannel, com.ctre.phoenix.CANifier.LEDChannel ledBChannel) {
 			_rChannel = ledRChannel;
 			_gChannel = ledGChannel;
 			_bChannel = ledBChannel;

@@ -93,6 +93,4 @@ public abstract class DriveBase
 
     public abstract double getLeftOutput();
     public abstract double getRightOutput();
-
-
 }
