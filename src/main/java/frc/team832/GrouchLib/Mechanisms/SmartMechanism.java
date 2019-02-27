@@ -46,10 +46,11 @@ public abstract class SmartMechanism {
 		return _smartMotor.getClosedLoopError() <= 20;
 	}
 
-	public void setPID(double kP, double kI, double kD){
+	public void setPIDF(double kP, double kI, double kD, double kF){
 		_smartMotor.setkP(kP);
 		_smartMotor.setkI(kI);
 		_smartMotor.setkD(kD);
+		_smartMotor.setkF(kF);
 	}
 
 	public void setUpperLimit(int limit){

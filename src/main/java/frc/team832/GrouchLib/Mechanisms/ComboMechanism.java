@@ -49,9 +49,9 @@ public class ComboMechanism {
         return _secondaryMech.getAtTarget() && _primaryMech.getAtTarget();
     }
 
-    public void setPID(double kP, double kI, double kD){
-        _primaryMech.setPID(kP, kI, kD);
-        _secondaryMech.setPID(kP, kI, kD);
+    public void setPIDF(double kP, double kI, double kD, double kF){
+        _primaryMech.setPIDF(kP, kI, kD, kF);
+        _secondaryMech.setPIDF(kP, kI, kD, kF);
     }
 
     public void setPrimaryUpperLimit(int limit){
