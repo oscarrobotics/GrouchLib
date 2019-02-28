@@ -10,6 +10,7 @@ targetCompatibility = JavaVersion.VERSION_11
 repositories {
     mavenLocal()
     mavenCentral()
+    maven{ url 'https://jitpack.io/'}
 }
 
 dependencies {
@@ -17,4 +18,5 @@ dependencies {
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    compile 'com.github.Oblarg:Oblog:2.4.1'
 }
