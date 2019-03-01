@@ -1,6 +1,7 @@
 package frc.team832.GrouchLib.Sensors;
 
 import com.ctre.phoenix.CANifier.GeneralPin;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import frc.team832.GrouchLib.CANDevice;
 import frc.team832.GrouchLib.Util.OscarMath;
@@ -25,6 +26,7 @@ public class CANifier {
 		_canifier = new com.ctre.phoenix.CANifier(canID);
 
 		onBus = _canifier.getBusVoltage() > 0;
+		System.out.println("CANIFIER ONBUS: " + onBus);
 		CANDevice.addDevice(new CANDevice(canID, onBus, "CANifier"));
 	}
 
@@ -130,21 +132,20 @@ public class CANifier {
 		}
 	}
 
-	public class LEDs {
-		private LEDMode ledMode;
-		private Color curColor;
-		private Color color1, color2, color3;
+	private LEDMode ledMode;
+	private Color curColor;
+	private Color color1, color2, color3;
 
-		private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
-		private com.ctre.phoenix.CANifier.LEDChannel _gChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelB;
-		private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
-		private double _maxOutput = 1;
+	private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
+	private com.ctre.phoenix.CANifier.LEDChannel _gChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelB;
+	private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
+	private double _maxOutput = 1;
 
-		public void setLedChannels(com.ctre.phoenix.CANifier.LEDChannel ledRChannel, com.ctre.phoenix.CANifier.LEDChannel ledGChannel, com.ctre.phoenix.CANifier.LEDChannel ledBChannel) {
-			_rChannel = ledRChannel;
-			_gChannel = ledGChannel;
-			_bChannel = ledBChannel;
-		}
+	public void setLedChannels(com.ctre.phoenix.CANifier.LEDChannel ledRChannel, com.ctre.phoenix.CANifier.LEDChannel ledGChannel, com.ctre.phoenix.CANifier.LEDChannel ledBChannel) {
+		_rChannel = ledRChannel;
+		_gChannel = ledGChannel;
+		_bChannel = ledBChannel;
+	}
 
 //		public void setRGB(int rValue, int gValue, int bValue) {
 //			rValue = OscarMath.clip(rValue, 0, 255);
@@ -153,107 +154,113 @@ public class CANifier {
 //			color1 = new Color(rValue, gValue, bValue);
 //		}
 
-		public void setLEDs(LEDMode mode, Color color) {
-			setMode(mode);
-			setPrimaryColor(color);
-		}
+	public void setLEDs(LEDMode mode, Color color) {
+		setMode(mode);
+		setPrimaryColor(color);
+	}
 
-		public void setMode(LEDMode mode) {
-			ledMode = mode;
-		}
-    
-		public void setPrimaryColor(Color color) {
-			color1 = color;
-		}
-		public void setSecondaryColor(Color color) { color2 = color; }
-		public void setTertiaryColor(Color color) { color3 = color; }
+	public void setMode(LEDMode mode) {
+		ledMode = mode;
+	}
 
-		private void sendColor(int r, int g, int b) {
-			sendColor(new Color(r, g, b));
+	public void setPrimaryColor(Color color) {
+		color1 = color;
+	}
+	public void setSecondaryColor(Color color) { color2 = color; }
+	public void setTertiaryColor(Color color) { color3 = color; }
+
+	private void sendColor(int r, int g, int b) {
+		sendColor(new Color(r, g, b));
+	}
+
+	public void sendColor(Color color) {
+		double[] vals = ColorToPercentRGB(color);
+		if (onBus) {
+			_canifier.setLEDOutput(vals[0] * _maxOutput, _rChannel);
+			_canifier.setLEDOutput(vals[1] * _maxOutput, _gChannel);
+			_canifier.setLEDOutput(vals[2] * _maxOutput, _bChannel);
 		}
+	}
 
-		private void sendColor(Color color) {
-			double[] vals = ColorToPercentRGB(color);
-			if (onBus) {
-				_canifier.setLEDOutput(vals[0] * _maxOutput, _rChannel);
-				_canifier.setLEDOutput(vals[1] * _maxOutput, _gChannel);
-				_canifier.setLEDOutput(vals[2] * _maxOutput, _bChannel);
-			}
-		}
+	private double[] ColorToPercentRGB(Color color) {
+		return new double[]{
+				color.getRed() / 255D,
+				color.getGreen() / 255D,
+				color.getBlue() / 255D
+		};
+	}
 
-		private double[] ColorToPercentRGB(Color color) {
-			return new double[]{
-					color.getRed() / 255D,
-					color.getGreen() / 255D,
-					color.getBlue() / 255D
-			};
-		}
+	private double[] RGBToPercentRGB(int r, int g, int b) {
+		return new double[]{
+				r / 255D,
+				g / 255D,
+				b / 255D};
+	}
 
-		private double[] RGBToPercentRGB(int r, int g, int b) {
-			return new double[]{
-					r / 255D,
-					g / 255D,
-					b / 255D};
-		}
+	public void turnOff() {
+		sendColor(Color.black);
+	}
 
-		public void turnOff() {
-			sendColor(Color.black);
-		}
+	public void setMaxOutput(double maxOutput) {
+		_maxOutput = OscarMath.clip(maxOutput, 0, 1);
+	}
 
-		public void setMaxOutput(double maxOutput) {
-			_maxOutput = OscarMath.clip(maxOutput, 0, 1);
-		}
+	private Notifier ledRunner = new Notifier(new LEDRunner());
 
-		private class LEDRunner implements Runnable {
-			@Override
-			public void run() {
-				int brightness = 0;
-				int fadeAmount = 3;
+	public void startLEDs() {
+		ledRunner.startPeriodic(0.05);
+	}
 
-				Timer timer = new Timer();
-				timer.start();
-				while (true) {
-					switch (ledMode) {
-						case STATIC:
-							sendColor(curColor);
-							break;
-						case ALTERNATE_GREEN:
-							if(timer.hasPeriodPassed(0.125)) {
-								Color newColor = curColor != Color.green ? color1 : Color.green;
-								sendColor(newColor);
+	private class LEDRunner implements Runnable {
+		@Override
+		public void run() {
+			int brightness = 0;
+			int fadeAmount = 3;
+
+			Timer timer = new Timer();
+			timer.start();
+			while (true) {
+				switch (ledMode) {
+					case STATIC:
+						sendColor(curColor);
+						break;
+					case ALTERNATE_GREEN:
+						if(timer.hasPeriodPassed(0.125)) {
+							Color newColor = curColor != Color.green ? color1 : Color.green;
+							sendColor(newColor);
+						}
+						break;
+					case FADE:
+						if (timer.hasPeriodPassed(0.125)) {
+							brightness = brightness + fadeAmount;
+
+							// reverse the direction of the fading at the ends of the fade:
+							if (brightness <= 0 || brightness >= 255) {
+								fadeAmount = -fadeAmount;
+
 							}
-							break;
-						case FADE:
-							if (timer.hasPeriodPassed(0.125)) {
-								brightness = brightness + fadeAmount;
+							sendColor(new Color(curColor.getRed() - brightness, curColor.getGreen() - brightness, curColor.getRed() - brightness));
 
-								// reverse the direction of the fading at the ends of the fade:
-								if (brightness <= 0 || brightness >= 255) {
-									fadeAmount = -fadeAmount;
+						}
+						break;
+					case FADE_2:
 
-								}
-								sendColor(new Color(curColor.getRed() - brightness, curColor.getGreen() - brightness, curColor.getRed() - brightness));
+					case RAINBOW:
+						if (timer.hasPeriodPassed(0.05)) {
+							int n = 256; // number of steps
+							float TWO_PI = (3.14159f * 2);
 
+							for (int i = 0; i < n; ++i) {
+								int red = (int) (128 + sin(i * TWO_PI / n + 0) + 127);
+								int grn = (int) (128 + sin(i * TWO_PI / n + TWO_PI / 3) + 127);
+								int blu = (int) (128 + sin(i * TWO_PI / n + 2 * TWO_PI / 3) + 127);
+								sendColor(new Color(red, grn, blu));
 							}
-							break;
-						case FADE_2:
-
-						case RAINBOW:
-							if (timer.hasPeriodPassed(0.05)) {
-								int n = 256; // number of steps
-								float TWO_PI = (3.14159f * 2);
-
-								for (int i = 0; i < n; ++i) {
-									int red = (int) (128 + sin(i * TWO_PI / n + 0) + 127);
-									int grn = (int) (128 + sin(i * TWO_PI / n + TWO_PI / 3) + 127);
-									int blu = (int) (128 + sin(i * TWO_PI / n + 2 * TWO_PI / 3) + 127);
-									sendColor(new Color(red, grn, blu));
-								}
-							}
-							break;
-					}
+						}
+						break;
 				}
 			}
 		}
+
 	}
 }
