@@ -79,6 +79,10 @@ public class CANTalon implements GeniusMotor {
         set(masterMotorID);
     }
 
+    public void follow(TalonSRX talon){
+        _talon.follow(talon);
+    }
+
     @Override
     public void follow(CANMotor masterMotor) {
         follow(masterMotor.getDeviceID());
@@ -120,6 +124,10 @@ public class CANTalon implements GeniusMotor {
 
     public void setSensorType(FeedbackDevice device) {
         _talon.configSelectedFeedbackSensor(device);
+    }
+
+    public void configureContinuousCurrent(int amps){
+        _talon.configContinuousCurrentLimit(amps);
     }
 
     @Override
@@ -266,6 +274,18 @@ public class CANTalon implements GeniusMotor {
         _talon.set(_ctrlMode, posVal);
     }
 
+    public void configMotionMagic(int sensorUnitsPer100ms, int sensorUnitsPer100MsPerSec){
+        _talon.configMotionCruiseVelocity(sensorUnitsPer100ms);
+        _talon.configMotionAcceleration(sensorUnitsPer100MsPerSec);
+
+    }
+
+    public void setMotionMagc(double pos){
+        _ctrlMode = ControlMode.MotionMagic;
+        _talon.selectProfileSlot(0,0);
+        _talon.set(_ctrlMode, pos);
+    }
+
     @Override
     public boolean atTarget() {
         return Math.abs(getTargetPosition()- getSensorPosition()) < 20;
@@ -323,6 +343,10 @@ public class CANTalon implements GeniusMotor {
     @Override
     public void setIZone(int iZone) {
         _talon.config_IntegralZone(0, iZone);
+    }
+
+    public void resetConfig(){
+        _talon.configFactoryDefault();
     }
 }
 
