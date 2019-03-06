@@ -29,4 +29,8 @@ public class OscarMath {
     public static double mid(double x, double y) {
         return x/2 + y/2 + (x%2 + y%2)/2;
     }
+
+    public static double signumPow(double value, double power) {
+        return Math.signum(value) * Math.abs(Math.pow(value, power));
+    }
 }
