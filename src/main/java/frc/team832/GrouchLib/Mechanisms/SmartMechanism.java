@@ -73,4 +73,7 @@ public abstract class SmartMechanism {
 		return  _smartMotor;
 	}
 
+	public int getClosedLoopError(){
+		return _smartMotor.getClosedLoopError();
+	}
 }

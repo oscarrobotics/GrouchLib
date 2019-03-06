@@ -136,9 +136,9 @@ public class CANifier {
 	private Color curColor;
 	private Color color1, color2, color3;
 
-	private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
+	private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
 	private com.ctre.phoenix.CANifier.LEDChannel _gChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelB;
-	private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
+	private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
 	private double _maxOutput = 1;
 
 	public void setLedChannels(com.ctre.phoenix.CANifier.LEDChannel ledRChannel, com.ctre.phoenix.CANifier.LEDChannel ledGChannel, com.ctre.phoenix.CANifier.LEDChannel ledBChannel) {
@@ -180,6 +180,12 @@ public class CANifier {
 			_canifier.setLEDOutput(vals[1] * _maxOutput, _gChannel);
 			_canifier.setLEDOutput(vals[2] * _maxOutput, _bChannel);
 		}
+	}
+
+	public void sendHSB(float hue, float sat, float bri) {
+		int colInt = Color.HSBtoRGB(hue, sat, bri);
+		Color col = new Color(colInt);
+		sendColor(col);
 	}
 
 	private double[] ColorToPercentRGB(Color color) {
