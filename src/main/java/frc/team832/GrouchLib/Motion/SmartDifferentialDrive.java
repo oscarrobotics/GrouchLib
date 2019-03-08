@@ -28,8 +28,12 @@ public class SmartDifferentialDrive extends DriveBase {
     }
 
     public void setVelocity(double velocity){
-        _leftMotor.setVelocity(velocity);
+        _leftMotor.setVelocity(-velocity);
         _rightMotor.setVelocity(velocity);
+    }
+
+    public double getOutputCurrent(){
+        return _rightMotor.getOutputCurrent() + _leftMotor.getOutputCurrent();
     }
 
     /**
