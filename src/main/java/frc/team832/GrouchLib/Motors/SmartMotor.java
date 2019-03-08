@@ -68,4 +68,6 @@ public interface SmartMotor extends SimpleMotor, PIDMotor {
     void setVelocity(double rpmVal);
 
     void setPosition(double posVal);
+
+    void setArbFFPos(double arbFF, double pos);
 }

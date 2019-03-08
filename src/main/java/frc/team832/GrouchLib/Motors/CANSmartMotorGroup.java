@@ -251,6 +251,11 @@ public class CANSmartMotorGroup implements CANSmartMotor {
     }
 
     @Override
+    public void setArbFFPos(double arbFF, double pos) {
+        //not yet implemented
+    }
+
+    @Override
     public boolean atTarget() {
         return Math.abs(getTargetPosition() - getSensorPosition()) < 20;
     }
