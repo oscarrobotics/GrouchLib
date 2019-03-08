@@ -5,6 +5,7 @@ import com.ctre.phoenix.motion.BufferedTrajectoryPointStream;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -273,6 +274,13 @@ public class CANTalon implements GeniusMotor {
         _ctrlMode = ControlMode.Position;
         _talon.set(_ctrlMode, posVal);
     }
+
+    @Override
+    public void setArbFFPos(double arbFF, double pos) {
+        _ctrlMode = ControlMode.Position;
+        _talon.set(_ctrlMode, pos, DemandType.ArbitraryFeedForward, arbFF);
+    }
+
 
     public void configMotionMagic(int sensorUnitsPer100ms, int sensorUnitsPer100MsPerSec){
         _talon.configMotionCruiseVelocity(sensorUnitsPer100ms);
