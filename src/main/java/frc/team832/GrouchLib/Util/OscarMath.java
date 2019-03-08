@@ -26,6 +26,10 @@ public class OscarMath {
         return Math.min(Math.max(value, min), max);
     }
 
+    public static double clipMap(double value, double in_min, double in_max, double out_min, double out_max) {
+        return map(clip(value, in_min, in_max), in_min, in_max, out_min, out_max);
+    }
+
     public static double mid(double x, double y) {
         return x/2 + y/2 + (x%2 + y%2)/2;
     }
