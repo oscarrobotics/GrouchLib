@@ -50,7 +50,7 @@ public class CANifier {
 		return new Ultrasonic(triggerPin, echoPin, this);
 	}
 
-	private void getPWMInput(com.ctre.phoenix.CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
+	public void getPWMInput (com.ctre.phoenix.CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
 		if (onBus) {
 			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
 		}
@@ -127,7 +127,11 @@ public class CANifier {
 	}
 
 	public void startLEDs() {
-		ledNotifier.startPeriodic(0.05);
+		try {
+			ledNotifier.startPeriodic(0.02);
+		} catch (Exception e) {
+			System.out.println("No Runnable set for LEDs!");
+		}
 	}
 
 	public void stopLEDs() {
@@ -135,11 +139,13 @@ public class CANifier {
 	}
 
 	public void setLEDs(Color color) {
-		_ledRunner.setColor(color);
+		if (_ledRunner != null)
+			_ledRunner.setColor(color);
 	}
 
 	public void turnOff() {
-		_ledRunner.setOff();
+		if (_ledRunner != null)
+			_ledRunner.setOff();
 	}
 
 	// Setters
@@ -149,7 +155,7 @@ public class CANifier {
 		_bChannel = ledBChannel;
 	}
 
-	public void setMaxOutput(double maxOutput) {
+	public void setLedMaxOutput (double maxOutput) {
 		_maxOutput = OscarMath.clip(maxOutput, 0, 1);
 	}
 
@@ -212,8 +218,10 @@ public class CANifier {
 	}
 
 	public void setLEDs(LEDMode ledMode, Color color) {
-		_ledRunner.setColor(color);
-		_ledRunner.setMode(ledMode);
+		if (_ledRunner != null) {
+			_ledRunner.setColor(color);
+			_ledRunner.setMode(ledMode);
+		}
 	}
 
 	public static abstract class LEDRunner implements Runnable {
