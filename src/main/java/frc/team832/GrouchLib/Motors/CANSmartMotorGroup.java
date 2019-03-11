@@ -259,4 +259,7 @@ public class CANSmartMotorGroup implements CANSmartMotor {
     public boolean atTarget() {
         return Math.abs(getTargetPosition() - getSensorPosition()) < 20;
     }
+
+    @Override
+    public void setMotionMagc(double pos){};
 }

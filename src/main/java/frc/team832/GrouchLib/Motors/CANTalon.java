@@ -285,6 +285,7 @@ public class CANTalon implements GeniusMotor {
     public void configMotionMagic(int sensorUnitsPer100ms, int sensorUnitsPer100MsPerSec){
         _talon.configMotionCruiseVelocity(sensorUnitsPer100ms);
         _talon.configMotionAcceleration(sensorUnitsPer100MsPerSec);
+        _talon.configMotionSCurveStrength(1);
 
     }
 
@@ -356,5 +357,7 @@ public class CANTalon implements GeniusMotor {
     public void resetConfig(){
         _talon.configFactoryDefault();
     }
+
+
 }
 
