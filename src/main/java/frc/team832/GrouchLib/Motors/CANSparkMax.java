@@ -271,6 +271,9 @@ public class CANSparkMax implements CANSmartMotor {
 	public void setOutputRange(double min, double max) {
 		_pidController.setOutputRange(min, max);
 	}
+
+	@Override
+	public void setMotionMagc(double pos){};
 }
 
 
