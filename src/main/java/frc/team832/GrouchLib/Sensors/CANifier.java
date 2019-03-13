@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"WeakerAccess", "unused", "FieldCanBeLocal"})
 public class CANifier {
 
 	private com.ctre.phoenix.CANifier _canifier;
@@ -50,7 +51,8 @@ public class CANifier {
 		return new Ultrasonic(triggerPin, echoPin, this);
 	}
 
-	public void getPWMInput (com.ctre.phoenix.CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
+
+	public void getPWMInput(com.ctre.phoenix.CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
 		if (onBus) {
 			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
 		}
@@ -155,24 +157,8 @@ public class CANifier {
 		_bChannel = ledBChannel;
 	}
 
-	public void setLedMaxOutput (double maxOutput) {
+	public void setLedMaxOutput(double maxOutput) {
 		_maxOutput = OscarMath.clip(maxOutput, 0, 1);
-	}
-
-	public static Color colorBrightness(Color c, int brightness) {
-		double scale = OscarMath.clipMap(brightness, 0, 255, 0, 1);
-		int r = Math.min(255, (int) (c.getRed() * scale));
-		int g = Math.min(255, (int) (c.getGreen() * scale));
-		int b = Math.min(255, (int) (c.getBlue() * scale));
-		return new Color(r, g, b);
-	}
-
-	public static Color colorBrightness(Color c, double scale) {
-		scale = OscarMath.clip(scale, -1, 1);
-		int r = Math.min(255, (int) (c.getRed() * scale));
-		int g = Math.min(255, (int) (c.getGreen() * scale));
-		int b = Math.min(255, (int) (c.getBlue() * scale));
-		return new Color(r, g, b);
 	}
 
 	public void sendColor(Color color) {
