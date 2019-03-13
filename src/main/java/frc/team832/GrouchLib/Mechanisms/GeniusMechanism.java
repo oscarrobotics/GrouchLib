@@ -100,4 +100,8 @@ public class GeniusMechanism {
     public void setIZone(int iZone) {
         _geniusMotor.setIZone(iZone);
     }
+
+    public void setArbFF(double FF){
+        _geniusMotor.setArbFFPos(FF, getTargetPosition());
+    }
 }

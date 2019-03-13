@@ -285,7 +285,7 @@ public class CANTalon implements GeniusMotor {
     public void configMotionMagic(int sensorUnitsPer100ms, int sensorUnitsPer100MsPerSec){
         _talon.configMotionCruiseVelocity(sensorUnitsPer100ms);
         _talon.configMotionAcceleration(sensorUnitsPer100MsPerSec);
-        _talon.configMotionSCurveStrength(1);
+        _talon.configMotionSCurveStrength(3);
 
     }
 
@@ -352,6 +352,12 @@ public class CANTalon implements GeniusMotor {
     @Override
     public void setIZone(int iZone) {
         _talon.config_IntegralZone(0, iZone);
+    }
+
+    @Override
+    public void setMotionMagcArbFF (double position, double arbFF) {
+        _ctrlMode = ControlMode.MotionMagic;
+        _talon.set(_ctrlMode, position, DemandType.ArbitraryFeedForward, arbFF);
     }
 
     public void resetConfig(){
