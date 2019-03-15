@@ -17,4 +17,6 @@ public class SimpleMechanism {
     public double get() {
         return _motor.get();
     }
+
+    public void stop() { _motor.stopMotor(); }
 }
