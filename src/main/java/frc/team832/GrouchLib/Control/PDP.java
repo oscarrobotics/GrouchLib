@@ -34,7 +34,11 @@ public class PDP {
 
     public double getVoltage() { return onBus ?_pdp.getVoltage() : -1; }
 
+    public boolean isOnBus () { return onBus; }
+
     public PowerDistributionPanel getInstance() {
-        return _pdp;
+        if (_pdp != null && onBus) {
+            return _pdp;
+        } else return null;
     }
 }
