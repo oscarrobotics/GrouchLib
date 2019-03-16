@@ -175,6 +175,10 @@ public class CANifier {
 		}
 	}
 
+	public void sendHSB(float[] hsbVals) {
+		sendHSB(hsbVals[0], hsbVals[1], hsbVals[2]);
+	}
+
 	public void sendHSB(float hue, float sat, float bri) {
 		int colInt = Color.HSBtoRGB(hue, sat, bri);
 		Color col = new Color(colInt);

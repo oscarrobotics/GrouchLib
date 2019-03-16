@@ -30,8 +30,8 @@ public class OscarMath {
         return map(clip(value, in_min, in_max), in_min, in_max, out_min, out_max);
     }
 
-    public static double mid(double x, double y) {
-        return x/2 + y/2 + (x%2 + y%2)/2;
+    public static double mid(double lower, double upper) {
+        return lower/2 + upper/2 + (lower%2 + upper%2)/2;
     }
 
     public static double signumPow(double value, double power) {
