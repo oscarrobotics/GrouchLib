@@ -1,10 +1,13 @@
 package frc.team832.GrouchLib.Motion;
 
 import frc.team832.GrouchLib.Motors.SmartMotor;
+import frc.team832.GrouchLib.Util.OscarMath;
 
 public class SmartDifferentialDrive extends DriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
+
+    private boolean _quickTurning;
 
     private int _maxRpm;
 
@@ -30,6 +33,10 @@ public class SmartDifferentialDrive extends DriveBase {
     public void setVelocity(double velocity){
         _leftMotor.setVelocity(-velocity);
         _rightMotor.setVelocity(velocity);
+    }
+
+    public boolean isQuickTurning() {
+        return _quickTurning;
     }
 
     public double getOutputCurrent(){
@@ -134,6 +141,8 @@ public class SmartDifferentialDrive extends DriveBase {
         xSpeed = limit(xSpeed);
         xSpeed = applyDeadband(xSpeed, m_deadband);
 
+        _quickTurning = Math.abs(xSpeed) > 0.05;
+
         zRotation = limit(zRotation);
         zRotation = applyDeadband(zRotation, m_deadband);
 
@@ -195,7 +204,7 @@ public class SmartDifferentialDrive extends DriveBase {
                 _rightMotor.set(rightMotorOutput);
                 break;
             case VELOCITY:
-                _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
+                _leftMotor.setVelocity( leftMotorOutput * _maxRpm);
                 _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
 
                 break;
