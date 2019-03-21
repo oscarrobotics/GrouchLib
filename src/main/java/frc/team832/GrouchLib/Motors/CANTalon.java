@@ -169,7 +169,9 @@ public class CANTalon implements GeniusMotor {
 
     @Override
     public double getTargetPosition() {
+        if(_ctrlMode!=ControlMode.Disabled&&_ctrlMode!=ControlMode.PercentOutput)
         return _talon.getClosedLoopTarget();
+        return 0;
     }
 
     @Override
@@ -186,6 +188,7 @@ public class CANTalon implements GeniusMotor {
     public int getClosedLoopError() {
         return _talon.getClosedLoopError();
     }
+
 
     @Override
     public void setPeakOutputForward(double percentOut) {
