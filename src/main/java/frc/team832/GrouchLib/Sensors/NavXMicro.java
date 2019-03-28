@@ -20,6 +20,10 @@ public class NavXMicro implements IMU {
         _updateRate = updateRate;
     }
 
+    public double getYeet() {
+        return _ahrs.getFusedHeading();
+    }
+
     @Override
     public double getXAccel() {
         return _ahrs.getRawAccelX();
