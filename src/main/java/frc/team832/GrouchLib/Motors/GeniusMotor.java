@@ -18,4 +18,6 @@ public interface GeniusMotor extends CANSmartMotor {
     void setIZone(int iZone);
 
 	void setMotionMagcArbFF (double position, double arbFF);
+
+	void configMotionMagic(int vel, int accel);
 }
