@@ -4,6 +4,9 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.awt.*;
 
 public class NavXMicro implements IMU {
 
@@ -18,6 +21,12 @@ public class NavXMicro implements IMU {
     public NavXMicro(NavXPort port, byte updateRate) {
         _port = port;
         _updateRate = updateRate;
+    }
+
+    public void pushData(){
+        SmartDashboard.putNumber("Yaw", getYeet());
+        SmartDashboard.putNumber("Pitch", getPitch());
+        SmartDashboard.putNumber("Roll", getRoll());
     }
 
     public double getYeet() {
