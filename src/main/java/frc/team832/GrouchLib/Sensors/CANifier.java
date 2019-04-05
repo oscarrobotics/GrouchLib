@@ -122,6 +122,7 @@ public class CANifier {
 	private Notifier ledNotifier;
 
 	private Color _lastColor;
+	private double _lastMaxOutput;
 
 	public void initLEDs(LEDRunner ledRunner) {
 		_ledRunner = ledRunner;
@@ -163,10 +164,11 @@ public class CANifier {
 
 	public void sendColor(Color color) {
 		if (color == null) color = Color.BLACK;
-		if (_lastColor == color) {
+		if (_lastColor == color && _lastMaxOutput == _maxOutput) {
 			return;
 		}
 		_lastColor = color;
+		_lastMaxOutput = _maxOutput;
 		double[] vals = ColorToPercentRGB(color);
 		if (onBus) {
 			_canifier.setLEDOutput(vals[0] * _maxOutput, _rChannel);
