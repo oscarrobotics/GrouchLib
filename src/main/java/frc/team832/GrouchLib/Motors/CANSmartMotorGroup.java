@@ -12,7 +12,7 @@ public class CANSmartMotorGroup implements CANSmartMotor {
     public CANSmartMotorGroup(CANSmartMotor masterMotor, CANMotor... slaveMotors) {
         m_masterMotor = masterMotor;
         m_slaveMotors = slaveMotors.clone();
-//        follow(masterMotor);
+        follow(masterMotor);
     }
 
     @Override
@@ -261,5 +261,5 @@ public class CANSmartMotorGroup implements CANSmartMotor {
     }
 
     @Override
-    public void setMotionMagc(double pos){};
+    public void setMotionMagc(double pos){}
 }
