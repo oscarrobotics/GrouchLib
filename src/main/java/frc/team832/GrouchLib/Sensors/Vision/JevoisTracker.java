@@ -19,17 +19,23 @@ public class JevoisTracker extends VisionTracker implements Runnable {
 	private boolean detectsTape;
 
 	public JevoisTracker(SerialPort.Port port, int baud) {
-		_jevoisPort = new SerialPort(baud, port);
 		_stream = new Thread(this);
-		_stream.start();
+		try {
+			_jevoisPort = new SerialPort(baud, port);
+			_stream.start();
+		} catch (Exception e) {
+			DriverStation.reportError("Jevois Cam Serial port missing!", e.getStackTrace());
+		}
 	}
 
 	public void startCameraStream() {
-		try {
-			_jevoisCam = CameraServer.getInstance().startAutomaticCapture();
-			_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 240, 30);
-		} catch (Exception e) {
-			DriverStation.reportError("Jevois Cam failed to connect!", e.getStackTrace());
+		if (_stream.isAlive()) {
+			try {
+				_jevoisCam = CameraServer.getInstance().startAutomaticCapture();
+				_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 240, 30);
+			} catch (Exception e) {
+				DriverStation.reportError("Jevois Cam failed to connect!", e.getStackTrace());
+			}
 		}
 	}
 
