@@ -32,7 +32,7 @@ public class JevoisTracker extends VisionTracker implements Runnable {
 		if (_stream.isAlive()) {
 			try {
 				_jevoisCam = CameraServer.getInstance().startAutomaticCapture();
-				_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 240, 30);
+				_jevoisCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30);
 			} catch (Exception e) {
 				DriverStation.reportError("Jevois Cam failed to connect!", e.getStackTrace());
 			}
@@ -55,7 +55,6 @@ public class JevoisTracker extends VisionTracker implements Runnable {
 						parts = dataParse(read);
 					} else {
 						detectsTape = false;
-
 					}
 				}
 			} catch (Exception e) {
