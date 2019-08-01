@@ -1,6 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.*;
 import frc.team832.GrouchLib.CANDevice;
 
@@ -98,7 +97,7 @@ public class CANSparkMax implements CANSmartMotor {
 
 	@Override
 	public void setNeutralMode(NeutralMode mode) {
-		_sparkMax.setIdleMode(mode == NeutralMode.Brake ? com.revrobotics.CANSparkMax.IdleMode.kBrake : com.revrobotics.CANSparkMax.IdleMode.kCoast);
+		_sparkMax.setIdleMode(mode == NeutralMode.kBrake ? com.revrobotics.CANSparkMax.IdleMode.kBrake : com.revrobotics.CANSparkMax.IdleMode.kCoast);
 	}
 
 	@Override
