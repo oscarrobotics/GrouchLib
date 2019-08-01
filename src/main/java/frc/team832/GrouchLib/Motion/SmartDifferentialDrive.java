@@ -1,5 +1,6 @@
 package frc.team832.GrouchLib.Motion;
 
+import frc.team832.GrouchLib.Motors.CANSparkMax;
 import frc.team832.GrouchLib.Motors.SmartMotor;
 import frc.team832.GrouchLib.Util.OscarMath;
 
@@ -11,8 +12,8 @@ public class SmartDifferentialDrive extends DriveBase {
 
     private int _maxRpm;
 
-    private SmartMotor _leftMotor;
-    private SmartMotor _rightMotor;
+    private CANSparkMax _leftMotor;
+    private CANSparkMax _rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
@@ -24,15 +25,10 @@ public class SmartDifferentialDrive extends DriveBase {
         POSITION
     }
 
-    public SmartDifferentialDrive(SmartMotor leftMotor, SmartMotor rightMotor, int maxRpm) {
+    public SmartDifferentialDrive(CANSparkMax leftMotor, CANSparkMax rightMotor, int maxRpm) {
         _leftMotor = leftMotor;
         _rightMotor = rightMotor;
         _maxRpm = maxRpm;
-    }
-
-    public void setVelocity(double velocity){
-        _leftMotor.setVelocity(-velocity);
-        _rightMotor.setVelocity(velocity);
     }
 
     public boolean isQuickTurning() {
@@ -51,7 +47,6 @@ public class SmartDifferentialDrive extends DriveBase {
      * @param zRotation The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
      *                  positive.
      */
-    @SuppressWarnings("ParameterName")
     public void arcadeDrive(double xSpeed, double zRotation, LoopMode loopMode) {
         arcadeDrive(xSpeed, zRotation, false, loopMode);
     }
@@ -64,7 +59,6 @@ public class SmartDifferentialDrive extends DriveBase {
      *                      positive.
      * @param squaredInputs If set, decreases the input sensitivity at low speeds.
      */
-    @SuppressWarnings("ParameterName")
     public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
 
         xSpeed = limit(xSpeed);
@@ -105,21 +99,28 @@ public class SmartDifferentialDrive extends DriveBase {
             }
         }
 
-        double leftPowerOut = limit(leftMotorOutput) * _maxOutput;
-        double rightPowerOut = -(limit(rightMotorOutput) * _maxOutput);
+        leftMotorOutput = limit(leftMotorOutput) * _maxOutput;
+        rightMotorOutput = -(limit(rightMotorOutput) * _maxOutput);
 
         switch (loopMode) {
+            case POSITION:
             case PERCENTAGE:
-                _leftMotor.set(leftPowerOut);
-                _rightMotor.set(-rightPowerOut);
+                _leftMotor.set(leftMotorOutput);
+                _rightMotor.set(-rightMotorOutput);
                 break;
             case VELOCITY:
-                _leftMotor.setVelocity(leftPowerOut * _maxRpm);
-                _rightMotor.setVelocity(rightPowerOut * _maxRpm);
-                break;
-            case POSITION:
+                _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
+                _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
                 break;
         }
+    }
+
+    public void curvatureDrive(double xSpeed, double zRotation) {
+        curvatureDrive(xSpeed, zRotation, true);
+    }
+
+    public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+        curvatureDrive(xSpeed, zRotation, isQuickTurn, LoopMode.VELOCITY);
     }
 
     /**
@@ -136,7 +137,6 @@ public class SmartDifferentialDrive extends DriveBase {
      * @param isQuickTurn If set, overrides constant-curvature turning for
      *                    turn-in-place maneuvers.
      */
-    @SuppressWarnings("ParameterName")
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode) {
         xSpeed = limit(xSpeed);
         xSpeed = applyDeadband(xSpeed, m_deadband);
@@ -199,16 +199,14 @@ public class SmartDifferentialDrive extends DriveBase {
         rightMotorOutput *= -1; // invert right side
 
         switch (loopMode) {
+            case POSITION:
             case PERCENTAGE:
                 _leftMotor.set(leftMotorOutput);
                 _rightMotor.set(rightMotorOutput);
                 break;
             case VELOCITY:
-                _leftMotor.setVelocity( leftMotorOutput * _maxRpm);
+                _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
                 _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
-
-                break;
-            case POSITION:
                 break;
         }
     }
@@ -249,19 +247,18 @@ public class SmartDifferentialDrive extends DriveBase {
             rightSpeed = Math.copySign(rightSpeed * rightSpeed, rightSpeed);
         }
 
-        double leftPowerOut = leftSpeed * _maxOutput;
-        double rightPowerOut = -rightSpeed * _maxOutput;
+        double leftMotorOutput = leftSpeed * _maxOutput;
+        double rightMotorOutput = -rightSpeed * _maxOutput;
 
         switch (loopMode) {
+            case POSITION:
             case PERCENTAGE:
-                _leftMotor.set(leftPowerOut);
-                _rightMotor.set(rightPowerOut);
+                _leftMotor.set(leftMotorOutput);
+                _rightMotor.set(rightMotorOutput);
                 break;
             case VELOCITY:
-                _leftMotor.setVelocity(leftPowerOut * _maxRpm);
-                _rightMotor.setVelocity(rightPowerOut * _maxRpm);
-                break;
-            case POSITION:
+                _leftMotor.setVelocity(leftMotorOutput * _maxRpm);
+                _rightMotor.setVelocity(rightMotorOutput * _maxRpm);
                 break;
         }
     }
@@ -325,12 +322,12 @@ public class SmartDifferentialDrive extends DriveBase {
         setD(kD);
         setF(kF);
     }
-    
+
     public void setP(double kP) {
         _leftMotor.setkP(kP);
         _rightMotor.setkP(kP);
     }
-    
+
     public void setI(double kI) {
         _leftMotor.setkI(kI);
         _rightMotor.setkI(kI);

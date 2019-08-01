@@ -1,7 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 public interface SimpleMotor {
 
     /**

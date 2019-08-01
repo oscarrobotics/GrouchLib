@@ -1,7 +1,6 @@
 package frc.team832.GrouchLib.Motors;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.team832.GrouchLib.CANDevice;
 
@@ -45,6 +44,11 @@ public class CANVictor implements CANMotor {
     @Override
     public void setInverted(boolean isInverted) {
         _victor.setInverted(isInverted);
+    }
+
+    @Override
+    public void setNeutralMode(NeutralMode mode) {
+        _victor.setNeutralMode(mode == NeutralMode.kBrake ? com.ctre.phoenix.motorcontrol.NeutralMode.Brake : com.ctre.phoenix.motorcontrol.NeutralMode.Coast);
     }
 
     @Override
@@ -101,9 +105,5 @@ public class CANVictor implements CANMotor {
     @Override
     public int getBaseID() {
         return _victor.getBaseID();
-    }
-
-    public void setNeutralMode(NeutralMode mode) {
-        _victor.setNeutralMode(mode);
     }
 }

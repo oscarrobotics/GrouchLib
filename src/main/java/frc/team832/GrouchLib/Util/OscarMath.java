@@ -1,6 +1,12 @@
 package frc.team832.GrouchLib.Util;
 
 public class OscarMath {
+    private OscarMath() {}
+
+    public static double round(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
 
     public static boolean inRange(double val, double lower, double upper) {
         return (lower <= val && upper < val);
@@ -35,6 +41,6 @@ public class OscarMath {
     }
 
     public static double signumPow(double value, double power) {
-        return Math.signum(value) * Math.abs(Math.pow(value, power));
+        return Math.signum(value) * Math.abs(Math.pow(Math.abs(value), power));
     }
 }

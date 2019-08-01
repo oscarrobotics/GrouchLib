@@ -7,7 +7,6 @@ import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team832.GrouchLib.CANDevice;
 
@@ -115,8 +114,8 @@ public class CANTalon implements GeniusMotor {
     }
 
     @Override
-    public void setNeutralMode(NeutralMode mode) {
-        _talon.setNeutralMode(mode);
+    public void setNeutralMode(frc.team832.GrouchLib.Motors.NeutralMode mode) {
+        _talon.setNeutralMode(mode == NeutralMode.kBrake ? com.ctre.phoenix.motorcontrol.NeutralMode.Brake : com.ctre.phoenix.motorcontrol.NeutralMode.Coast);
     }
 
     public void setSensorPhase(boolean phase) {

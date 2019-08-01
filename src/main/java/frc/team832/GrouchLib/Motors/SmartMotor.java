@@ -1,7 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 /**
  * Interface describing all methods a SmartMotor (CAN-based controller) must implement
  */

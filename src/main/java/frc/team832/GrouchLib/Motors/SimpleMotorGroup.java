@@ -1,7 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 public class SimpleMotorGroup implements SimpleMotor {
 
     private final SimpleMotor[] m_simpleMotors;
@@ -43,7 +41,7 @@ public class SimpleMotorGroup implements SimpleMotor {
     @Override
     public void setNeutralMode(NeutralMode mode) {
         for (SimpleMotor simpleMotor : m_simpleMotors) {
-            simpleMotor.setNeutralMode(NeutralMode.Coast);
+            simpleMotor.setNeutralMode(mode);
         }
     }
 

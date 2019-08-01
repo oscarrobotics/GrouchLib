@@ -1,8 +1,5 @@
 package frc.team832.GrouchLib.Motors;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 public class CANSmartMotorGroup implements CANSmartMotor {
 
     private final CANSmartMotor m_masterMotor;
