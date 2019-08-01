@@ -41,6 +41,6 @@ public class OscarMath {
     }
 
     public static double signumPow(double value, double power) {
-        return Math.signum(value) * Math.abs(Math.pow(Math.abs(value), power));
+        return Math.copySign(Math.pow(value, power), value);
     }
 }

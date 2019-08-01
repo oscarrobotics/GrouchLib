@@ -1,8 +1,7 @@
 package frc.team832.GrouchLib.Motion;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.team832.GrouchLib.Motors.CANSparkMax;
-import frc.team832.GrouchLib.Motors.SmartMotor;
-import frc.team832.GrouchLib.Util.OscarMath;
 
 public class SmartDifferentialDrive extends DriveBase {
     public static final double kDefaultQuickStopThreshold = 0.2;
@@ -10,6 +9,7 @@ public class SmartDifferentialDrive extends DriveBase {
 
     private boolean _quickTurning;
 
+    private double _maxOutput;
     private int _maxRpm;
 
     private CANSparkMax _leftMotor;
@@ -18,6 +18,25 @@ public class SmartDifferentialDrive extends DriveBase {
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SmartDifferentialDrive");
+        builder.setActuator(true);
+        builder.setSafeState(this::stopMotor);
+        builder.addDoubleProperty("Left Motor Speed", _leftMotor::getSensorVelocity, null);
+        builder.addDoubleProperty("Right Motor Speed",_rightMotor::getSensorVelocity, null);
+    }
+
+    public void setMaxOutput(double maxOutput) {
+        _maxOutput = maxOutput;
+    }
+
+    @Override
+    public void stopMotor() {
+        _leftMotor.stopMotor();
+        _rightMotor.stopMotor();
+    }
 
     public enum LoopMode {
         PERCENTAGE,
@@ -62,13 +81,8 @@ public class SmartDifferentialDrive extends DriveBase {
     public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
 
         xSpeed = limit(xSpeed);
-        xSpeed = applyDeadband(xSpeed, m_deadband);
-
         zRotation = limit(zRotation);
-        zRotation = applyDeadband(zRotation, m_deadband);
 
-        // Square the inputs (while preserving the sign) to increase fine control
-        // while permitting full power.
         if (squaredInputs) {
             xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
             zRotation = Math.copySign(zRotation * zRotation, zRotation);
@@ -292,54 +306,5 @@ public class SmartDifferentialDrive extends DriveBase {
      */
     public void setQuickStopAlpha(double alpha) {
         m_quickStopAlpha = alpha;
-    }
-
-    @Override
-    public void stopMotor() {
-        _leftMotor.stopMotor();
-        _rightMotor.stopMotor();
-    }
-
-    @Override
-    public double getLeftOutput() {
-        return _leftMotor.get();
-    }
-
-    @Override
-    public double getRightOutput() {
-        return _rightMotor.get();
-    }
-
-    public double getLeftPosition() { return _leftMotor.getSensorPosition(); }
-    public double getRightPosition() { return _rightMotor.getSensorPosition(); }
-
-    public double getLeftVelocity() { return _leftMotor.getSensorVelocity(); }
-    public double getRightVelocity() { return _rightMotor.getSensorVelocity(); }
-
-    public void setPIDF(double kP, double kI, double kD, double kF){
-        setP(kP);
-        setI(kI);
-        setD(kD);
-        setF(kF);
-    }
-
-    public void setP(double kP) {
-        _leftMotor.setkP(kP);
-        _rightMotor.setkP(kP);
-    }
-
-    public void setI(double kI) {
-        _leftMotor.setkI(kI);
-        _rightMotor.setkI(kI);
-    }
-
-    public void setD(double kD) {
-        _leftMotor.setkD(kD);
-        _rightMotor.setkD(kD);
-    }
-
-    public void setF(double kF) {
-        _leftMotor.setkF(kF);
-        _rightMotor.setkF(kF);
     }
 }

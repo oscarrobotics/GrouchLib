@@ -1,16 +1,96 @@
 package frc.team832.GrouchLib.Motion;
 
-public abstract class DriveBase
-//        extends MotorSafety
+import edu.wpi.first.wpilibj.MotorSafety;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.SendableImpl;
+import frc.team832.GrouchLib.Util.OscarMath;
+
+public abstract class DriveBase implements Sendable, AutoCloseable
 {
+        public static final double kDefaultDeadband = 0.02;
+        public static final double kDefaultMaxOutput = 1.0;
 
-    public static final double kDefaultDeadband = 0.02;
-    public static final double kDefaultMaxOutput = 1.0;
+        protected double m_deadband = kDefaultDeadband;
+        protected double m_maxOutput = kDefaultMaxOutput;
 
-    protected double m_deadband = kDefaultDeadband;
-    protected double _maxOutput = kDefaultMaxOutput;
+        private final SendableImpl m_sendableImpl;
 
+/**
+ * The location of a motor on the robot for the purpose of driving.
+ */
+public enum MotorType {
+    kFrontLeft(0), kFrontRight(1), kRearLeft(2), kRearRight(3), kLeft(0),
+    kRight(1), kBack(2);
+
+    @SuppressWarnings("MemberName")
+    public final int value;
+
+    MotorType(int value) {
+        this.value = value;
+    }
+}
+
+    /**
+     * RobotDriveBase constructor.
+     */
     public DriveBase() {
+        m_sendableImpl = new SendableImpl(true);
+        setName("RobotDriveBase");
+    }
+
+    @Override
+    public void close() {
+        m_sendableImpl.close();
+    }
+
+    @Override
+    public final synchronized String getName() {
+        return m_sendableImpl.getName();
+    }
+
+    @Override
+    public final synchronized void setName(String name) {
+        m_sendableImpl.setName(name);
+    }
+
+    /**
+     * Sets the name of the sensor with a channel number.
+     *
+     * @param moduleType A string that defines the module name in the label for the value
+     * @param channel    The channel number the device is plugged into
+     */
+    protected final void setName(String moduleType, int channel) {
+        m_sendableImpl.setName(moduleType, channel);
+    }
+
+    /**
+     * Sets the name of the sensor with a module and channel number.
+     *
+     * @param moduleType   A string that defines the module name in the label for the value
+     * @param moduleNumber The number of the particular module type
+     * @param channel      The channel number the device is plugged into (usually PWM)
+     */
+    protected final void setName(String moduleType, int moduleNumber, int channel) {
+        m_sendableImpl.setName(moduleType, moduleNumber, channel);
+    }
+
+    @Override
+    public final synchronized String getSubsystem() {
+        return m_sendableImpl.getSubsystem();
+    }
+
+    @Override
+    public final synchronized void setSubsystem(String subsystem) {
+        m_sendableImpl.setSubsystem(subsystem);
+    }
+
+    /**
+     * Add a child component.
+     *
+     * @param child child component
+     */
+    protected final void addChild(Object child) {
+        m_sendableImpl.addChild(child);
     }
 
     /**
@@ -35,23 +115,14 @@ public abstract class DriveBase
      * @param maxOutput Multiplied with the output percentage computed by the drive functions.
      */
     public void setMaxOutput(double maxOutput) {
-        _maxOutput = maxOutput;
+        m_maxOutput = maxOutput;
     }
-
-    //    @Override
-    public abstract void stopMotor();
 
     /**
      * Limit motor values to the -1.0 to +1.0 range.
      */
     protected double limit(double value) {
-        if (value > 1.0) {
-            return 1.0;
-        }
-        if (value < -1.0) {
-            return -1.0;
-        }
-        return value;
+        return OscarMath.clip(value, -1.0, 1.0);
     }
 
     /**
@@ -91,6 +162,5 @@ public abstract class DriveBase
         }
     }
 
-    public abstract double getLeftOutput();
-    public abstract double getRightOutput();
+    public abstract void stopMotor();
 }
