@@ -3,6 +3,7 @@ package frc.team832.GrouchLib.driverstation.dashboard;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.HashMap;
 
@@ -21,6 +22,11 @@ public class DashboardManager {
 		if (!shuffleboardTabs.containsKey(updatable)) {
 			shuffleboardTabs.put(updatable, Shuffleboard.getTab(updatable.getDashboardTabName()));
 		}
+	}
+
+	public static void addTabSubsystem(DashboardUpdatable updatable, SubsystemBase subsystem) {
+		if (!shuffleboardTabs.containsKey(updatable)) return;
+		shuffleboardTabs.get(updatable).add(subsystem);
 	}
 
 	public static NetworkTableEntry addTabItem(DashboardUpdatable updatable, String itemName, Object defaultValue, DashboardWidget widget) {
