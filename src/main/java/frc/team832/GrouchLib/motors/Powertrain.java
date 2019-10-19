@@ -16,13 +16,11 @@ public class Powertrain {
         _motorCount = motorCount;
     }
 
-    public double getOutputSpeed() {
-        return gearbox.getTotalReduction() * motor.freeSpeed;
-    }
+    public int getMotorCount() { return _motorCount; }
 
-    public double getFreeCurrent() {
-        return motor.freeCurrent * _motorCount;
-    }
+    public double getOutputSpeed() { return motor.freeSpeed / gearbox.getTotalReduction(); }
+
+    public double getFreeCurrent() { return motor.freeCurrent * _motorCount; }
 
     public double getStallCurrent() {
         return motor.stallCurrent * _motorCount;
