@@ -1,6 +1,7 @@
 package frc.team832.lib.driverstation.dashboard;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,11 @@ public class DashboardManager {
 
 	public static NetworkTableEntry addTabItem(DashboardUpdatable updatable, String itemName, Object defaultValue) {
 		return addTabItem(updatable, itemName, defaultValue, DashboardWidget.TextView);
+	}
+
+	public static void addTabSendable(DashboardUpdatable updatable, String itemName, Sendable sendable) {
+		if (!shuffleboardTabs.containsKey(updatable)) return;
+		shuffleboardTabs.get(updatable).add(itemName, sendable);
 	}
 
 	public static void updateAllTabs() {
