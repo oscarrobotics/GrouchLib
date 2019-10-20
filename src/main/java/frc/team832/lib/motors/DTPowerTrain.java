@@ -2,12 +2,21 @@ package frc.team832.lib.motors;
 
 public class DTPowerTrain extends Powertrain {
 
-    private final double _wheelSize;
+    public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
+
+    private final double _wheelRadiusMeters;
     private double _encoderRatio;
 
-    public DTPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelSize) {
+    /**
+     *
+     * @param gearbox Gearbox
+     * @param motor Motor type
+     * @param motorCount Amount of motors
+     * @param wheelRadiusMeters Wheel radius in meters
+     */
+    public DTPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelRadiusMeters) {
         super(gearbox, motor, motorCount);
-        _wheelSize = wheelSize;
+        _wheelRadiusMeters = wheelRadiusMeters;
         setEncoderRatioIndex(0);
     }
 
@@ -19,11 +28,19 @@ public class DTPowerTrain extends Powertrain {
         }
     }
 
+    public int getWheelTicksPerRev(int encoderCPR) {
+        return (int) (encoderCPR * _encoderRatio * _wheelRadiusMeters);
+    }
+
     public double getWheelRpm(double currentRpm) {
         return _encoderRatio * currentRpm;
     }
 
+    public double calculateMetersPerSec(double currentRpm) {
+        return _wheelRadiusMeters * Math.PI * getWheelRpm(currentRpm) / 60;
+    }
+
     public double calculateFeetPerSec(double currentRpm) {
-        return _wheelSize * Math.PI / 12 * getWheelRpm(currentRpm) / 60;
+        return calculateMetersPerSec(currentRpm) * METERS_SEC_TO_FEET_SEC;
     }
 }

@@ -21,6 +21,7 @@ public class CANTalon implements GeniusMC {
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
     private double _allowableError = 0;
+    private double _openLoopSetpoint, _closedLoopSetpoint;
 
     private BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
     int profilePointCount = 0;
@@ -43,6 +44,7 @@ public class CANTalon implements GeniusMC {
     }
 
     public void set(ControlMode ctrlMode, double value) {
+        _openLoopSetpoint = value;
         _ctrlMode = ctrlMode;
         _talon.set(_ctrlMode, value);
     }
@@ -181,6 +183,17 @@ public class CANTalon implements GeniusMC {
 
     @Override
     public double getClosedLoopError() {
+        switch(_ctrlMode) {
+            case Position:
+            case Velocity:
+            case Current:
+                return _talon.getClosedLoopError();
+            case MotionProfile:
+            case MotionMagic:
+            case MotionProfileArc:
+                // because MM/MP returns error for nearest point, not final point
+                return _closedLoopSetpoint - getSensorPosition();
+        }
         return _talon.getClosedLoopError();
     }
 
@@ -194,7 +207,7 @@ public class CANTalon implements GeniusMC {
             case MotionProfile:
             case MotionMagic:
             case MotionProfileArc:
-                return 0; // TODO: find a way to do this
+                return _talon.getClosedLoopError(); // TODO: find a way to do this
             case Follower:
             case PercentOutput:
             case Disabled:
@@ -215,12 +228,12 @@ public class CANTalon implements GeniusMC {
 
     @Override
     public void setNominalOutputForward(double percentOut) {
-
+        _talon.configNominalOutputForward(percentOut);
     }
 
     @Override
     public void setNominalOutputReverse(double percentOut) {
-
+        _talon.configNominalOutputReverse(percentOut);
     }
 
     @Override
@@ -282,18 +295,21 @@ public class CANTalon implements GeniusMC {
 
     @Override
     public void setVelocity(double rpmVal) {
+        _closedLoopSetpoint = rpmVal;
         _ctrlMode = ControlMode.Velocity;
         _talon.set(_ctrlMode, rpmVal);
     }
 
     @Override
     public void setPosition(double posVal) {
+        _closedLoopSetpoint = posVal;
         _ctrlMode = ControlMode.Position;
         _talon.set(_ctrlMode, posVal);
     }
 
     @Override
     public void setArbFFPos(double arbFF, double pos) {
+        _closedLoopSetpoint = pos;
         _ctrlMode = ControlMode.Position;
         _talon.set(_ctrlMode, pos, DemandType.ArbitraryFeedForward, arbFF);
     }
@@ -311,7 +327,8 @@ public class CANTalon implements GeniusMC {
 
     }
 
-    public void setMotionMagic(double pos){
+    public void setMotionMagic(double pos) {
+        _closedLoopSetpoint = pos;
         _ctrlMode = ControlMode.MotionMagic;
         _talon.selectProfileSlot(0,0);
         _talon.set(_ctrlMode, pos);
@@ -319,7 +336,7 @@ public class CANTalon implements GeniusMC {
 
     @Override
     public boolean atTarget() {
-        return Math.abs(_talon.getClosedLoopError()) <= _allowableError;
+        return Math.abs(getClosedLoopError()) <= _allowableError;
     }
 
     @Override

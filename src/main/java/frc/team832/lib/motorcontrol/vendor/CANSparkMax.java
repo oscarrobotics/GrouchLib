@@ -12,6 +12,7 @@ public class CANSparkMax implements SmartCANMC {
 	private double _openLoopSetpoint, _closedLoopSetpoint;
 	private double _forwardOutputRange = 0, _reverseOutputRange = 0;
 	private double _allowableError = 0;
+	private double _closedLoopRampRate = 0;
 
 	private final com.revrobotics.CANSparkMax _sparkMax;
 	private ControlType _ctrlType;
@@ -137,7 +138,10 @@ public class CANSparkMax implements SmartCANMC {
 
 	@Override
 	public void setClosedLoopRamp(double secondsFromNeutralToFull) {
-		_sparkMax.setClosedLoopRampRate(secondsFromNeutralToFull);
+		if (secondsFromNeutralToFull != _closedLoopRampRate) {
+			_closedLoopRampRate = secondsFromNeutralToFull;
+			_sparkMax.setClosedLoopRampRate(secondsFromNeutralToFull);
+		}
 	}
 
 	@Override
