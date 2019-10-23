@@ -1,4 +1,4 @@
-package frc.team832.lib.motion;
+package frc.team832.lib;
 
 import frc.team832.lib.control.PCM;
 

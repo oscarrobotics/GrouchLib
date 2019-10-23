@@ -3,6 +3,10 @@ package frc.team832.lib.util;
 public class OscarMath {
     private OscarMath() {}
 
+    public static double degreesToRadians(double degrees) {
+        return degrees * ((2 * Math.PI)/360);
+    }
+
     public static double round(double value, int places) {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
