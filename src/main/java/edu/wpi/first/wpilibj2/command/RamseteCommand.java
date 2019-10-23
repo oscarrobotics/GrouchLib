@@ -144,11 +144,12 @@ public class RamseteCommand extends CommandBase {
     m_leftController = null;
     m_rightController = null;
 
-    addRequirements();
+    addRequirements(requirements);
   }
 
   @Override
   public void initialize() {
+    System.out.println("Ramsete init");
     m_prevTime = 0;
     var initialState = m_trajectory.sample(0);
     m_prevSpeeds = m_kinematics.toWheelSpeeds(
@@ -205,6 +206,7 @@ public class RamseteCommand extends CommandBase {
   }
 
   public void end(boolean interrupted) {
+    System.out.println("Ramsete end");
     m_timer.stop();
   }
 

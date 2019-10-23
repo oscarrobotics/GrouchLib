@@ -1,5 +1,8 @@
 package frc.team832.lib.motors;
 
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+
 public class DTPowerTrain extends Powertrain {
 
     public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
@@ -42,5 +45,9 @@ public class DTPowerTrain extends Powertrain {
 
     public double calculateFeetPerSec(double currentRpm) {
         return calculateMetersPerSec(currentRpm) * METERS_SEC_TO_FEET_SEC;
+    }
+
+    public double calculateMotorSpeed(double wheelMetersPerSec) {
+        return wheelMetersPerSec * 60 / (_wheelRadiusMeters * Math.PI * _encoderRatio);
     }
 }
