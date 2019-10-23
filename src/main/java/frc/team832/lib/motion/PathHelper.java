@@ -1,7 +1,9 @@
 package frc.team832.lib.motion;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -32,17 +34,35 @@ public class PathHelper {
     }
 
     public Trajectory generatePath(Rotation2d startRadians, List<Translation2d> waypoints, Rotation2d endRadians) {
-        if (waypoints.size() < 2) return null;
+        int waypointCount = waypoints.size();
+
+        if (waypointCount < 2) return null;
 
         var startWaypoint = waypoints.get(0);
         var endWaypoint = waypoints.get(waypoints.size() - 1);
 
-        waypoints.remove(0);
-        waypoints.remove(waypoints.size() - 1);
+        List<Translation2d> newWaypointList = new ArrayList<>();
+
+        if (waypointCount == 2) {
+            // do nothing
+        } else if (waypointCount == 3) {
+            newWaypointList.add(waypoints.get(1));
+        } else {
+            newWaypointList = waypoints.subList(1, waypoints.size() - 2);
+        }
 
         var startPose = new Pose2d(startWaypoint, startRadians);
         var endPose = new Pose2d(endWaypoint, endRadians);
-        return TrajectoryGenerator.generateTrajectory(startPose, waypoints, endPose, m_kinematics,
+
+        Timer genTimer = new Timer();
+        genTimer.start();
+
+        var traj = TrajectoryGenerator.generateTrajectory(startPose, newWaypointList, endPose, m_kinematics,
                 0, 0, m_maxVelocityMeters, m_maxAccelerationMetersSq, m_reversed);
+
+        genTimer.stop();
+
+        System.out.printf("Generated Path in %.2fms\n", genTimer.get());
+        return traj;
     }
 }

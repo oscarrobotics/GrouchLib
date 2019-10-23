@@ -207,7 +207,7 @@ public class CANTalon implements GeniusMC {
             case MotionProfile:
             case MotionMagic:
             case MotionProfileArc:
-                return _talon.getClosedLoopError(); // TODO: find a way to do this
+                return _talon.getActiveTrajectoryPosition(); // TODO: find a way to do this
             case Follower:
             case PercentOutput:
             case Disabled:
