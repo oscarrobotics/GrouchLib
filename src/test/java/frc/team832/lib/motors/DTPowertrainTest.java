@@ -14,22 +14,38 @@ public class DTPowertrainTest {
     public void init() {
         motor = Motors.NEO;
         Gearbox gearbox = new Gearbox(11.23f);
-        dtPowerTrain = new DTPowerTrain(gearbox, motor, 2, 6);
+        dtPowerTrain = new DTPowerTrain(gearbox, motor, 2, .149);
     }
 
     @Test
     public void freeSpeedCorrect() {
-        double expectedFreeSpeed = 13.23;
+        double expectedFreeSpeed = 12.94;
         double actualFreeSpeed = OscarMath.round(dtPowerTrain.calculateFeetPerSec(motor.freeSpeed), 2);
 
         assertEquals("Free Speed FAIL", expectedFreeSpeed, actualFreeSpeed, 0);
     }
 
     @Test
-    public void halfSpeedCorrect() {
-        double expectedHalfSpeed = 6.62;
-        double actualHalfSpeed = OscarMath.round(dtPowerTrain.calculateFeetPerSec(motor.freeSpeed/2.0), 2);
+    public void metersPerSecondTest(){
+        double expectedMetersPerSec = 3.75;
+        double actualMeterPerSec = OscarMath.round(dtPowerTrain.calculateMetersPerSec(5400), 2);
 
-        assertEquals("Half Free Speed FAIL", expectedHalfSpeed, actualHalfSpeed, 0);
+        assertEquals("Meters Per Second FAIL", expectedMetersPerSec, actualMeterPerSec, 0);
+    }
+
+    @Test
+    public void feetPerSecondTest(){
+        double expectedFeetPerSec = 12.31;
+        double actualFeetPerSec = OscarMath.round(dtPowerTrain.calculateFeetPerSec(5400), 2);
+
+        assertEquals("Feet Per Second FAIL", expectedFeetPerSec, actualFeetPerSec, 0);
+    }
+
+    @Test
+    public void motorSpeedTest(){
+        double expectedMotorSpeed = 5398;
+        double actualMotorSpeed = OscarMath.round(dtPowerTrain.calculateMotorSpeed(3.75), 0);
+
+        assertEquals("Feet Per Second FAIL", expectedMotorSpeed, actualMotorSpeed, 0);
     }
 }
