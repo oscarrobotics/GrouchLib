@@ -1,13 +1,10 @@
 package frc.team832.lib.motors;
 
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-
 public class DTPowerTrain extends Powertrain {
 
     public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
-    private final double _wheelRadiusMeters;
+    private final double _wheelDiameterMeters;
     private double _encoderRatio;
 
     /**
@@ -15,11 +12,11 @@ public class DTPowerTrain extends Powertrain {
      * @param gearbox Gearbox
      * @param motor Motor type
      * @param motorCount Amount of motors
-     * @param wheelRadiusMeters Wheel radius in meters
+     * @param wheelDiameterMeters Wheel diameter in meters
      */
-    public DTPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelRadiusMeters) {
+    public DTPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterMeters) {
         super(gearbox, motor, motorCount);
-        _wheelRadiusMeters = wheelRadiusMeters;
+        _wheelDiameterMeters = wheelDiameterMeters;
         setEncoderRatioIndex(0);
     }
 
@@ -32,7 +29,7 @@ public class DTPowerTrain extends Powertrain {
     }
 
     public int getWheelTicksPerRev(int encoderCPR) {
-        return (int) (encoderCPR * _encoderRatio * _wheelRadiusMeters);
+        return (int) (encoderCPR * _encoderRatio * _wheelDiameterMeters);
     }
 
     public double getWheelRpm(double currentRpm) {
@@ -40,7 +37,7 @@ public class DTPowerTrain extends Powertrain {
     }
 
     public double calculateMetersPerSec(double currentRpm) {
-        return _wheelRadiusMeters * Math.PI * getWheelRpm(currentRpm) / 60;
+        return _wheelDiameterMeters * Math.PI * getWheelRpm(currentRpm) / 60f;
     }
 
     public double calculateFeetPerSec(double currentRpm) {
@@ -48,6 +45,8 @@ public class DTPowerTrain extends Powertrain {
     }
 
     public double calculateMotorSpeed(double wheelMetersPerSec) {
-        return wheelMetersPerSec * 60 / (_wheelRadiusMeters * Math.PI * _encoderRatio);
+        return wheelMetersPerSec * 60 / (_wheelDiameterMeters * Math.PI * _encoderRatio);
     }
+
+// wheelrpm * .007797
 }
