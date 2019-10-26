@@ -65,4 +65,8 @@ public class PathHelper {
         System.out.printf("Generated Path in %.2fms\n", genTimer.get());
         return traj;
     }
+
+    public static Pose2d mirrorPose(Pose2d pose2d){
+        return new Pose2d(pose2d.getTranslation().getX(), 8.23 - pose2d.getTranslation().getY(), new Rotation2d(-pose2d.getRotation().getRadians()));
+    }
 }
