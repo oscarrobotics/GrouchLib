@@ -7,6 +7,8 @@
 
 package edu.wpi.first.wpilibj.geometry;
 
+import edu.wpi.first.wpiutil.math.MathUtils;
+
 import java.util.Objects;
 
 /**
@@ -178,6 +180,11 @@ public class Rotation2d {
    */
   public double getTan() {
     return m_sin / m_cos;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Rotation2d(Rads: %.2f, Deg: %.2f)", m_value, Math.toDegrees(m_value));
   }
 
   /**

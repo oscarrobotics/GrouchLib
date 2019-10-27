@@ -16,30 +16,35 @@ public class PathHelper {
 
     private final DifferentialDriveKinematics m_kinematics;
     private final double m_maxVelocityMeters, m_maxAccelerationMetersSq;
-    private final boolean m_reversed;
 
     public PathHelper(
                       DifferentialDriveKinematics kinematics,
                       double maxVelocityMeters,
-                      double maxAccelerationMetersSq,
-                      boolean reversed) {
+                      double maxAccelerationMetersSq) {
         m_kinematics = kinematics;
         m_maxVelocityMeters = maxVelocityMeters;
         m_maxAccelerationMetersSq = maxAccelerationMetersSq;
-        m_reversed = reversed;
     }
 
     public Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees) {
-        return generatePath(Rotation2d.fromDegrees(startDegrees), waypoints, Rotation2d.fromDegrees(endDegrees));
+        return generatePath(startDegrees, waypoints, endDegrees, false);
     }
 
-    public Trajectory generatePath(Rotation2d startRadians, List<Translation2d> waypoints, Rotation2d endRadians) {
+    public Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees, boolean reversed) {
+        return generatePath(Rotation2d.fromDegrees(startDegrees), waypoints, Rotation2d.fromDegrees(endDegrees), reversed);
+    }
+
+    public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation) {
+        return generatePath(startRotation, waypoints, endRotation, false);
+    }
+
+    public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation, boolean reversed) {
         int waypointCount = waypoints.size();
 
         if (waypointCount < 2) return null;
 
         var startWaypoint = waypoints.get(0);
-        var endWaypoint = waypoints.get(waypoints.size() - 1);
+        var endWaypoint = waypoints.get(waypointCount - 1);
 
         List<Translation2d> newWaypointList = new ArrayList<>();
 
@@ -48,17 +53,17 @@ public class PathHelper {
         } else if (waypointCount == 3) {
             newWaypointList.add(waypoints.get(1));
         } else {
-            newWaypointList = waypoints.subList(1, waypoints.size() - 2);
+            newWaypointList = waypoints.subList(1, waypointCount - 2);
         }
 
-        var startPose = new Pose2d(startWaypoint, startRadians);
-        var endPose = new Pose2d(endWaypoint, endRadians);
+        var startPose = new Pose2d(startWaypoint, startRotation);
+        var endPose = new Pose2d(endWaypoint, endRotation);
 
         Timer genTimer = new Timer();
         genTimer.start();
 
         var traj = TrajectoryGenerator.generateTrajectory(startPose, newWaypointList, endPose, m_kinematics,
-                0, 0, m_maxVelocityMeters, m_maxAccelerationMetersSq, m_reversed);
+                0, 0, m_maxVelocityMeters, m_maxAccelerationMetersSq, reversed);
 
         genTimer.stop();
 
