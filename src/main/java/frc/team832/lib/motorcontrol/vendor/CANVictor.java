@@ -2,11 +2,12 @@ package frc.team832.lib.motorcontrol.vendor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import edu.wpi.first.wpilibj.Victor;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 
-public class CANVictor implements CANMC {
+public class CANVictor implements CANMC<VictorSPX> {
 
     private VictorSPX _victor;
     private ControlMode _ctrlMode;
@@ -67,6 +68,11 @@ public class CANVictor implements CANMC {
 
     public void setMode(ControlMode mode) {
         _ctrlMode = mode;
+    }
+
+    @Override
+    public VictorSPX getBaseController() {
+        return _victor;
     }
 
     @Override

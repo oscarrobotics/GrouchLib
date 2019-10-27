@@ -28,6 +28,8 @@ public class Xbox360Controller extends GenericHID {
      }
    }
 
+   public final POV pov = new POV(this);
+
    public final JoystickButton leftBumper = new JoystickButton(this, Button.kBumperLeft.value);
    public final JoystickButton rightBumper = new JoystickButton(this, Button.kBumperRight.value);
    public final JoystickButton leftStickPress = new JoystickButton(this, Button.kStickLeft.value);

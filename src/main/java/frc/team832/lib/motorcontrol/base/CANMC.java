@@ -1,6 +1,9 @@
 package frc.team832.lib.motorcontrol.base;
 
-public interface CANMC extends SimpleMC {
+public interface CANMC<B> extends SimpleMC {
+
+    B getBaseController();
+
     /**
      * Sets this motor controller to follow the output of another controller.
      *
