@@ -7,9 +7,13 @@
 
 package edu.wpi.first.wpilibj.trajectory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+01
 
 /**
  * Represents a time-parameterized trajectory. The trajectory contains of
@@ -219,5 +223,16 @@ public class Trajectory {
           lerp(curvatureRadPerMeter, endValue.curvatureRadPerMeter, interpolationFrac)
       );
     }
+
+    @Override
+    public String toString() {
+      return String.format("State(Sec: %.2f, Vel m/s: %.2f, Accel m/s/s: %.2f, Pose: %s, Curvature: %.2f)", timeSeconds, velocityMetersPerSecond, accelerationMetersPerSecondSq, poseMeters, curvatureRadPerMeter);
+    }
+  }
+
+  @Override
+  public String toString() {
+    var statesPretty = m_states.stream().map(State::toString).collect(Collectors.joining(", \n"));
+    return String.format("Trajectory - Seconds: %.2f, States:\n%s", m_totalTimeSeconds, statesPretty);
   }
 }
