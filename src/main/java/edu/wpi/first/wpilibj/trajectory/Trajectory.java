@@ -7,13 +7,10 @@
 
 package edu.wpi.first.wpilibj.trajectory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-01
 
 /**
  * Represents a time-parameterized trajectory. The trajectory contains of
