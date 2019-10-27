@@ -13,13 +13,13 @@ public class DTPowertrainTest {
     @Before
     public void init() {
         motor = Motors.NEO;
-        Gearbox gearbox = new Gearbox(11.23f);
+        Gearbox gearbox = new Gearbox(11.259259f);
         dtPowerTrain = new DTPowerTrain(gearbox, motor, 2, .149);
     }
 
     @Test
     public void freeSpeedCorrect() {
-        double expectedFreeSpeed = 12.94;
+        double expectedFreeSpeed = 12.9;
         double actualFreeSpeed = OscarMath.round(dtPowerTrain.calculateFeetPerSec(motor.freeSpeed), 2);
 
         assertEquals("Free Speed FAIL", expectedFreeSpeed, actualFreeSpeed, 0);
@@ -27,15 +27,15 @@ public class DTPowertrainTest {
 
     @Test
     public void metersPerSecondTest(){
-        double expectedMetersPerSec = 3.75;
-        double actualMeterPerSec = OscarMath.round(dtPowerTrain.calculateMetersPerSec(5400), 2);
+        double expectedMetersPerSec = 2.08;
+        double actualMeterPerSec = OscarMath.round(dtPowerTrain.calculateMetersPerSec(3000), 2);
 
         assertEquals("Meters Per Second FAIL", expectedMetersPerSec, actualMeterPerSec, 0);
     }
 
     @Test
     public void feetPerSecondTest(){
-        double expectedFeetPerSec = 12.31;
+        double expectedFeetPerSec = 12.28;
         double actualFeetPerSec = OscarMath.round(dtPowerTrain.calculateFeetPerSec(5400), 2);
 
         assertEquals("Feet Per Second FAIL", expectedFeetPerSec, actualFeetPerSec, 0);

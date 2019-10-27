@@ -37,7 +37,8 @@ public class DTPowerTrain extends Powertrain {
     }
 
     public double calculateMetersPerSec(double currentRpm) {
-        return _wheelDiameterMeters * Math.PI * getWheelRpm(currentRpm) / 60f;
+        var wheelRpm = getWheelRpm(currentRpm);
+        return (wheelRpm * 2 * Math.PI * (_wheelDiameterMeters / 2)) / 60f ;
     }
 
     public double calculateFeetPerSec(double currentRpm) {
