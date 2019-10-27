@@ -145,7 +145,7 @@ public class SmartDifferentialDrive extends DriveBase {
     }
 
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-        curvatureDrive(xSpeed, zRotation, isQuickTurn, LoopMode.VELOCITY);
+        curvatureDrive(xSpeed, zRotation, isQuickTurn, LoopMode.PERCENTAGE);
     }
 
     /**

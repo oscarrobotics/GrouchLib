@@ -6,7 +6,7 @@ import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 import frc.team832.lib.motorcontrol.base.SmartCANMC;
 
-public class CANSparkMax implements SmartCANMC {
+public class CANSparkMax implements SmartCANMC<com.revrobotics.CANSparkMax> {
 
 	private int _id;
 	private double _openLoopSetpoint, _closedLoopSetpoint;
@@ -74,6 +74,11 @@ public class CANSparkMax implements SmartCANMC {
 
 	public void setFollowType(com.revrobotics.CANSparkMax.ExternalFollower followType) {
 		_followType = followType;
+	}
+
+	@Override
+	public com.revrobotics.CANSparkMax getBaseController() {
+		return _sparkMax;
 	}
 
 	@Override
@@ -277,7 +282,7 @@ public class CANSparkMax implements SmartCANMC {
 	}
 
 	@Override
-	public void resetSensor() {
+	public void rezeroSensor() {
 		setSensorPosition(0);
 	}
 

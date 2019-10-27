@@ -49,6 +49,11 @@ public class SmartCANMCGroup implements SmartCANMC {
     }
 
     @Override
+    public Object getBaseController() {
+        return m_masterMotor.getBaseController();
+    }
+
+    @Override
     public void follow(int canID) {
         for (CANMC slaveMotor : m_slaveMotors) {
             slaveMotor.follow(canID);
@@ -244,8 +249,8 @@ public class SmartCANMCGroup implements SmartCANMC {
     }
 
     @Override
-    public void resetSensor() {
-        m_masterMotor.resetSensor();
+    public void rezeroSensor() {
+        m_masterMotor.rezeroSensor();
     }
 
     @Override

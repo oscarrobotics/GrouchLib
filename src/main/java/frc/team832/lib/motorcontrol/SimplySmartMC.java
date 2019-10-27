@@ -48,7 +48,7 @@ public class SimplySmartMC implements PIDMC {
 	}
 
 	@Override
-	public void resetSensor() {
+	public void rezeroSensor() {
 		setSensorPosition(0);
 	}
 

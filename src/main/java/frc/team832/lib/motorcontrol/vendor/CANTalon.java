@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.Talon;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
@@ -16,7 +17,7 @@ import frc.team832.lib.motorcontrol.base.GeniusMC;
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
  */
-public class CANTalon implements GeniusMC {
+public class CANTalon implements GeniusMC<TalonSRX> {
 
     private TalonSRX _talon;
     private ControlMode _ctrlMode;
@@ -37,6 +38,8 @@ public class CANTalon implements GeniusMC {
         boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
     }
+
+
 
     @Override
     public void set(double value) {
@@ -75,6 +78,11 @@ public class CANTalon implements GeniusMC {
     public void stopMotor() {
         _ctrlMode = ControlMode.PercentOutput;
         set(0);
+    }
+
+    @Override
+    public TalonSRX getBaseController() {
+        return _talon;
     }
 
     @Override
@@ -289,7 +297,7 @@ public class CANTalon implements GeniusMC {
     }
 
     @Override
-    public void resetSensor(){
+    public void rezeroSensor(){
         _talon.setSelectedSensorPosition(0);
     }
 

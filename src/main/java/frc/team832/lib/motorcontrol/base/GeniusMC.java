@@ -3,7 +3,7 @@ package frc.team832.lib.motorcontrol.base;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 
-public interface GeniusMC extends SmartCANMC {
+public interface GeniusMC<B> extends SmartCANMC<B> {
 
     void fillProfileBuffer(double[][] profile, int size);
 

@@ -17,7 +17,7 @@ public interface PIDMC {
 
 	boolean atTarget();
 
-	void resetSensor();
+	void rezeroSensor();
 
 	void setkP(double kP);
 
