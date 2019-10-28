@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.geometry.Twist2d;
  * using this class. Only reset your encoders ONCE. You should not reset your
  * encoders even if you want to reset your robot's pose.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class DifferentialDriveOdometry {
   private final DifferentialDriveKinematics m_kinematics;
   private Pose2d m_poseMeters;
