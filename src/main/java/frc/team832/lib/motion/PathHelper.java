@@ -2,6 +2,7 @@ package frc.team832.lib.motion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -13,8 +14,8 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 
 public class PathHelper {
 
-    private final DifferentialDriveKinematics m_kinematics;
-    private final double m_maxVelocityMeters, m_maxAccelerationMetersSq;
+    public final DifferentialDriveKinematics m_kinematics;
+    public final double m_maxVelocityMeters, m_maxAccelerationMetersSq;
 
     public PathHelper(
                       DifferentialDriveKinematics kinematics,
@@ -35,6 +36,19 @@ public class PathHelper {
 
     public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation) {
         return generatePath(startRotation, waypoints, endRotation, false);
+    }
+
+    public Trajectory generatePath(Pose2d startPose, Pose2d endPose) {
+        return generatePath(startPose, new ArrayList<Translation2d>(), endPose, false);
+    }
+
+    public Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose) {
+        return generatePath(startPose, waypoints, endPose, false);
+    }
+
+    public Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose, boolean reversed) {
+        return TrajectoryGenerator.generateTrajectory(startPose, waypoints, endPose, m_kinematics, 0, 0,
+                m_maxVelocityMeters, m_maxAccelerationMetersSq, reversed);
     }
 
     public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation, boolean reversed) {
@@ -70,7 +84,15 @@ public class PathHelper {
         return traj;
     }
 
-    public static Pose2d mirrorPose(Pose2d pose2d){
-        return new Pose2d(pose2d.getTranslation().getX(), 8.23 - pose2d.getTranslation().getY(), new Rotation2d(-pose2d.getRotation().getRadians()));
+    public static Pose2d mirrorPose2d(Pose2d pose2d) {
+        return new Pose2d(mirrorTranslation2d(pose2d.getTranslation()), new Rotation2d(-pose2d.getRotation().getRadians()));
+    }
+
+    public static Translation2d mirrorTranslation2d(Translation2d translation2d) {
+        return new Translation2d(translation2d.getX(), 8.23 - translation2d.getY());
+    }
+
+    public static List<Translation2d> mirrorTranslation2dList(List<Translation2d> translation2dList) {
+        return translation2dList.stream().map(PathHelper::mirrorTranslation2d).collect(Collectors.toList());
     }
 }
