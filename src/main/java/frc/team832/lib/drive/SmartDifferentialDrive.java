@@ -1,6 +1,7 @@
 package frc.team832.lib.drive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import frc.team832.lib.motorcontrol.base.SmartCANMC;
 import frc.team832.lib.motorcontrol.vendor.CANSparkMax;
 import frc.team832.lib.util.OscarMath;
 
@@ -13,8 +14,8 @@ public class SmartDifferentialDrive extends DriveBase {
     private double _maxOutput;
     private int _maxRpm;
 
-    private CANSparkMax _leftMotor;
-    private CANSparkMax _rightMotor;
+    private SmartCANMC _leftMotor;
+    private SmartCANMC _rightMotor;
 
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
@@ -49,7 +50,7 @@ public class SmartDifferentialDrive extends DriveBase {
         POSITION
     }
 
-    public SmartDifferentialDrive(CANSparkMax leftMotor, CANSparkMax rightMotor, int maxRpm) {
+    public SmartDifferentialDrive(SmartCANMC leftMotor, SmartCANMC rightMotor, int maxRpm) {
         _leftMotor = leftMotor;
         _rightMotor = rightMotor;
         _maxRpm = maxRpm;
