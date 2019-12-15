@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj.kinematics;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Twist2d;
@@ -25,17 +26,21 @@ public class SwerveDriveOdometry {
   private Pose2d m_poseMeters;
   private double m_prevTimeSeconds = -1;
 
+  private Rotation2d m_gyroOffset;
   private Rotation2d m_previousAngle;
 
   /**
    * Constructs a SwerveDriveOdometry object.
    *
    * @param kinematics  The swerve drive kinematics for your drivetrain.
+   * @param gyroAngle   The angle reported by the gyroscope.
    * @param initialPose The starting position of the robot on the field.
    */
-  public SwerveDriveOdometry(SwerveDriveKinematics kinematics, Pose2d initialPose) {
+  public SwerveDriveOdometry(SwerveDriveKinematics kinematics, Rotation2d gyroAngle,
+                             Pose2d initialPose) {
     m_kinematics = kinematics;
     m_poseMeters = initialPose;
+    m_gyroOffset = m_poseMeters.getRotation().minus(gyroAngle);
     m_previousAngle = initialPose.getRotation();
   }
 
@@ -43,23 +48,30 @@ public class SwerveDriveOdometry {
    * Constructs a SwerveDriveOdometry object with the default pose at the origin.
    *
    * @param kinematics The swerve drive kinematics for your drivetrain.
+   * @param gyroAngle  The angle reported by the gyroscope.
    */
-  public SwerveDriveOdometry(SwerveDriveKinematics kinematics) {
-    this(kinematics, new Pose2d());
+  public SwerveDriveOdometry(SwerveDriveKinematics kinematics, Rotation2d gyroAngle) {
+    this(kinematics, gyroAngle, new Pose2d());
   }
 
   /**
    * Resets the robot's position on the field.
    *
-   * @param pose The position on the field that your robot is at.
+   * <p>The gyroscope angle does not need to be reset here on the user's robot code.
+   * The library automatically takes care of offsetting the gyro angle.
+   *
+   * @param pose      The position on the field that your robot is at.
+   * @param gyroAngle The angle reported by the gyroscope.
    */
-  public void resetPosition(Pose2d pose) {
+  public void resetPosition(Pose2d pose, Rotation2d gyroAngle) {
     m_poseMeters = pose;
     m_previousAngle = pose.getRotation();
+    m_gyroOffset = m_poseMeters.getRotation().minus(gyroAngle);
   }
 
   /**
    * Returns the position of the robot on the field.
+   *
    * @return The pose of the robot (x and y are in meters).
    */
   public Pose2d getPoseMeters() {
@@ -75,16 +87,18 @@ public class SwerveDriveOdometry {
    * angular rate that is calculated from forward kinematics.
    *
    * @param currentTimeSeconds The current time in seconds.
-   * @param angle              The angle of the robot.
+   * @param gyroAngle          The angle reported by the gyroscope.
    * @param moduleStates       The current state of all swerve modules. Please provide
    *                           the states in the same order in which you instantiated your
    *                           SwerveDriveKinematics.
    * @return The new pose of the robot.
    */
-  public Pose2d updateWithTime(double currentTimeSeconds, Rotation2d angle,
+  public Pose2d updateWithTime(double currentTimeSeconds, Rotation2d gyroAngle,
                                SwerveModuleState... moduleStates) {
     double period = m_prevTimeSeconds >= 0 ? currentTimeSeconds - m_prevTimeSeconds : 0.0;
     m_prevTimeSeconds = currentTimeSeconds;
+
+    var angle = gyroAngle.plus(m_gyroOffset);
 
     var chassisState = m_kinematics.toChassisSpeeds(moduleStates);
     var newPose = m_poseMeters.exp(
@@ -106,13 +120,13 @@ public class SwerveDriveOdometry {
    * also takes in an angle parameter which is used instead of the angular
    * rate that is calculated from forward kinematics.
    *
-   * @param angle        The angle of the robot.
+   * @param gyroAngle    The angle reported by the gyroscope.
    * @param moduleStates The current state of all swerve modules. Please provide
    *                     the states in the same order in which you instantiated your
    *                     SwerveDriveKinematics.
    * @return The new pose of the robot.
    */
-  public Pose2d update(Rotation2d angle, SwerveModuleState... moduleStates) {
-    return updateWithTime(System.currentTimeMillis() / 1000.0, angle, moduleStates);
+  public Pose2d update(Rotation2d gyroAngle, SwerveModuleState... moduleStates) {
+    return updateWithTime(Timer.getFPGATimestamp(), gyroAngle, moduleStates);
   }
 }

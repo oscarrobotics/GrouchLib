@@ -26,11 +26,12 @@ public class TrajectoryTest {
     private static final double maxAccelerationMetersPerSecondSq = 10;
 
     private static Trajectory testTraj;
+    private static TrajectoryConfig config = new TrajectoryConfig(maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq);
 
     @Before
     public void init() {
         var waypoints = Collections.singletonList(testPath.get(1).getTranslation());
-        testTraj = TrajectoryGenerator.generateTrajectory(testPath.get(0), waypoints, testPath.get(2), differentialDriveKinematics, startVelocityMetersPerSecond, endVelocityMetersPerSecond, maxVelocityMetersPerSecond, maxAccelerationMetersPerSecondSq, false);
+        testTraj = TrajectoryGenerator.generateTrajectory(testPath.get(0), waypoints, testPath.get(2), config);
     }
 
     @Test
