@@ -10,12 +10,15 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 
 public class PathHelper {
 
     public final DifferentialDriveKinematics m_kinematics;
     public final double m_maxVelocityMeters, m_maxAccelerationMetersSq;
+
+    private TrajectoryConfig config;
 
     public PathHelper(
                       DifferentialDriveKinematics kinematics,
@@ -24,7 +27,10 @@ public class PathHelper {
         m_kinematics = kinematics;
         m_maxVelocityMeters = maxVelocityMeters;
         m_maxAccelerationMetersSq = maxAccelerationMetersSq;
+
+        config = new TrajectoryConfig(m_maxVelocityMeters, m_maxAccelerationMetersSq);
     }
+
 
     public Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees) {
         return generatePath(startDegrees, waypoints, endDegrees, false);
@@ -47,8 +53,7 @@ public class PathHelper {
     }
 
     public Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose, boolean reversed) {
-        return TrajectoryGenerator.generateTrajectory(startPose, waypoints, endPose, m_kinematics, 0, 0,
-                m_maxVelocityMeters, m_maxAccelerationMetersSq, reversed);
+        return TrajectoryGenerator.generateTrajectory(startPose, waypoints, endPose, config);
     }
 
     public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation, boolean reversed) {
@@ -75,8 +80,7 @@ public class PathHelper {
         Timer genTimer = new Timer();
         genTimer.start();
 
-        var traj = TrajectoryGenerator.generateTrajectory(startPose, newWaypointList, endPose, m_kinematics,
-                0, 0, m_maxVelocityMeters, m_maxAccelerationMetersSq, reversed);
+        var traj = TrajectoryGenerator.generateTrajectory(startPose, newWaypointList, endPose, config);
 
         genTimer.stop();
 

@@ -1,11 +1,13 @@
 package frc.team832.lib.drive;
 
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.team832.lib.motorcontrol.base.SmartCANMC;
 import frc.team832.lib.motorcontrol.vendor.CANSparkMax;
 import frc.team832.lib.util.OscarMath;
 
-public class SmartDifferentialDrive extends DriveBase {
+public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
@@ -38,10 +40,14 @@ public class SmartDifferentialDrive extends DriveBase {
         _maxOutput = maxOutput;
     }
 
-    @Override
     public void stopMotor() {
         _leftMotor.stopMotor();
         _rightMotor.stopMotor();
+    }
+
+    @Override
+    public String getDescription() {
+        return "SmartDifferentialDrive";
     }
 
     public enum LoopMode {
@@ -92,8 +98,8 @@ public class SmartDifferentialDrive extends DriveBase {
      */
     public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
 
-        xSpeed = limit(xSpeed);
-        zRotation = limit(zRotation);
+        xSpeed = OscarMath.clip(xSpeed, -1, 1);
+        zRotation = OscarMath.clip(zRotation, -1, 1);
 
         if (squaredInputs) {
             xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
@@ -125,8 +131,8 @@ public class SmartDifferentialDrive extends DriveBase {
             }
         }
 
-        leftMotorOutput = limit(leftMotorOutput) * _maxOutput;
-        rightMotorOutput = -(limit(rightMotorOutput) * _maxOutput);
+        leftMotorOutput = OscarMath.clip(leftMotorOutput, -1, 1) * _maxOutput;
+        rightMotorOutput = -(OscarMath.clip(rightMotorOutput, -1, 1) * _maxOutput);
 
         switch (loopMode) {
             case POSITION:
@@ -164,12 +170,12 @@ public class SmartDifferentialDrive extends DriveBase {
      *                    turn-in-place maneuvers.
      */
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode) {
-        xSpeed = limit(xSpeed);
+        xSpeed = OscarMath.clip(xSpeed, -1, 1);
         xSpeed = applyDeadband(xSpeed, m_deadband);
 
         _quickTurning = Math.abs(xSpeed) > 0.05;
 
-        zRotation = limit(zRotation);
+        zRotation = OscarMath.clip(zRotation, -1, 1);
         zRotation = applyDeadband(zRotation, m_deadband);
 
         double angularPower;
@@ -178,7 +184,7 @@ public class SmartDifferentialDrive extends DriveBase {
         if (isQuickTurn) {
             if (Math.abs(xSpeed) < m_quickStopThreshold) {
                 m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator
-                        + m_quickStopAlpha * limit(zRotation) * 2;
+                        + m_quickStopAlpha * OscarMath.clip(zRotation, -1, 1) * 2;
             }
             overPower = true;
             angularPower = zRotation;
@@ -260,10 +266,10 @@ public class SmartDifferentialDrive extends DriveBase {
      * @param squaredInputs If set, decreases the input sensitivity at low speeds.
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs, LoopMode loopMode) {
-        leftSpeed = limit(leftSpeed);
+        leftSpeed = OscarMath.clip(leftSpeed, -1, 1);
         leftSpeed = applyDeadband(leftSpeed, m_deadband);
 
-        rightSpeed = limit(rightSpeed);
+        rightSpeed = OscarMath.clip(rightSpeed, -1, 1);
         rightSpeed = applyDeadband(rightSpeed, m_deadband);
 
         // Square the inputs (while preserving the sign) to increase fine control

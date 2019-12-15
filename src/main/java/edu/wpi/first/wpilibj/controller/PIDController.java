@@ -9,13 +9,16 @@ package edu.wpi.first.wpilibj.controller;
 
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.wpiutil.math.MathUtils;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+import edu.wpi.first.wpiutil.math.MathUtil;
 
 /**
  * Implements a PID control loop.
  */
 @SuppressWarnings("PMD.TooManyFields")
-public class PIDController {
+public class PIDController implements Sendable, AutoCloseable {
   private static int instances;
 
   // Factor for "proportional" control
@@ -95,15 +98,15 @@ public class PIDController {
     m_period = period;
 
     instances++;
-//    SendableRegistry.addLW(this, "PIDController", instances);
+    SendableRegistry.addLW(this, "PIDController", instances);
 
     HAL.report(tResourceType.kResourceType_PIDController, instances);
   }
 
-//  @Override
-//  public void close() {
-//    SendableRegistry.remove(this);
-//  }
+  @Override
+  public void close() {
+    SendableRegistry.remove(this);
+  }
 
   /**
    * Sets the PID Controller gain parameters.
@@ -194,7 +197,7 @@ public class PIDController {
    */
   public void setSetpoint(double setpoint) {
     if (m_maximumInput > m_minimumInput) {
-      m_setpoint = MathUtils.clamp(setpoint, m_minimumInput, m_maximumInput);
+      m_setpoint = MathUtil.clamp(setpoint, m_minimumInput, m_maximumInput);
     } else {
       m_setpoint = setpoint;
     }
@@ -317,7 +320,7 @@ public class PIDController {
     m_velocityError = (m_positionError - m_prevError) / m_period;
 
     if (m_Ki != 0) {
-      m_totalError = MathUtils.clamp(m_totalError + m_positionError * m_period,
+      m_totalError = MathUtil.clamp(m_totalError + m_positionError * m_period,
           m_minimumIntegral / m_Ki, m_maximumIntegral / m_Ki);
     }
 
@@ -332,14 +335,14 @@ public class PIDController {
     m_totalError = 0;
   }
 
-//  @Override
-//  public void initSendable(SendableBuilder builder) {
-//    builder.setSmartDashboardType("PIDController");
-//    builder.addDoubleProperty("p", this::getP, this::setP);
-//    builder.addDoubleProperty("i", this::getI, this::setI);
-//    builder.addDoubleProperty("d", this::getD, this::setD);
-//    builder.addDoubleProperty("setpoint", this::getSetpoint, this::setSetpoint);
-//  }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("PIDController");
+    builder.addDoubleProperty("p", this::getP, this::setP);
+    builder.addDoubleProperty("i", this::getI, this::setI);
+    builder.addDoubleProperty("d", this::getD, this::setD);
+    builder.addDoubleProperty("setpoint", this::getSetpoint, this::setSetpoint);
+  }
 
   /**
    * Wraps error around for continuous inputs. The original error is returned if continuous mode is
@@ -375,7 +378,7 @@ public class PIDController {
 
     // Clamp setpoint to new input
     if (m_maximumInput > m_minimumInput) {
-      m_setpoint = MathUtils.clamp(m_setpoint, m_minimumInput, m_maximumInput);
+      m_setpoint = MathUtil.clamp(m_setpoint, m_minimumInput, m_maximumInput);
     }
   }
 }

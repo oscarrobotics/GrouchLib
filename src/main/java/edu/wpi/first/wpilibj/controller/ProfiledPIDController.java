@@ -7,6 +7,8 @@
 
 package edu.wpi.first.wpilibj.controller;
 
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 /**
@@ -14,7 +16,7 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
  * profile.
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class ProfiledPIDController {
+public class ProfiledPIDController implements Sendable {
   private PIDController m_controller;
   private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
@@ -137,7 +139,16 @@ public class ProfiledPIDController {
   /**
    * Sets the goal for the ProfiledPIDController.
    *
-   * @param goal The desired unprofiled setpoint.
+   * @param goal The desired goal state.
+   */
+  public void setGoal(TrapezoidProfile.State goal) {
+    m_goal = goal;
+  }
+
+  /**
+   * Sets the goal for the ProfiledPIDController.
+   *
+   * @param goal The desired goal position.
    */
   public void setGoal(double goal) {
     m_goal = new TrapezoidProfile.State(goal, 0);
@@ -146,8 +157,8 @@ public class ProfiledPIDController {
   /**
    * Gets the goal for the ProfiledPIDController.
    */
-  public double getGoal() {
-    return m_goal.position;
+  public TrapezoidProfile.State getGoal() {
+    return m_goal;
   }
 
   /**
@@ -173,8 +184,8 @@ public class ProfiledPIDController {
    *
    * @return The current setpoint.
    */
-  public double getSetpoint() {
-    return m_controller.getSetpoint();
+  public TrapezoidProfile.State getSetpoint() {
+    return m_setpoint;
   }
 
   /**
@@ -272,6 +283,17 @@ public class ProfiledPIDController {
    * @param measurement The current measurement of the process variable.
    * @param goal The new goal of the controller.
    */
+  public double calculate(double measurement, TrapezoidProfile.State goal) {
+    setGoal(goal);
+    return calculate(measurement);
+  }
+
+  /**
+   * Returns the next output of the PIDController.
+   *
+   * @param measurement The current measurement of the process variable.
+   * @param goal The new goal of the controller.
+   */
   public double calculate(double measurement, double goal) {
     setGoal(goal);
     return calculate(measurement);
@@ -284,7 +306,7 @@ public class ProfiledPIDController {
    * @param goal        The new goal of the controller.
    * @param constraints Velocity and acceleration constraints for goal.
    */
-  public double calculate(double measurement, double goal,
+  public double calculate(double measurement, TrapezoidProfile.State goal,
                    TrapezoidProfile.Constraints constraints) {
     setConstraints(constraints);
     return calculate(measurement, goal);
@@ -297,12 +319,12 @@ public class ProfiledPIDController {
     m_controller.reset();
   }
 
-//  @Override
-//  public void initSendable(SendableBuilder builder) {
-//    builder.setSmartDashboardType("ProfiledPIDController");
-//    builder.addDoubleProperty("p", this::getP, this::setP);
-//    builder.addDoubleProperty("i", this::getI, this::setI);
-//    builder.addDoubleProperty("d", this::getD, this::setD);
-//    builder.addDoubleProperty("goal", this::getGoal, this::setGoal);
-//  }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("ProfiledPIDController");
+    builder.addDoubleProperty("p", this::getP, this::setP);
+    builder.addDoubleProperty("i", this::getI, this::setI);
+    builder.addDoubleProperty("d", this::getD, this::setD);
+    builder.addDoubleProperty("goal", () -> getGoal().position, this::setGoal);
+  }
 }
