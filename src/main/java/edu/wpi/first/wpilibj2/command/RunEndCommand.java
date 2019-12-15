@@ -25,7 +25,7 @@ public class RunEndCommand extends CommandBase {
      * @param onEnd        the Runnable to run on command end
      * @param requirements the subsystems required by this command
      */
-    public RunEndCommand(Runnable onExecute, Runnable onEnd, Subsystem... requirements) {
+    public RunEndCommand(Runnable onExecute, Runnable onEnd, SubsystemBase... requirements) {
         m_onExecute = requireNonNullParam(onExecute, "onInit", "RunEndCommand");
         m_onEnd = requireNonNullParam(onEnd, "onEnd", "RunEndCommand");
 
