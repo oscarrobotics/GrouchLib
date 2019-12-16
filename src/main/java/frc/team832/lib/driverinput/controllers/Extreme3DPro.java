@@ -1,7 +1,8 @@
-package frc.team832.lib.driverstation.controllers;
+package frc.team832.lib.driverinput.controllers;
 
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+@SuppressWarnings("unused")
 public class Extreme3DPro extends Attack3 {
 	/**
 	 * Construct an instance of a joystick. The joystick index is the USB port on the drivers

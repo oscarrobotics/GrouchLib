@@ -1,10 +1,11 @@
-package frc.team832.lib.driverstation.controllers;
+package frc.team832.lib.driverinput.controllers;
 
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+@SuppressWarnings("unused")
 public class Xbox360Controller extends GenericHID {
    /**
     * Represents a digital button on an XboxController.
