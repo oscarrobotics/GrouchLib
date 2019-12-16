@@ -1,9 +1,9 @@
-package frc.team832.lib.driverstation.controllers;
+package frc.team832.lib.driverinput.controllers;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class StratComInterface extends GenericHID {
 
     //Constructor
