@@ -36,8 +36,8 @@ public class XboxDriverOI implements DriverOI<Xbox360Controller, Void> {
     }
 
     @Override
-    public Xbox360Controller getFirstController() {
-        return xbox;
+    public Optional<Xbox360Controller> getFirstController() {
+        return Optional.ofNullable(xbox);
     }
 
     @Override
