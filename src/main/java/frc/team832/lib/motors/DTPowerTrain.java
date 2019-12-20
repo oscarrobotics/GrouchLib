@@ -36,9 +36,16 @@ public class DTPowerTrain extends Powertrain {
         return _encoderRatio * currentRpm;
     }
 
+    public double getWheelCircumferenceMeters() {
+        return _wheelDiameterMeters * Math.PI;
+    }
+
+    public double calculateWheelDistanceMeters(double encoderRotations) {
+        return encoderRotations * _encoderRatio * getWheelCircumferenceMeters();
+    }
+
     public double calculateMetersPerSec(double currentRpm) {
-        var wheelRpm = getWheelRpm(currentRpm);
-        return (wheelRpm * 2 * Math.PI * (_wheelDiameterMeters / 2)) / 60f ;
+        return (getWheelRpm(currentRpm) * 2 * Math.PI * (_wheelDiameterMeters / 2)) / 60f ;
     }
 
     public double calculateFeetPerSec(double currentRpm) {
@@ -48,6 +55,4 @@ public class DTPowerTrain extends Powertrain {
     public double calculateMotorSpeed(double wheelMetersPerSec) {
         return wheelMetersPerSec * 60 / (_wheelDiameterMeters * Math.PI * _encoderRatio);
     }
-
-// wheelrpm * .007797
 }

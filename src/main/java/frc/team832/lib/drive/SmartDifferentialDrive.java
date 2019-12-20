@@ -7,13 +7,14 @@ import frc.team832.lib.motorcontrol.base.SmartCANMC;
 import frc.team832.lib.motorcontrol.vendor.CANSparkMax;
 import frc.team832.lib.util.OscarMath;
 
-public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
+public class SmartDifferentialDrive implements Sendable {
     public static final double kDefaultQuickStopThreshold = 0.2;
     public static final double kDefaultQuickStopAlpha = 0.1;
 
     private boolean _quickTurning;
 
-    private double _maxOutput;
+    private double _maxOutput = 1;
+    private double _deadband = 0.02;
     private int _maxRpm;
 
     private SmartCANMC _leftMotor;
@@ -22,6 +23,12 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
     private double m_quickStopThreshold = kDefaultQuickStopThreshold;
     private double m_quickStopAlpha = kDefaultQuickStopAlpha;
     private double m_quickStopAccumulator = 0.0;
+
+    public SmartDifferentialDrive(SmartCANMC leftMotor, SmartCANMC rightMotor, int maxRpm) {
+        _leftMotor = leftMotor;
+        _rightMotor = rightMotor;
+        _maxRpm = maxRpm;
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -33,11 +40,14 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
         builder.addDoubleProperty("Left Pos", _leftMotor::getSensorPosition, null);
         builder.addDoubleProperty("Right Pos", _rightMotor::getSensorPosition, null);
         builder.addDoubleProperty("Max Velocity", this::getMaxRPM, null);
-
     }
 
     public void setMaxOutput(double maxOutput) {
         _maxOutput = maxOutput;
+    }
+
+    public void setDeadband(double deadband) {
+        _deadband = deadband;
     }
 
     public void stopMotor() {
@@ -45,21 +55,10 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
         _rightMotor.stopMotor();
     }
 
-    @Override
-    public String getDescription() {
-        return "SmartDifferentialDrive";
-    }
-
     public enum LoopMode {
         PERCENTAGE,
         VELOCITY,
         POSITION
-    }
-
-    public SmartDifferentialDrive(SmartCANMC leftMotor, SmartCANMC rightMotor, int maxRpm) {
-        _leftMotor = leftMotor;
-        _rightMotor = rightMotor;
-        _maxRpm = maxRpm;
     }
 
     public int getMaxRPM() { return _maxRpm; }
@@ -72,8 +71,16 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
         return _quickTurning;
     }
 
-    public double getOutputCurrent(){
-        return _rightMotor.getOutputCurrent() + _leftMotor.getOutputCurrent();
+    protected double applyDeadband(double value) {
+        if (Math.abs(value) > _deadband) {
+            if (value > 0.0) {
+                return (value - _deadband) / (1.0 - _deadband);
+            } else {
+                return (value + _deadband) / (1.0 - _deadband);
+            }
+        } else {
+            return 0.0;
+        }
     }
 
     /**
@@ -97,9 +104,11 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
      * @param squaredInputs If set, decreases the input sensitivity at low speeds.
      */
     public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
-
         xSpeed = OscarMath.clip(xSpeed, -1, 1);
+        xSpeed = applyDeadband(xSpeed);
+
         zRotation = OscarMath.clip(zRotation, -1, 1);
+        zRotation = applyDeadband(zRotation);
 
         if (squaredInputs) {
             xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
@@ -171,12 +180,12 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
      */
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode) {
         xSpeed = OscarMath.clip(xSpeed, -1, 1);
-        xSpeed = applyDeadband(xSpeed, m_deadband);
+        xSpeed = applyDeadband(xSpeed);
 
         _quickTurning = Math.abs(xSpeed) > 0.05;
 
         zRotation = OscarMath.clip(zRotation, -1, 1);
-        zRotation = applyDeadband(zRotation, m_deadband);
+        zRotation = applyDeadband(zRotation);
 
         double angularPower;
         boolean overPower;
@@ -184,7 +193,7 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
         if (isQuickTurn) {
             if (Math.abs(xSpeed) < m_quickStopThreshold) {
                 m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator
-                        + m_quickStopAlpha * OscarMath.clip(zRotation, -1, 1) * 2;
+                        + m_quickStopAlpha * zRotation * 2;
             }
             overPower = true;
             angularPower = zRotation;
@@ -267,10 +276,10 @@ public class SmartDifferentialDrive extends RobotDriveBase implements Sendable {
      */
     public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs, LoopMode loopMode) {
         leftSpeed = OscarMath.clip(leftSpeed, -1, 1);
-        leftSpeed = applyDeadband(leftSpeed, m_deadband);
+        leftSpeed = applyDeadband(leftSpeed);
 
         rightSpeed = OscarMath.clip(rightSpeed, -1, 1);
-        rightSpeed = applyDeadband(rightSpeed, m_deadband);
+        rightSpeed = applyDeadband(rightSpeed);
 
         // Square the inputs (while preserving the sign) to increase fine control
         // while permitting full power.

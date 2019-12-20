@@ -6,6 +6,6 @@ public interface DriverOI<A, B> {
     DriveAxesSupplier getTankDriveAxes();
     DriveAxesSupplier getArcadeDriveAxes();
 
-    A getFirstController();
+    Optional<A> getFirstController();
     Optional<B> getSecondController();
 }

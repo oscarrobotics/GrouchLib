@@ -6,7 +6,7 @@ import frc.team832.lib.driverinput.controllers.HIDControllerType;
 import java.util.Vector;
 @SuppressWarnings("unused")
 public class OperatorInterface {
-    private static Vector<HIDControllerType> attachedControllers = new Vector<>();
+    private static Vector<HIDControllerType> attachedControllers = new Vector<>(6);
 
     private static final DriverStation driverStation = DriverStation.getInstance();
 
@@ -46,6 +46,6 @@ public class OperatorInterface {
         } else if (attachedControllers.containsAll(XboxDriverOI.requiredControllers)) {
             return new XboxDriverOI();
         }
-        else return null;
+        else return new EmptyDriverOI();
     }
 }

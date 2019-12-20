@@ -48,4 +48,12 @@ public class DTPowertrainTest {
 
         assertEquals("Feet Per Second FAIL", expectedMotorSpeed, actualMotorSpeed, 0);
     }
+
+    @Test
+    public void calculateWheelDistanceMetersTest() {
+        double expectedWheelDistanceMeters = 3.1181;
+        double actualWheelDistanceMeters = OscarMath.round(dtPowerTrain.calculateWheelDistanceMeters(75), 4);
+
+        assertEquals("Calculate Wheel Distance Meters FAIL", expectedWheelDistanceMeters, actualWheelDistanceMeters, 0);
+    }
 }
