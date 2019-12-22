@@ -6,7 +6,8 @@ public enum DashboardWidget {
 	ToggleButton("Toggle Button"),
 	ToggleSwitch("Toggle Switch"),
 	NumberBar("Number Bar"),
-	NumberSlider("Number Slider");
+	NumberSlider("Number Slider"),
+	Graph("Graph");
 
 	public final String name;
 
