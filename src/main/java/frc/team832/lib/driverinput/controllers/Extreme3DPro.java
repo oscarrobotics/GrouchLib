@@ -1,6 +1,6 @@
 package frc.team832.lib.driverinput.controllers;
 
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 @SuppressWarnings("unused")
 public class Extreme3DPro extends Attack3 {
