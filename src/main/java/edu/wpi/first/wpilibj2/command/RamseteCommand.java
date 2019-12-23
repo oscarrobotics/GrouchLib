@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
@@ -169,6 +170,9 @@ public class RamseteCommand extends CommandBase {
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
+    SmartDashboard.putNumber("WheelSpeed/LeftTarget", leftSpeedSetpoint);
+    SmartDashboard.putNumber("WheelSpeed/RightTarget", rightSpeedSetpoint);
+
     double leftOutput;
     double rightOutput;
 
@@ -177,9 +181,19 @@ public class RamseteCommand extends CommandBase {
           m_leftFeedForward.calculate(leftSpeedSetpoint,
               (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
 
+      SmartDashboard.putNumber("FF/Left", leftFeedforward);
+
       double rightFeedforward =
           m_rightFeedForward.calculate(rightSpeedSetpoint,
               (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
+
+      SmartDashboard.putNumber("FF/Right", rightFeedforward);
+
+      double leftRealSpeed = m_speeds.get().leftMetersPerSecond;
+      double rightRealSpeed = m_speeds.get().rightMetersPerSecond;
+
+      SmartDashboard.putNumber("WheelSpeeds/LeftReal", leftRealSpeed);
+      SmartDashboard.putNumber("WheelSpeeds/RightReal", -rightRealSpeed);
 
       leftOutput = leftFeedforward
           + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
