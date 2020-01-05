@@ -12,14 +12,14 @@ public class DTPowertrainTest {
 
     @Before
     public void init() {
-        motor = Motors.NEO;
+        motor = Motor.kNEO;
         Gearbox gearbox = new Gearbox(11.259259f);
         dtPowerTrain = new DTPowerTrain(gearbox, motor, 2, .149);
     }
 
     @Test
     public void freeSpeedCorrect() {
-        double expectedFreeSpeed = 12.9;
+        double expectedFreeSpeed = 13.37;
         double actualFreeSpeed = OscarMath.round(dtPowerTrain.calculateFeetPerSec(motor.freeSpeed), 2);
 
         assertEquals("Free Speed FAIL", expectedFreeSpeed, actualFreeSpeed, 0);
