@@ -1,6 +1,8 @@
 package frc.team832.lib.motorcontrol2.vendor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
@@ -11,6 +13,8 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
 
     private TalonFX _talon;
     private ControlMode _ctrlMode;
+    private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
+    private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
 
     public CANTalonFX(int canId){
         _talon = new TalonFX(canId);
@@ -56,6 +60,22 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     @Override
     public int getCANID() {
         return 0;
+    }
+
+    @Override
+    public void wipeSettings () {
+        _talon.configFactoryDefault();
+    }
+
+    @Override
+    public void limitInputCurrent(int currentLimit) {
+        inputCurrentConfig.currentLimit = currentLimit;
+        _talon.configSupplyCurrentLimit(inputCurrentConfig);
+    }
+
+    public void limitOutputCurrent(int currentLimit) {
+        outputCurrentConfig.currentLimit = currentLimit;
+        _talon.configStatorCurrentLimit(outputCurrentConfig);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package frc.team832.lib.motorcontrol2.vendor;
 
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.team832.lib.CANDevice;
@@ -13,7 +15,11 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     private ControlMode _ctrlMode;
     private double _allowableError = 0;
     private double _openLoopSetpoint;
-    
+
+    private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
+    private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
+
+
     /***
      * Create an OscarCANTalon at the specified CAN ID.
      * @param canId CAN ID of controller to attach.
@@ -62,6 +68,17 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     @Override
     public int getCANID() {
         return _talon.getBaseID();
+    }
+
+    @Override
+    public void wipeSettings () {
+        _talon.configFactoryDefault();
+    }
+
+    @Override
+    public void limitInputCurrent(int currentLimit) {
+        inputCurrentConfig.currentLimit = currentLimit;
+        _talon.configSupplyCurrentLimit(inputCurrentConfig);
     }
 
     @Override
