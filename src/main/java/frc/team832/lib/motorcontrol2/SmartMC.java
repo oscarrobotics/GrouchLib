@@ -43,4 +43,8 @@ public interface SmartMC<B> extends SimpleMC<B> {
 
     int getCANID();
 
+    void wipeSettings();
+
+    void limitInputCurrent(int currentLimit);
+
 }

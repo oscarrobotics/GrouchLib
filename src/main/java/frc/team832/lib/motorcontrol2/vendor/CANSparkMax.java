@@ -61,6 +61,16 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
+    public void wipeSettings () {
+        _spark.restoreFactoryDefaults();
+    }
+
+    @Override
+    public void limitInputCurrent(int currentLimit) {
+        _spark.setSmartCurrentLimit(currentLimit);
+    }
+
+    @Override
     public void set(double power) {
         _spark.set(power);
     }
