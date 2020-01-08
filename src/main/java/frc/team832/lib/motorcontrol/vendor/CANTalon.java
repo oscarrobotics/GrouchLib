@@ -39,8 +39,6 @@ public class CANTalon implements GeniusMC<TalonSRX> {
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
     }
 
-
-
     @Override
     public void set(double value) {
         _talon.set(_ctrlMode, value);
@@ -56,7 +54,6 @@ public class CANTalon implements GeniusMC<TalonSRX> {
     public double get() {
         return _talon.getMotorOutputPercent();
     }
-
 
     @Override
     public boolean getInverted() {
