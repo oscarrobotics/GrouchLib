@@ -7,6 +7,8 @@ public class OscarMath {
         return degrees * ((2 * Math.PI)/360);
     }
 
+    public static double radiansToDegrees(double radians) { return radians * (360/(2 * Math.PI)); }
+
     public static double round(double value, int places) {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
