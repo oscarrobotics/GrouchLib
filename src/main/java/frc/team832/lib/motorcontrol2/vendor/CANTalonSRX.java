@@ -82,6 +82,21 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     }
 
     @Override
+    public double getSensorPosition () {
+        return _talon.getSelectedSensorPosition();
+    }
+
+    @Override
+    public double getSensorVelocity () {
+        return _talon.getSelectedSensorVelocity();
+    }
+
+    @Override
+    public void setVelocity (double v) {
+        _talon.configMotionCruiseVelocity((int) v);
+    }
+
+    @Override
     public void set(double power) {
         _talon.set(_ctrlMode, power);
     }
@@ -109,5 +124,10 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     @Override
     public TalonSRX getBaseController() {
         return _talon;
+    }
+
+    @Override
+    public void stopMotor () {
+
     }
 }

@@ -21,4 +21,6 @@ public interface SimpleMC<B> {
     boolean getInverted();
 
     B getBaseController();
+
+	void stopMotor();
 }

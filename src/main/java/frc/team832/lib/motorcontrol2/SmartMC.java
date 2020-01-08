@@ -47,4 +47,9 @@ public interface SmartMC<B> extends SimpleMC<B> {
 
     void limitInputCurrent(int currentLimit);
 
+    double getSensorPosition();
+
+    double getSensorVelocity();
+
+    void setVelocity (double v);
 }
