@@ -26,7 +26,7 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
      */
     public CANTalonSRX(int canId) {
         _talon = new TalonSRX(canId);
-        _ctrlMode = ControlMode.Disabled;
+        _ctrlMode = ControlMode.PercentOutput;
 
         boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
@@ -34,8 +34,12 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
 
     @Override
     public void follow(SmartMC masterMC) {
-        _ctrlMode = ControlMode.Follower;
-        _talon.set(_ctrlMode, masterMC.getCANID());
+        if (!(masterMC instanceof CANSparkMax)) {
+            _talon.follow(((CANTalonSRX)masterMC).getBaseController());
+        } else {
+            _ctrlMode = ControlMode.Follower;
+            _talon.set(_ctrlMode, masterMC.getCANID());
+        }
     }
 
     @Override

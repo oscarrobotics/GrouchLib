@@ -41,6 +41,7 @@ public class CANTalon implements GeniusMC<TalonSRX> {
 
     @Override
     public void set(double value) {
+        _ctrlMode = ControlMode.PercentOutput;
         _talon.set(_ctrlMode, value);
     }
 
