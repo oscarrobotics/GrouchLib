@@ -92,7 +92,7 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
 
     @Override
     public double getSensorVelocity () {
-        return _talon.getSelectedSensorVelocity();
+        return (_talon.getSelectedSensorVelocity() / 2048.0) * 600;
     }
 
     @Override
