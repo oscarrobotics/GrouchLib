@@ -94,6 +94,11 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     }
 
     @Override
+    public void rezeroSensor () {
+        _talon.setSelectedSensorPosition(0);
+    }
+
+    @Override
     public void set(double power) {
         _talon.set(_ctrlMode, power);
     }
