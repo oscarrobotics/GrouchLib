@@ -120,6 +120,10 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
         _talon.setInverted(inverted);
     }
 
+    public void setSensorPhase(boolean phase) {
+        _talon.setSensorPhase(phase);
+    }
+
     @Override
     public boolean getInverted() {
         return _talon.getInverted();
