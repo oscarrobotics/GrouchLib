@@ -92,6 +92,11 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
+    public void rezeroSensor () {
+        _encoder.setPosition(0);
+    }
+
+    @Override
     public void set(double power) {
         _spark.set(power);
     }
