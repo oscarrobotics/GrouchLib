@@ -3,6 +3,7 @@ package frc.team832.lib.motorcontrol2.vendor;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.ControlType;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
@@ -89,6 +90,13 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     @Override
     public void setVelocity (double v) {
         _pid.setSmartMotionMaxVelocity(v, _spark.getDeviceId());
+    }
+
+    public void setPosition(double pos){ _pid.setReference(pos, ControlType.kPosition);}
+
+    @Override
+    public void rezeroSensor () {
+        _encoder.setPosition(0);
     }
 
     @Override
