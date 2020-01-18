@@ -95,42 +95,26 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     public void setPosition(double pos){ _pid.setReference(pos, ControlType.kPosition);}
 
     @Override
-    public void rezeroSensor () {
-        _encoder.setPosition(0);
-    }
+    public void setSensorPhase(boolean phase) { }
 
     @Override
-    public void set(double power) {
-        _spark.set(power);
-    }
+    public void rezeroSensor () { _encoder.setPosition(0); }
 
     @Override
-    public double get() {
-        return _spark.getAppliedOutput();
-    }
+    public void set(double power) { _spark.set(power); }
 
     @Override
-    public void stop() {
-        _spark.set(0);
-    }
+    public double get() { return _spark.getAppliedOutput(); }
 
     @Override
-    public void setInverted(boolean inverted) {
-        _spark.setInverted(inverted);
-    }
+    public void stop() { _spark.set(0); }
 
     @Override
-    public boolean getInverted() {
-        return _spark.getInverted();
-    }
+    public void setInverted(boolean inverted) { _spark.setInverted(inverted); }
 
     @Override
-    public com.revrobotics.CANSparkMax getBaseController() {
-        return _spark;
-    }
+    public boolean getInverted() { return _spark.getInverted(); }
 
     @Override
-    public void stopMotor () {
-
-    }
+    public com.revrobotics.CANSparkMax getBaseController() { return _spark; }
 }

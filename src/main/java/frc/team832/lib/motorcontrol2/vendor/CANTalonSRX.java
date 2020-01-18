@@ -106,6 +106,9 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     }
 
     @Override
+    public void setPosition(double position) { _talon.setSelectedSensorPosition((int)position); }
+
+    @Override
     public void set(double power) {
         _talon.set(_ctrlMode, power);
     }
@@ -125,6 +128,7 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
         _talon.setInverted(inverted);
     }
 
+    @Override
     public void setSensorPhase(boolean phase) {
         _talon.setSensorPhase(phase);
     }
@@ -139,8 +143,4 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
         return _talon;
     }
 
-    @Override
-    public void stopMotor () {
-
-    }
 }
