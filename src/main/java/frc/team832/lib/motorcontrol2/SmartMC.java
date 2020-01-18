@@ -54,4 +54,8 @@ public interface SmartMC<B> extends SimpleMC<B> {
     void setVelocity (double v);
 
     void rezeroSensor();
+
+    void setPosition(double position);
+
+    void setSensorPhase(boolean phase);
 }

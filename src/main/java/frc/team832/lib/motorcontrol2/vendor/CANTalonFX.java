@@ -99,6 +99,12 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     }
 
     @Override
+    public void setPosition(double position) { _talon.setSelectedSensorPosition((int)position); }
+
+    @Override
+    public void setSensorPhase(boolean phase) { _talon.setSensorPhase(phase); }
+
+    @Override
     public void set(double power) {
         _talon.set(_ctrlMode, power);
     }
@@ -126,10 +132,5 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     @Override
     public TalonFX getBaseController() {
         return _talon;
-    }
-
-    @Override
-    public void stopMotor () {
-
     }
 }
