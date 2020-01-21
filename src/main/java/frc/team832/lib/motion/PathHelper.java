@@ -32,31 +32,31 @@ public class PathHelper {
     }
 
 
-    public Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees) {
+    public static Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees) {
         return generatePath(startDegrees, waypoints, endDegrees, false);
     }
 
-    public Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees, boolean reversed) {
+    public static Trajectory generatePath(double startDegrees, List<Translation2d> waypoints, double endDegrees, boolean reversed) {
         return generatePath(Rotation2d.fromDegrees(startDegrees), waypoints, Rotation2d.fromDegrees(endDegrees), reversed);
     }
 
-    public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation) {
+    public static Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation) {
         return generatePath(startRotation, waypoints, endRotation, false);
     }
 
-    public Trajectory generatePath(Pose2d startPose, Pose2d endPose) {
+    public static Trajectory generatePath(Pose2d startPose, Pose2d endPose) {
         return generatePath(startPose, new ArrayList<Translation2d>(), endPose, false);
     }
 
-    public Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose) {
+    public static Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose) {
         return generatePath(startPose, waypoints, endPose, false);
     }
 
-    public Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose, boolean reversed) {
+    public static Trajectory generatePath(Pose2d startPose, List<Translation2d> waypoints, Pose2d endPose, boolean reversed) {
         return TrajectoryGenerator.generateTrajectory(startPose, waypoints, endPose, config);
     }
 
-    public Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation, boolean reversed) {
+    public static Trajectory generatePath(Rotation2d startRotation, List<Translation2d> waypoints, Rotation2d endRotation, boolean reversed) {
         int waypointCount = waypoints.size();
 
         if (waypointCount < 2) return null;
