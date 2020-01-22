@@ -52,8 +52,8 @@ public class SmartDiffDrive implements Sendable {
 	}
 
 	public void stopMotor() {
-		_leftMotor.stopMotor();
-		_rightMotor.stopMotor();
+		_leftMotor.stop();
+		_rightMotor.stop();
 	}
 
 	public enum LoopMode {
