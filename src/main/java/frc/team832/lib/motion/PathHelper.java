@@ -18,7 +18,7 @@ public class PathHelper {
     public final DifferentialDriveKinematics m_kinematics;
     public final double m_maxVelocityMeters, m_maxAccelerationMetersSq;
 
-    private TrajectoryConfig config;
+    private static TrajectoryConfig config;
 
     public PathHelper(
                       DifferentialDriveKinematics kinematics,
