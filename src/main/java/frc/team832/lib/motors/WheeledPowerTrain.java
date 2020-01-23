@@ -61,4 +61,8 @@ public class WheeledPowerTrain extends Powertrain {
     public double calculateMotorSpeed(double wheelMetersPerSec) {
         return wheelMetersPerSec * 60 / (_wheelDiameterMeters * Math.PI * _encoderRatio);
     }
+
+    public double calculateTicksFromPosition(double targetPosition) {
+        return targetPosition/_encoderRatio;
+    }
 }
