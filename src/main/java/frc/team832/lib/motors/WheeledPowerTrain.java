@@ -1,6 +1,6 @@
 package frc.team832.lib.motors;
 
-public class DTPowerTrain extends Powertrain {
+public class WheeledPowerTrain extends Powertrain {
 
     public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
@@ -14,7 +14,7 @@ public class DTPowerTrain extends Powertrain {
      * @param motorCount Amount of motors
      * @param wheelDiameterMeters Wheel diameter in meters
      */
-    public DTPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterMeters) {
+    public WheeledPowerTrain (Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterMeters) {
         super(gearbox, motor, motorCount);
         _wheelDiameterMeters = wheelDiameterMeters;
         setEncoderRatioIndex(0);
@@ -36,6 +36,12 @@ public class DTPowerTrain extends Powertrain {
         return _encoderRatio * currentRpm;
     }
 
+    public double calculateMotorRpmFromWheelRpm(double targetRpm) {
+        return targetRpm / _encoderRatio;
+    }
+
+    public double calculateRpmFromSurfaceSpeed (double surfaceSpeedMetersPersec) { return (surfaceSpeedMetersPersec * 60f) / (Math.PI * _wheelDiameterMeters); }
+
     public double getWheelCircumferenceMeters() {
         return _wheelDiameterMeters * Math.PI;
     }
@@ -45,7 +51,7 @@ public class DTPowerTrain extends Powertrain {
     }
 
     public double calculateMetersPerSec(double currentRpm) {
-        return (getWheelRpm(currentRpm) * 2 * Math.PI * (_wheelDiameterMeters / 2)) / 60f ;
+        return (getWheelRpm(currentRpm) * Math.PI * _wheelDiameterMeters) / 60f ;
     }
 
     public double calculateFeetPerSec(double currentRpm) {
