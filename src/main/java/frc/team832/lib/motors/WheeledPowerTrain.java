@@ -40,7 +40,7 @@ public class WheeledPowerTrain extends Powertrain {
         return targetRpm / _encoderRatio;
     }
 
-    public double calculateRpmFromSurfaceSpeed (double surfaceSpeedMetersPersec) { return (surfaceSpeedMetersPersec * 60f) / (Math.PI * _wheelDiameterMeters); }
+    public double calculateMotorRpmFromSurfaceSpeed (double surfaceSpeedMetersPersec) { return (surfaceSpeedMetersPersec * 60f) / (Math.PI * _wheelDiameterMeters); }
 
     public double getWheelCircumferenceMeters() {
         return _wheelDiameterMeters * Math.PI;
