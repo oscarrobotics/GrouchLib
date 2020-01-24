@@ -80,12 +80,12 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
 
     @Override
     public double getSensorPosition () {
-        return _talon.getSelectedSensorPosition();
+        return _talon.getSelectedSensorPosition() / 2048.0;
     }
 
     @Override
     public double getSensorVelocity () {
-        return _talon.getSelectedSensorVelocity();
+        return (_talon.getSelectedSensorVelocity() / 2048.0) * 600;
     }
 
     @Override
