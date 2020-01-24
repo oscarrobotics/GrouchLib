@@ -106,7 +106,7 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     }
 
     @Override
-    public void setPosition(double position) { _talon.setSelectedSensorPosition((int)position); }
+    public void setEncoderPosition (double position) { _talon.setSelectedSensorPosition((int)position); }
 
     @Override
     public void set(double power) {

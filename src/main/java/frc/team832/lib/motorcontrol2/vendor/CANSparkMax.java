@@ -68,7 +68,7 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
-    public void wipeSettings () {
+    public void wipeSettings() {
         _spark.restoreFactoryDefaults();
     }
 
@@ -78,27 +78,27 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
-    public double getSensorPosition () {
+    public double getSensorPosition() {
         return _encoder.getPosition();
     }
 
     @Override
-    public double getSensorVelocity () {
+    public double getSensorVelocity() {
         return _encoder.getVelocity();
     }
 
     @Override
-    public void setVelocity (double v) {
+    public void setVelocity(double v) {
         _pid.setSmartMotionMaxVelocity(v, _spark.getDeviceId());
     }
 
-    public void setPosition(double pos){ _pid.setReference(pos, ControlType.kPosition);}
+    public void setEncoderPosition(double pos){ _pid.setReference(pos, ControlType.kPosition);}
 
     @Override
     public void setSensorPhase(boolean phase) { }
 
     @Override
-    public void rezeroSensor () { _encoder.setPosition(0); }
+    public void rezeroSensor() { _encoder.setPosition(0); }
 
     @Override
     public void set(double power) { _spark.set(power); }

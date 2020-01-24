@@ -99,7 +99,7 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     }
 
     @Override
-    public void setPosition(double position) { _talon.setSelectedSensorPosition((int)position); }
+    public void setEncoderPosition (double position) { _talon.setSelectedSensorPosition((int)position); }
 
     @Override
     public void setSensorPhase(boolean phase) { _talon.setSensorPhase(phase); }
