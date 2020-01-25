@@ -63,6 +63,6 @@ public class WheeledPowerTrain extends Powertrain {
     }
 
     public double calculateTicksFromPosition(double targetPosition) {
-        return targetPosition/_encoderRatio;
+        return targetPosition / _encoderRatio;
     }
 }
