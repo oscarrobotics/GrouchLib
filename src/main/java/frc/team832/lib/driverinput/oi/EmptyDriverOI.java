@@ -14,6 +14,9 @@ public class EmptyDriverOI implements DriverOI {
 	}
 
 	@Override
+	public DriveAxesSupplier getGreenbergDriveAxes() { return new DriveAxesSupplier(() -> 0, () -> 0); }
+
+	@Override
 	public Optional getFirstController () {
 		return Optional.empty();
 	}

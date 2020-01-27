@@ -36,6 +36,9 @@ public class XboxDriverOI implements DriverOI<Xbox360Controller, Void> {
     }
 
     @Override
+    public DriveAxesSupplier getGreenbergDriveAxes() { return null; }
+
+    @Override
     public Optional<Xbox360Controller> getFirstController() {
         return Optional.ofNullable(xbox);
     }
