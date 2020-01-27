@@ -18,6 +18,7 @@ public class SticksDriverOI implements DriverOI<Attack3, Extreme3DPro> {
 
     private final DriveAxesSupplier tankDriveAxes;
     private final DriveAxesSupplier arcadeDriveAxes;
+    private final DriveAxesSupplier greenbergDriveAxes;
 
     public SticksDriverOI() {
         leftStick = new Attack3(0);
@@ -25,6 +26,7 @@ public class SticksDriverOI implements DriverOI<Attack3, Extreme3DPro> {
 
         tankDriveAxes = new DriveAxesSupplier(leftStick::getY, rightStick::getY, rightStick::getTwist);
         arcadeDriveAxes = new DriveAxesSupplier(leftStick::getY, rightStick::getX);
+        greenbergDriveAxes = new DriveAxesSupplier(leftStick::getY, rightStick::getY, rightStick::getX, rightStick::getTwist);
     }
 
     @Override
@@ -36,6 +38,8 @@ public class SticksDriverOI implements DriverOI<Attack3, Extreme3DPro> {
     public DriveAxesSupplier getArcadeDriveAxes() {
         return arcadeDriveAxes;
     }
+
+    public DriveAxesSupplier getGreenbergDriveAxes() { return greenbergDriveAxes; }
 
     @Override
     public Optional<Attack3> getFirstController() {

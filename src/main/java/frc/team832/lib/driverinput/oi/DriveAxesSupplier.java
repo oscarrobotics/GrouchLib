@@ -3,28 +3,40 @@ package frc.team832.lib.driverinput.oi;
 import java.util.function.DoubleSupplier;
 
 public class DriveAxesSupplier {
-    private final DoubleSupplier leftSupplier;
-    private final DoubleSupplier rightSupplier;
+    private final DoubleSupplier leftYSupplier;
+    private final DoubleSupplier rightYSupplier;
+    private final DoubleSupplier rightXSupplier;
     private final DoubleSupplier rotationSupplier;
 
-    public DriveAxesSupplier(DoubleSupplier leftSupplier, DoubleSupplier rightSupplier, DoubleSupplier rotation) {
-        this.leftSupplier = leftSupplier;
-        this.rightSupplier = rightSupplier;
-        this.rotationSupplier = rotation;
+    public DriveAxesSupplier(DoubleSupplier leftYSupplier, DoubleSupplier rightYSupplier, DoubleSupplier rotationSupplier) {
+        this.leftYSupplier = leftYSupplier;
+        this.rightYSupplier = rightYSupplier;
+        this.rightXSupplier = () -> 0;
+        this.rotationSupplier = rotationSupplier;
     }
 
-    public DriveAxesSupplier(DoubleSupplier leftSupplier, DoubleSupplier rightSupplier) {
-        this.leftSupplier = leftSupplier;
-        this.rightSupplier = rightSupplier;
+    public DriveAxesSupplier(DoubleSupplier leftYSupplier, DoubleSupplier rightYSupplier) {
+        this.leftYSupplier = leftYSupplier;
+        this.rightYSupplier = rightYSupplier;
+        this.rightXSupplier = () -> 0;
         this.rotationSupplier = () -> 0;
     }
 
-    public double getLeft() {
-        return -leftSupplier.getAsDouble();
+    public DriveAxesSupplier(DoubleSupplier leftYSupplier, DoubleSupplier rightYSupplier, DoubleSupplier rightXSupplier, DoubleSupplier rotationSupplier) {
+        this.leftYSupplier = leftYSupplier;
+        this.rightYSupplier = rightYSupplier;
+        this.rightXSupplier = rightXSupplier;
+        this.rotationSupplier = rotationSupplier;
     }
 
-    public double getRight() {
-        return -rightSupplier.getAsDouble();
+    public double getLeftY() { return -leftYSupplier.getAsDouble(); }
+
+    public double getRightY() {
+        return -rightYSupplier.getAsDouble();
+    }
+
+    public double getRightX() {
+        return -rightXSupplier.getAsDouble();
     }
 
     public double getRotation() { return rotationSupplier.getAsDouble(); }
