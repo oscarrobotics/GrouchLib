@@ -35,9 +35,7 @@ public class DriveAxesSupplier {
         return -rightYSupplier.getAsDouble();
     }
 
-    public double getRightX() {
-        return -rightXSupplier.getAsDouble();
-    }
+    public double getRightX() { return -rightXSupplier.getAsDouble(); }
 
-    public double getRotation() { return rotationSupplier.getAsDouble(); }
+    public double getRotation() { return -rotationSupplier.getAsDouble(); }
 }
