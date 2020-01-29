@@ -33,10 +33,13 @@ public class Motor {
         kt = _stallTorque / _stallCurrent;
     }
 
+    public double getPredictiveCurent(double currentVolts, double currentRPM) {
+        return -1.0 / kv / r * currentRPM + 1.0 / r * currentVolts;
+    }
 
-    public double predictiveCurrentLimit(double currentV, double maxI, double currentRPM) {
-        double currentI = currentV / r - currentRPM / (kv * r);
-        double outputV = currentV;
+    public double predictiveCurrentLimit(double currentVolts, double maxI, double currentRPM) {
+        double currentI = getPredictiveCurent(currentVolts, currentRPM);
+        double outputV = currentVolts;
 
         if (currentI > maxI) {
             outputV = maxI * r + currentRPM / kv;
@@ -58,7 +61,7 @@ public class Motor {
     public static final Motor kMiniCIM = new Motor(5840, 3, 1.41, 89);
     public static final Motor kNEO = new Motor(5880, 1.3, 3.36, 166);
     public static final Motor kNEO550 = new Motor(11000, 1.4, 0.97, 100); 
-    public static final Motor kFalcon500 = new Motor(6380, 1.5, 4.69, 257); // TODO: Experimential values dont exist?
+    public static final Motor kFalcon500 = new Motor(6380, 1.5, 4.69, 257);
     public static final Motor kBAG = new Motor(13180, 1.8, 0.43, 53);
     public static final Motor k775Pro = new Motor(18730, 0.7, 0.71, 134);
     public static final Motor kAndyMark9015 = new Motor(14720, 3.7, 0.36, 71);
