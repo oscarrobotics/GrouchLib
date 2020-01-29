@@ -13,12 +13,6 @@ public interface SmartMC<B> extends SimpleMC<B> {
      */
     double getInputVoltage();
 
-    /**
-     * Gets the current output voltage of the controller.
-     *
-     * @return Output in Volts.
-     */
-    double getOutputVoltage();
 
     /**
      * Gets the input current of the controller.

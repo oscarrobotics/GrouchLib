@@ -8,15 +8,18 @@ import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
 import frc.team832.lib.motorcontrol2.SmartMC;
+import frc.team832.lib.motors.Motor;
 
 public class CANTalonFX extends PowerManagedMC<TalonFX> {
 
-    private TalonFX _talon;
+    private final TalonFX _talon;
+
     private ControlMode _ctrlMode;
     private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
     private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
 
-    public CANTalonFX(int canId){
+
+    public CANTalonFX(int canId) {
         _talon = new TalonFX(canId);
         _ctrlMode = ControlMode.Disabled;
 
@@ -24,7 +27,12 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon FX"));
     }
 
-@Override
+    @Override
+    public Motor getMotor() {
+        return Motor.kFalcon500;
+    }
+
+    @Override
     public void follow(SmartMC masterMC) {
         _ctrlMode = ControlMode.Follower;
         _talon.set(_ctrlMode, masterMC.getCANID());

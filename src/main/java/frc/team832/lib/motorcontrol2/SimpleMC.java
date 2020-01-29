@@ -1,5 +1,7 @@
 package frc.team832.lib.motorcontrol2;
 
+import frc.team832.lib.motors.Motor;
+
 public interface SimpleMC<B> {
 
     /**
@@ -20,5 +22,14 @@ public interface SimpleMC<B> {
 
     boolean getInverted();
 
+    Motor getMotor();
+
     B getBaseController();
+
+    /**
+     * Gets the current output voltage of the controller.
+     *
+     * @return Output in Volts.
+     */
+    double getOutputVoltage();
 }
