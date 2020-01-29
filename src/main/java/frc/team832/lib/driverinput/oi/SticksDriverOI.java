@@ -8,8 +8,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Vector;
 
-@SuppressWarnings({"WeakerAccess", "SuspiciousNameCombination"})
-public class SticksDriverOI implements DriverOI<Attack3, Extreme3DPro> {
+public class SticksDriverOI implements DriverOI {
 
     public static final Vector<HIDControllerType> requiredControllers = new Vector<>(Arrays.asList(HIDControllerType.kAttack3, HIDControllerType.kExtreme3DPro));
 
@@ -40,14 +39,4 @@ public class SticksDriverOI implements DriverOI<Attack3, Extreme3DPro> {
     }
 
     public DriveAxesSupplier getGreenbergDriveAxes() { return greenbergDriveAxes; }
-
-    @Override
-    public Optional<Attack3> getFirstController() {
-        return Optional.ofNullable(leftStick);
-    }
-
-    @Override
-    public Optional<Extreme3DPro> getSecondController() {
-        return Optional.ofNullable(rightStick);
-    }
 }

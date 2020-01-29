@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Vector;
 
 @SuppressWarnings("WeakerAccess")
-public class XboxDriverOI implements DriverOI<Xbox360Controller, Void> {
+public class XboxDriverOI implements DriverOI {
 
     public static final Vector<HIDControllerType> requiredControllers = new Vector<>(Collections.singletonList(HIDControllerType.kXbox360Controller));
 
@@ -17,12 +17,14 @@ public class XboxDriverOI implements DriverOI<Xbox360Controller, Void> {
 
     private final DriveAxesSupplier tankDriveAxes;
     private final DriveAxesSupplier arcadeDriveAxes;
+    private final DriveAxesSupplier greenbergDriveAxes;
 
     public XboxDriverOI() {
         xbox = new Xbox360Controller(0);
 
         tankDriveAxes = new DriveAxesSupplier(() -> xbox.getY(GenericHID.Hand.kLeft), () -> xbox.getY(GenericHID.Hand.kRight));
         arcadeDriveAxes = new DriveAxesSupplier(() -> xbox.getY(GenericHID.Hand.kLeft), () -> xbox.getX(GenericHID.Hand.kRight));
+        greenbergDriveAxes = new DriveAxesSupplier(() -> xbox.getY(GenericHID.Hand.kLeft), () -> xbox.getX(GenericHID.Hand.kRight));
     }
 
     @Override
@@ -36,15 +38,7 @@ public class XboxDriverOI implements DriverOI<Xbox360Controller, Void> {
     }
 
     @Override
-    public DriveAxesSupplier getGreenbergDriveAxes() { return null; }
-
-    @Override
-    public Optional<Xbox360Controller> getFirstController() {
-        return Optional.ofNullable(xbox);
-    }
-
-    @Override
-    public Optional<Void> getSecondController() {
-        return Optional.empty();
+    public DriveAxesSupplier getGreenbergDriveAxes() {
+        return greenbergDriveAxes;
     }
 }

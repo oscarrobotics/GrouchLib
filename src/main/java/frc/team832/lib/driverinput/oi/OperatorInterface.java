@@ -38,14 +38,4 @@ public class OperatorInterface {
             attachedControllers.set(index, newController);
         }
     }
-
-    public static DriverOI getDriverOIForAttached() {
-        // TODO: check that this also matches indexes
-        if (attachedControllers.containsAll(SticksDriverOI.requiredControllers)) {
-            return new SticksDriverOI();
-        } else if (attachedControllers.containsAll(XboxDriverOI.requiredControllers)) {
-            return new XboxDriverOI();
-        }
-        else return new EmptyDriverOI();
-    }
 }
