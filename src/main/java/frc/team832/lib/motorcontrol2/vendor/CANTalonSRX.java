@@ -8,13 +8,14 @@ import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
 import frc.team832.lib.motorcontrol2.SmartMC;
+import frc.team832.lib.motors.Motor;
 
 public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
     
-    private TalonSRX _talon;
+    private final TalonSRX _talon;
+    private final Motor _motor;
+
     private ControlMode _ctrlMode;
-    private double _allowableError = 0;
-    private double _openLoopSetpoint;
 
     private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
     private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
@@ -24,12 +25,20 @@ public class CANTalonSRX extends PowerManagedMC<TalonSRX> {
      * Create an OscarCANTalon at the specified CAN ID.
      * @param canId CAN ID of controller to attach.
      */
-    public CANTalonSRX(int canId) {
+    public CANTalonSRX(int canId, Motor motor) {
+        assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
+
+        _motor = motor;
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.PercentOutput;
 
         boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
         CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
+    }
+
+    @Override
+    public Motor getMotor() {
+        return _motor;
     }
 
     @Override

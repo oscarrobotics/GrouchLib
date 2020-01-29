@@ -1,9 +1,14 @@
 package frc.team832.lib.power;
 
 import frc.team832.lib.control.PDP;
+import frc.team832.lib.motorcontrol2.SimpleMC;
+import frc.team832.lib.motorcontrol2.SmartMC;
+import frc.team832.lib.power.impl.SimpleMCAttachedPDPSlot;
+import frc.team832.lib.power.impl.SmartMCAttachedPDPSlot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 public class GrouchPDP {
 
@@ -14,22 +19,51 @@ public class GrouchPDP {
         pdp = new PDP(pdpCANID);
     }
 
-    public GrouchPDP(PDP pdp) {
-        this.pdp = pdp;
-    }
-
     private boolean hasAssignedPort(PDPPortNumber port) {
         return ports.stream().anyMatch(p -> port == p.pdpPort);
     }
 
-    public void addDevice(PDPPortNumber portNumber) {
-        addDevice(portNumber, portNumber.maxBreaker);
+    public PDPSlot addDevice(PDPPortNumber portNumber) {
+        return addDevice(portNumber, portNumber.maxBreaker);
     }
 
-    public void addDevice(PDPPortNumber portNumber, PDPSlot.PDPBreaker breaker) {
+    public PDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker) {
         assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
         assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
 
-        PDPSlot newSlot = new PDPSlot(pdp, portNumber, breaker);
+        PDPSlot slot = new PDPSlot(pdp, portNumber, breaker);
+
+        ports.add(slot);
+        return slot;
+    }
+
+    public PDPSlot addDevice(PDPPortNumber portNumber, SimpleMC motorController,
+                             DoubleSupplier motorRPMSupplier) {
+        return addDevice(portNumber, portNumber.maxBreaker, motorController, motorRPMSupplier);
+    }
+
+    public SimpleMCAttachedPDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker, SimpleMC motorController,
+                             DoubleSupplier motorRPMSupplier) {
+        assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
+        assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
+
+        SimpleMCAttachedPDPSlot slot = new SimpleMCAttachedPDPSlot(pdp, portNumber, breaker, motorController, motorRPMSupplier);
+
+        ports.add(slot);
+        return slot;
+    }
+
+    public SmartMCAttachedPDPSlot addDevice(PDPPortNumber portNumber, SmartMC motorController) {
+        return addDevice(portNumber, portNumber.maxBreaker, motorController);
+    }
+
+    public SmartMCAttachedPDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker, SmartMC motorController) {
+        assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
+        assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
+
+        SmartMCAttachedPDPSlot slot = new SmartMCAttachedPDPSlot(pdp, portNumber, breaker, motorController);
+
+        ports.add(slot);
+        return slot;
     }
 }

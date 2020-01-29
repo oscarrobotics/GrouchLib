@@ -8,6 +8,7 @@ import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
 import frc.team832.lib.motorcontrol2.SmartMC;
+import frc.team832.lib.motors.Motor;
 
 import static com.revrobotics.CANSparkMax.*;
 
@@ -16,14 +17,26 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
     private final com.revrobotics.CANSparkMax _spark;
     private final CANEncoder _encoder;
     private final CANPIDController _pid;
+    private final Motor _motor;
 
-    public CANSparkMax(int canId, CANSparkMaxLowLevel.MotorType motorType) {
+    public CANSparkMax(int canId, Motor motor) {
+        assert motor != Motor.kFalcon500 : "Invalid motor for CANSparkMax!";
+
+        _motor = motor;
+
+        MotorType motorType = motor == Motor.kNEO || motor == Motor.kNEO550 ? MotorType.kBrushless : MotorType.kBrushed;
+
         _spark = new com.revrobotics.CANSparkMax(canId, motorType);
         _encoder = _spark.getEncoder();
         _pid = _spark.getPIDController();
 
         boolean onBus = !_spark.getFirmwareString().equals("");
         CANDevice.addDevice(new CANDevice(canId, onBus, "SparkMax"));
+    }
+
+    @Override
+    public Motor getMotor() {
+        return _motor;
     }
 
     @Override
