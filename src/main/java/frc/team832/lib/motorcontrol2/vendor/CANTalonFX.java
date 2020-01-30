@@ -35,7 +35,13 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     @Override
     public void follow(SmartMC masterMC) {
         _ctrlMode = ControlMode.Follower;
-        _talon.set(_ctrlMode, masterMC.getCANID());
+        if (masterMC instanceof  CANTalonFX) {
+            _talon.follow(((CANTalonFX) masterMC).getBaseController());
+        } else if (masterMC instanceof CANTalonSRX) {
+            _talon.follow(((CANTalonSRX) masterMC).getBaseController());
+        } else {
+            _talon.set(_ctrlMode, masterMC.getCANID());
+        }
     }
 
     @Override
@@ -114,6 +120,7 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
 
     @Override
     public void set(double power) {
+        _ctrlMode = ControlMode.PercentOutput;
         _talon.set(_ctrlMode, power);
     }
 
