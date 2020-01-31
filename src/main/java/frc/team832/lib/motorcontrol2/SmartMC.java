@@ -1,6 +1,7 @@
 package frc.team832.lib.motorcontrol2;
 
 import frc.team832.lib.motorcontrol.NeutralMode;
+import frc.team832.lib.util.ClosedLoopConfig;
 
 public interface SmartMC<B> extends SimpleMC<B> {
 
@@ -52,4 +53,6 @@ public interface SmartMC<B> extends SimpleMC<B> {
     void setEncoderPosition(double position);
 
     void setSensorPhase(boolean phase);
+
+    void setPIDF(ClosedLoopConfig closedLoopConfig);
 }

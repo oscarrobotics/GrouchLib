@@ -9,6 +9,7 @@ import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
 import frc.team832.lib.motorcontrol2.SmartMC;
 import frc.team832.lib.motors.Motor;
+import frc.team832.lib.util.ClosedLoopConfig;
 
 import static com.revrobotics.CANSparkMax.*;
 
@@ -130,4 +131,12 @@ public class CANSparkMax extends PowerManagedMC<com.revrobotics.CANSparkMax> {
 
     @Override
     public com.revrobotics.CANSparkMax getBaseController() { return _spark; }
+
+    @Override
+    public void setPIDF(ClosedLoopConfig closedLoopConfig) {
+        _pid.setP(closedLoopConfig.getkP());
+        _pid.setI(closedLoopConfig.getkI());
+        _pid.setD(closedLoopConfig.getkD());
+        _pid.setFF(closedLoopConfig.getkF());
+    }
 }

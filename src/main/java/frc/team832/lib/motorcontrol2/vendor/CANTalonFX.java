@@ -9,6 +9,7 @@ import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.PowerManagedMC;
 import frc.team832.lib.motorcontrol2.SmartMC;
 import frc.team832.lib.motors.Motor;
+import frc.team832.lib.util.ClosedLoopConfig;
 
 public class CANTalonFX extends PowerManagedMC<TalonFX> {
 
@@ -147,5 +148,13 @@ public class CANTalonFX extends PowerManagedMC<TalonFX> {
     @Override
     public TalonFX getBaseController() {
         return _talon;
+    }
+
+    @Override
+    public void setPIDF(ClosedLoopConfig closedLoopConfig) {
+        _talon.config_kP(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkP());
+        _talon.config_kI(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkI());
+        _talon.config_kD(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkD());
+        _talon.config_kF(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkF());
     }
 }
