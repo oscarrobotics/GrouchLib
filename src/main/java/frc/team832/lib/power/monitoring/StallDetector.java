@@ -1,6 +1,7 @@
 package frc.team832.lib.power.monitoring;
 
 import edu.wpi.first.wpilibj.MedianFilter;
+import frc.team832.lib.power.PDPPortNumber;
 import frc.team832.lib.power.PDPSlot;
 
 public class StallDetector {
@@ -25,7 +26,7 @@ public class StallDetector {
         this.minStallMillis = minStallMillis;
     }
 
-    public StallDetectorStatus getStallStatus() {
+    public void updateStallStatus() {
         double currentCurrent = currentFilter.calculate(slot.getCurrentUsage());
         long nowMillis = System.currentTimeMillis();
         long elapsed = nowMillis - lastRunMillis;
@@ -40,7 +41,9 @@ public class StallDetector {
 
         stallStatus.isStalled = stallMillis >= minStallMillis;
         stallStatus.stalledForMillis = (int) stallMillis;
+    }
 
+    public StallDetectorStatus getStallStatus() {
         return stallStatus;
     }
 }

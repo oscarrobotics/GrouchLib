@@ -8,7 +8,7 @@ public class PDPSlot {
     final PDPPortNumber pdpPort;
     private final PDPBreaker breaker;
 
-    protected PDPSlot(PDP pdp, PDPPortNumber portNumber, PDPBreaker breaker) {
+    public PDPSlot(PDP pdp, PDPPortNumber portNumber, PDPBreaker breaker) {
         this.pdp = pdp;
         this.pdpPort = portNumber;
         this.breaker = breaker;
