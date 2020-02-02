@@ -66,4 +66,6 @@ public class GrouchPDP {
         ports.add(slot);
         return slot;
     }
+
+    public PDP getBasePDP() { return pdp; }
 }
