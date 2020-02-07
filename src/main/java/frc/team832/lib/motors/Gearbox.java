@@ -2,7 +2,7 @@ package frc.team832.lib.motors;
 
 public class Gearbox {
     private final float[] _reductions;
-    private float _totalReduction;
+    private final float _totalReduction;
 
     public Gearbox(float... reductions) {
         _reductions = reductions.clone();
@@ -13,8 +13,20 @@ public class Gearbox {
         _totalReduction = tempVal;
     }
 
-    public float getReduction(int index) {
-            return _reductions[index];
+    public Gearbox(GearReduction... reductions) {
+        _reductions = new float[reductions.length];
+
+        float tempVal = 1;
+
+        for (int i = 0; i < reductions.length; i++) {
+            _reductions[i] = reductions[i].getReduction();
+            tempVal = tempVal * _reductions[i];
+        }
+        _totalReduction = tempVal;
+    }
+
+    protected float getReduction(int index) {
+        return _reductions[index];
     }
 
     public float getTotalReduction() {

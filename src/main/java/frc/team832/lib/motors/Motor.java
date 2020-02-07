@@ -33,12 +33,12 @@ public class Motor {
         kt = _stallTorque / _stallCurrent;
     }
 
-    public double getPredictiveCurent(double currentVolts, double currentRPM) {
+    public double getPredictiveCurrent(double currentVolts, double currentRPM) {
         return -1.0 / kv / r * currentRPM + 1.0 / r * currentVolts;
     }
 
     public double predictiveCurrentLimit(double currentVolts, double maxI, double currentRPM) {
-        double currentI = getPredictiveCurent(currentVolts, currentRPM);
+        double currentI = getPredictiveCurrent(currentVolts, currentRPM);
         double outputV = currentVolts;
 
         if (currentI > maxI) {

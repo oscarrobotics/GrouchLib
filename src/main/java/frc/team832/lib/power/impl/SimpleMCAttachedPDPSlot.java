@@ -21,6 +21,6 @@ public class SimpleMCAttachedPDPSlot extends PDPSlot {
 
     @Override
     public double getCurrentUsage() {
-        return motorController.getMotor().getPredictiveCurent(motorController.getOutputVoltage(), motorRPMSupplier.getAsDouble());
+        return motorController.getMotor().getPredictiveCurrent(motorController.getOutputVoltage(), motorRPMSupplier.getAsDouble());
     }
 }
