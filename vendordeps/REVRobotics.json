@@ -33,11 +33,11 @@
     ],
     "cppDependencies": [
         {
+            "groupId": "com.revrobotics.frc",
             "artifactId": "SparkMax-cpp",
             "version": "1.5.1",
             "libName": "SparkMax",
             "headerClassifier": "headers",
-            "libName": "SparkMax",
             "sharedLibrary": false,
             "skipInvalidPlatforms": true,
             "binaryPlatforms": [
@@ -50,11 +50,11 @@
             ]
         },
         {
+            "groupId": "com.revrobotics.frc",
             "artifactId": "SparkMax-driver",
             "version": "1.5.1",
             "libName": "SparkMaxDriver",
             "headerClassifier": "headers",
-            "libName": "SparkMaxDriver",
             "sharedLibrary": false,
             "skipInvalidPlatforms": true,
             "binaryPlatforms": [
@@ -66,12 +66,5 @@
                 "linuxraspbian"
             ]
         }
-    ],
-    "jsonUrl": "http://www.revrobotics.com/content/sw/max/sdk/REVRobotics.json",
-    "mavenUrls": [
-        "http://www.revrobotics.com/content/sw/max/sdk/maven/"
-    ],
-    "name": "REVRobotics",
-    "uuid": "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
-    "version": "1.5.1"
+    ]
 }
