@@ -1,10 +1,8 @@
 package frc.team832.lib.drive;
 
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-import frc.team832.lib.motorcontrol.base.SmartCANMC;
-import frc.team832.lib.motorcontrol.vendor.CANSparkMax;
 import frc.team832.lib.motorcontrol2.SmartMC;
 import frc.team832.lib.util.OscarMath;
 
@@ -16,19 +14,21 @@ public class SmartDiffDrive implements Sendable {
 
 	private double _maxOutput = 1;
 	private double _deadband = 0.02;
-	private int _maxRpm;
 
-	private SmartMC _leftMotor;
-	private SmartMC _rightMotor;
+	private final SmartMC _leftMotor;
+	private final SmartMC _rightMotor;
+	private final ClosedLoopDT _closedLoopDT;
+	private final int _maxMotorRPM;
 
 	private double m_quickStopThreshold = kDefaultQuickStopThreshold;
 	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
 	private double m_quickStopAccumulator = 0.0;
 
-	public SmartDiffDrive(SmartMC leftMotor, SmartMC rightMotor, int maxRpm) {
+	public SmartDiffDrive(SmartMC leftMotor, SmartMC rightMotor, ClosedLoopDT closedLoopDT, int maxRPM) {
 		_leftMotor = leftMotor;
 		_rightMotor = rightMotor;
-		_maxRpm = maxRpm;
+		_closedLoopDT = closedLoopDT;
+		_maxMotorRPM = maxRPM;
 	}
 
 	@Override
@@ -40,7 +40,6 @@ public class SmartDiffDrive implements Sendable {
 		builder.addDoubleProperty("Right Speed", _rightMotor::getSensorVelocity, null);
 		builder.addDoubleProperty("Left Pos", _leftMotor::getSensorPosition, null);
 		builder.addDoubleProperty("Right Pos", _rightMotor::getSensorPosition, null);
-		builder.addDoubleProperty("Max Velocity", this::getMaxRPM, null);
 	}
 
 	public void setMaxOutput(double maxOutput) {
@@ -62,17 +61,11 @@ public class SmartDiffDrive implements Sendable {
 		POSITION
 	}
 
-	public int getMaxRPM() { return _maxRpm; }
-
-	public void setMaxRPM(int rpm) {
-		_maxRpm = OscarMath.clip(rpm, 500, 5600);
-	}
-
 	public boolean isQuickTurning() {
 		return _quickTurning;
 	}
 
-	protected double applyDeadband(double value) {
+	private double applyDeadband(double value) {
 		if (Math.abs(value) > _deadband) {
 			if (value > 0.0) {
 				return (value - _deadband) / (1.0 - _deadband);
@@ -105,6 +98,20 @@ public class SmartDiffDrive implements Sendable {
 	 * @param squaredInputs If set, decreases the input sensitivity at low speeds.
 	 */
 	public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode) {
+		arcadeDrive(xSpeed, zRotation, squaredInputs, loopMode, false);
+	}
+
+	/**
+	 * Arcade drive method for differential drive platform.
+	 *
+	 * @param xSpeed        The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
+	 * @param zRotation     The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
+	 *                      positive.
+	 * @param squaredInputs If set, decreases the input sensitivity at low speeds.
+	 *
+	 * @param isFF 			Determines whether or not to use the SimpleMotorFeedForward
+	 */
+	public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs, LoopMode loopMode, boolean isFF) {
 		xSpeed = OscarMath.clip(xSpeed, -1, 1);
 		xSpeed = applyDeadband(xSpeed);
 
@@ -147,22 +154,51 @@ public class SmartDiffDrive implements Sendable {
 		switch (loopMode) {
 			case POSITION:
 			case PERCENTAGE:
-				_leftMotor.set(leftMotorOutput);
-				_rightMotor.set(-rightMotorOutput);
+				if (isFF) {
+					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.set(leftMotorOutput);
+					_rightMotor.set(rightMotorOutput);
+				}
 				break;
 			case VELOCITY:
-				_leftMotor.setVelocity(leftMotorOutput * _maxRpm);
-				_rightMotor.setVelocity(rightMotorOutput * _maxRpm);
+				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
+				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
+
+				double leftMotorFF = 0;
+				double rightMotorFF = 0;
+
+				if (isFF) {
+					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+				}
+
+				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
 
-	public void curvatureDrive(double xSpeed, double zRotation) {
-		curvatureDrive(xSpeed, zRotation, true);
-	}
-
-	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
-		curvatureDrive(xSpeed, zRotation, isQuickTurn, LoopMode.PERCENTAGE);
+	/**
+	 * Curvature drive method for differential drive platform.
+	 *
+	 * <p>The rotation argument controls the curvature of the robot's path rather than its rate of
+	 * heading change. This makes the robot more controllable at high speeds. Also handles the
+	 * robot's quick turn functionality - "quick turn" overrides constant-curvature turning for
+	 * turn-in-place maneuvers.
+	 *
+	 * @param xSpeed      The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
+	 * @param zRotation   The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
+	 *                    positive.
+	 */
+	public void curvatureDrive(double xSpeed, double zRotation, LoopMode loopMode) {
+		curvatureDrive(xSpeed, zRotation, loopMode);
 	}
 
 	/**
@@ -180,6 +216,26 @@ public class SmartDiffDrive implements Sendable {
 	 *                    turn-in-place maneuvers.
 	 */
 	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode) {
+		curvatureDrive(xSpeed, zRotation, isQuickTurn, loopMode, false);
+	}
+
+	/**
+	 * Curvature drive method for differential drive platform.
+	 *
+	 * <p>The rotation argument controls the curvature of the robot's path rather than its rate of
+	 * heading change. This makes the robot more controllable at high speeds. Also handles the
+	 * robot's quick turn functionality - "quick turn" overrides constant-curvature turning for
+	 * turn-in-place maneuvers.
+	 *
+	 * @param xSpeed      The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
+	 * @param zRotation   The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
+	 *                    positive.
+	 * @param isQuickTurn If set, overrides constant-curvature turning for
+	 *                    turn-in-place maneuvers.
+	 *
+	 * @param isFF 		  Determines whether or not to use the SimpleMotorFeedForward
+	 */
+	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, LoopMode loopMode, boolean isFF) {
 		xSpeed = OscarMath.clip(xSpeed, -1, 1);
 		xSpeed = applyDeadband(xSpeed);
 
@@ -243,12 +299,33 @@ public class SmartDiffDrive implements Sendable {
 		switch (loopMode) {
 			case POSITION:
 			case PERCENTAGE:
-				_leftMotor.set(leftMotorOutput);
-				_rightMotor.set(rightMotorOutput);
+				if (isFF) {
+					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.set(leftMotorOutput);
+					_rightMotor.set(rightMotorOutput);
+				}
 				break;
 			case VELOCITY:
-				_leftMotor.setVelocity(leftMotorOutput * _maxRpm);
-				_rightMotor.setVelocity(rightMotorOutput * _maxRpm);
+				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
+				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
+
+				double leftMotorFF = 0;
+				double rightMotorFF = 0;
+
+				if (isFF) {
+					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+				}
+
+				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
@@ -276,6 +353,21 @@ public class SmartDiffDrive implements Sendable {
 	 * @param squaredInputs If set, decreases the input sensitivity at low speeds.
 	 */
 	public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs, LoopMode loopMode) {
+		tankDrive(leftSpeed, rightSpeed, squaredInputs, loopMode, false);
+	}
+
+	/**
+	 * Tank drive method for differential drive platform.
+	 *
+	 * @param leftSpeed     The robot left side's speed along the X axis [-1.0..1.0]. Forward is
+	 *                      positive.
+	 * @param rightSpeed    The robot right side's speed along the X axis [-1.0..1.0]. Forward is
+	 *                      positive.
+	 * @param squaredInputs If set, decreases the input sensitivity at low speeds.
+	 *
+	 * @param isFF 			Determines whether or not to use the SimpleMotorFeedForward
+	 */
+	public void tankDrive(double leftSpeed, double rightSpeed, boolean squaredInputs, LoopMode loopMode, boolean isFF) {
 		leftSpeed = OscarMath.clip(leftSpeed, -1, 1);
 		leftSpeed = applyDeadband(leftSpeed);
 
@@ -295,12 +387,33 @@ public class SmartDiffDrive implements Sendable {
 		switch (loopMode) {
 			case POSITION:
 			case PERCENTAGE:
-				_leftMotor.set(leftMotorOutput);
-				_rightMotor.set(rightMotorOutput);
+				if (isFF) {
+					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.set(leftMotorOutput);
+					_rightMotor.set(rightMotorOutput);
+				}
 				break;
 			case VELOCITY:
-				_leftMotor.setVelocity(leftMotorOutput * _maxRpm);
-				_rightMotor.setVelocity(rightMotorOutput * _maxRpm);
+				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
+				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
+				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
+
+				double leftMotorFF = 0;
+				double rightMotorFF = 0;
+
+				if (isFF) {
+					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+				}
+
+				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}

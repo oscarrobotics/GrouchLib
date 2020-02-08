@@ -29,13 +29,13 @@ public class DriveAxesSupplier {
         this.rotationSupplier = rotationSupplier;
     }
 
-    public double getLeftY() { return -leftYSupplier.getAsDouble(); }
+    public double getLeftY() { return leftYSupplier.getAsDouble(); }
 
     public double getRightY() {
-        return -rightYSupplier.getAsDouble();
+        return rightYSupplier.getAsDouble();
     }
 
     public double getRightX() { return -rightXSupplier.getAsDouble(); }
 
-    public double getRotation() { return -rotationSupplier.getAsDouble(); }
+    public double getRotation() { return rotationSupplier.getAsDouble(); }
 }

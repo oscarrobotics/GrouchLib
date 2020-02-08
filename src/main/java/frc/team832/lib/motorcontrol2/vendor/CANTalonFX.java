@@ -123,9 +123,10 @@ public class CANTalonFX implements SmartMC<TalonFX> {
     }
 
     @Override
-    public void setVelocity(double v) {
+    public void setVelocity(double velocityRPM) {
         if (_onBus) {
-            _talon.configMotionCruiseVelocity((int) v);
+            _ctrlMode = ControlMode.Velocity;
+            _talon.set(_ctrlMode, velocityRPM);
         }
     }
 
