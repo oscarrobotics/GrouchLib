@@ -44,7 +44,7 @@ public class DTPowertrainTest {
     @Test
     public void motorSpeedTest(){
         double expectedMotorSpeed = 5412;
-        double actualMotorSpeed = OscarMath.round(wheeledPowerTrain.calculateMotorSpeed(3.75), 0);
+        double actualMotorSpeed = OscarMath.round(wheeledPowerTrain.calculateMotorRpmFromSurfaceSpeed(3.75), 0);
 
         assertEquals("Feet Per Second FAIL", expectedMotorSpeed, actualMotorSpeed, 0);
     }
