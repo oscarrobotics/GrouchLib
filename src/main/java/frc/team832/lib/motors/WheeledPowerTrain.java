@@ -28,22 +28,18 @@ public class WheeledPowerTrain extends Powertrain {
         }
     }
 
+    public double getWheelCircumferenceMeters() {
+        return _wheelDiameterMeters * Math.PI;
+    }
+
     public int getWheelTicksPerRev(int encoderCPR) {
         return (int) (encoderCPR * _encoderRatio * _wheelDiameterMeters);
     }
 
-    public double getWheelRpm(double currentRpm) {
-        return _encoderRatio * currentRpm;
-    }
+    public double getWheelRpm(double currentRpm) { return _encoderRatio * currentRpm; }
 
     public double calculateMotorRpmFromWheelRpm(double targetRpm) {
         return targetRpm / _encoderRatio;
-    }
-
-    public double calculateMotorRpmFromSurfaceSpeed (double surfaceSpeedMetersPersec) { return (surfaceSpeedMetersPersec * 60f) / (Math.PI * _wheelDiameterMeters); }
-
-    public double getWheelCircumferenceMeters() {
-        return _wheelDiameterMeters * Math.PI;
     }
 
     public double calculateWheelDistanceMeters(double encoderRotations) {
@@ -58,8 +54,8 @@ public class WheeledPowerTrain extends Powertrain {
         return calculateMetersPerSec(currentRpm) * METERS_SEC_TO_FEET_SEC;
     }
 
-    public double calculateMotorSpeed(double wheelMetersPerSec) {
-        return wheelMetersPerSec * 60 / (_wheelDiameterMeters * Math.PI * _encoderRatio);
+    public double calculateMotorRpmFromSurfaceSpeed(double wheelMetersPerSec) {
+        return wheelMetersPerSec * 60f / (_wheelDiameterMeters * Math.PI * _encoderRatio);
     }
 
     public double calculateTicksFromPosition(double targetPosition) {
