@@ -117,9 +117,7 @@ public class StratComInterface extends GenericHID {
     @Override
     public double getY(Hand hand) { return getRawAxis(1); }
 
-    public double getLeftSlider() {
-        return getX();
-    }
+    public double getLeftSlider() { return getX(); }
 
     public double getRightSlider() {
         return getY();
