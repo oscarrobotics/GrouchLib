@@ -165,4 +165,21 @@ public class OscarMathTest {
 
         assertEquals("SignumPow \"double\" failed!", expectedResult, actualResult, 0);
     }
+
+    @Test
+    public void keepSignedPowTest() {
+        double value1 = -0.5;
+        double value2 = 0.5;
+
+        double power = 1.5;
+
+        double expectedResult1 = -0.3535533905932738;
+        double expectedResult2 = 0.3535533905932738;
+
+        double actualResult1 = OscarMath.keepSignedPow(value1, power);
+        double actualResult2 = OscarMath.keepSignedPow(value2, power);
+
+        assertEquals("KeepSignedPow failed!", expectedResult1, actualResult1, 0);
+        assertEquals("KeepSignedPow failed!", expectedResult2, actualResult2, 0);
+    }
 }
