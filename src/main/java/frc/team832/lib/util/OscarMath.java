@@ -53,4 +53,20 @@ public class OscarMath {
     public static double signumPow(double value, double power) {
         return Math.copySign(Math.pow(value, power), value);
     }
+
+    public static double keepSignedPow(double input, double exponent) {
+        if (input > 0.0) {
+            var output = Math.pow(input, exponent);
+            if (output < 0.0) return -output;
+            return output;
+        }
+
+        if (input < 0.0) {
+            var output = Math.pow(-input, exponent);
+            if (output > 0) return -output;
+            return output;
+        }
+
+        return 0.0;
+    }
 }
