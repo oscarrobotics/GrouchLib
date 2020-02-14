@@ -2,8 +2,13 @@ package frc.team832.lib.sensors.analog;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.MedianFilter;
+import frc.team832.lib.sensors.base.DistanceSensor;
 
-public class SHARPDistance {
+@SuppressWarnings({"SameParameterValue", "unused", "WeakerAccess"})
+public class SHARPDistance extends DistanceSensor {
+
+    private static final double kMinRangeMeters = 0.1;
+    private static final double kMaxRangeMeters = 1.5;
 
     private enum FitType {
         FIT_POLY,
@@ -17,7 +22,6 @@ public class SHARPDistance {
     private float[] polyCoeffs = new float[6];
     private float powerCoeffC, powerCoeffP;
     private int valMin, valMax;
-
     private static final float[] SZLF_Coeffs = {1734, -9.005f, 2.023E-2f, -2.251E-5f, 1.167E-8f, 2.037E-12f};
 
     /**
@@ -27,6 +31,7 @@ public class SHARPDistance {
      * @param medianFilterSize Size of the MedianFilter to reduce noise
      */
     public SHARPDistance(int channel, int medianFilterSize) {
+        super(kMinRangeMeters, kMaxRangeMeters);
         this.analog = new AnalogInput(channel);
         filter = new MedianFilter(medianFilterSize);
         setPolyFitCoeffs(SZLF_Coeffs, 30, 875);
@@ -69,7 +74,8 @@ public class SHARPDistance {
         return analog.getValue();
     }
 
-    public double getDistance() {
+    @Override
+    public double getDistanceMeters() {
         return read();
     }
 }
