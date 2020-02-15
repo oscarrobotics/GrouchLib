@@ -33,7 +33,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
         _encoder = _spark.getEncoder();
         _pid = _spark.getPIDController();
 
-        _onBus = !_spark.getFirmwareString().equals("");
+        _onBus = !_spark.getFirmwareString().equalsIgnoreCase("v0.0.0");
         CANDevice.addDevice(new CANDevice(canID, _onBus, "SparkMax"));
     }
 
