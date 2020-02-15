@@ -31,9 +31,7 @@ public abstract class ChameleonVisionSubsystem extends VisionSubsystemBase {
 	}
 
 	@Override
-	public NetworkTableEntry getAreaEntry () {
-		return areaEntry;
-	}
+	public NetworkTableEntry getAreaEntry () { return areaEntry; }
 
 	@Override
 	public NetworkTableEntry getPitchEntry () {
