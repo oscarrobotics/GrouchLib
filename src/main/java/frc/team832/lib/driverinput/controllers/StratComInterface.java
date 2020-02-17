@@ -29,8 +29,8 @@ public class StratComInterface extends GenericHID {
         ArcadeWhiteLeft(14),
         ArcadeWhiteRight(15),
         SingleToggle(16),
-        DoubleToggleUp(17),
-        DoubleToggleDown(18),
+        DoubleToggleDown(17),
+        DoubleToggleUp(18),
         KeySwitch(19);
 
         public final int index;
