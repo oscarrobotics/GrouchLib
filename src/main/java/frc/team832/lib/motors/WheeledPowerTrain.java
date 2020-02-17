@@ -42,6 +42,10 @@ public class WheeledPowerTrain extends Powertrain {
         return targetRpm / _encoderRatio;
     }
 
+    public double calculateTicksFromWheelDistance(double distanceMeters) {
+        return calculateTicksFromPosition(distanceMeters / (Math.PI * _wheelDiameterMeters));
+    }
+
     public double calculateWheelDistanceMeters(double encoderRotations) {
         return encoderRotations * _encoderRatio * getWheelCircumferenceMeters();
     }
