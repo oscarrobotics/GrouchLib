@@ -1,7 +1,6 @@
 package frc.team832.lib.drive;
 
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.team832.lib.motorcontrol2.SmartMC;
 import frc.team832.lib.util.OscarMath;
@@ -179,8 +178,8 @@ public class SmartDiffDrive implements Sendable {
 					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
 				}
 
-				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
+				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
@@ -324,8 +323,8 @@ public class SmartDiffDrive implements Sendable {
 					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
 				}
 
-				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
+				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
@@ -412,8 +411,8 @@ public class SmartDiffDrive implements Sendable {
 					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
 				}
 
-				_leftMotor.setVelocity(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.setVelocity(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
+				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
+				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}

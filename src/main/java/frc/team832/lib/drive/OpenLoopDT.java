@@ -20,6 +20,6 @@ public class OpenLoopDT {
     }
 
     public void setFFAccel(double accel) {
-        ffAcceleration=accel;
+        ffAcceleration = accel;
     }
 }
