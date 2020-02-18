@@ -1,8 +1,11 @@
 package frc.team832.lib.motorcontrol2.vendor;
 
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.SmartMC;
@@ -117,9 +120,37 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
     }
 
     @Override
-    public void setVelocity(double v) {
+    public void setMotionProfileVelocity(double velocityPerSec) {
         if (_onBus) {
-            _talon.configMotionCruiseVelocity((int) v);
+            _talon.configMotionCruiseVelocity((int) (velocityPerSec / 10));
+        }
+    }
+
+    @Override
+    public void setTargetVelocity(double target) {
+        if (_onBus) {
+            _talon.set(ControlMode.Velocity, target);
+        }
+    }
+
+    @Override
+    public void setTargetVelocity(double target, double arbFF) {
+        if (_onBus) {
+            _talon.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, arbFF);
+        }
+    }
+
+    @Override
+    public void setTargetPosition(double target) {
+        if (_onBus) {
+            _talon.set(ControlMode.Position, target);
+        }
+    }
+
+    @Override
+    public void setTargetPosition(double target, double arbFF) {
+        if (_onBus) {
+            _talon.set(ControlMode.Position, target, DemandType.ArbitraryFeedForward, arbFF);
         }
     }
 
@@ -127,13 +158,6 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
     public void rezeroSensor() {
         if (_onBus) {
             _talon.setSelectedSensorPosition(0);
-        }
-    }
-
-    @Override
-    public void setEncoderPosition(double position) {
-        if (_onBus) {
-            _talon.setSelectedSensorPosition((int) position);
         }
     }
 

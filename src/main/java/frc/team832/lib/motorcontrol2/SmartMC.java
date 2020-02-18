@@ -1,5 +1,7 @@
 package frc.team832.lib.motorcontrol2;
 
+import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.util.ClosedLoopConfig;
 
@@ -46,11 +48,17 @@ public interface SmartMC<B> extends SimpleMC<B> {
 
     double getSensorVelocity();
 
-    void setVelocity(double v);
+    void setMotionProfileVelocity(double velocity);
 
     void rezeroSensor();
 
-    void setEncoderPosition(double position);
+    void setTargetPosition(double target);
+
+    void setTargetPosition(double target, double arbFF);
+
+    void setTargetVelocity(double target);
+
+    void setTargetVelocity(double target, double arbFF);
 
     void setSensorPhase(boolean phase);
 

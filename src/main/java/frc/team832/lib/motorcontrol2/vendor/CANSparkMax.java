@@ -122,15 +122,9 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
-    public void setVelocity(double v) {
+    public void setMotionProfileVelocity(double velocity) {
         if (_onBus) {
-            _pid.setSmartMotionMaxVelocity(v, _spark.getDeviceId());
-        }
-    }
-
-    public void setEncoderPosition(double pos) {
-        if (_onBus) {
-            _pid.setReference(pos, ControlType.kPosition);
+            _pid.setSmartMotionMaxVelocity(velocity, _spark.getDeviceId());
         }
     }
 
@@ -141,6 +135,46 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     public void rezeroSensor() {
         if (_onBus) {
             _encoder.setPosition(0);
+        }
+    }
+
+    public void setTargetVelocity(double target, double arbFF, CANPIDController.ArbFFUnits arbFFUnits) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kVelocity, 0, arbFF, arbFFUnits);
+        }
+    }
+
+    @Override
+    public void setTargetVelocity(double target, double arbFF) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kVelocity, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+        }
+    }
+
+    @Override
+    public void setTargetVelocity(double target) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kVelocity, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
+        }
+    }
+
+    public void setTargetPosition(double target, double arbFF, CANPIDController.ArbFFUnits arbFFUnits) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kPosition, 0, arbFF, arbFFUnits);
+        }
+    }
+
+    @Override
+    public void setTargetPosition(double target, double arbFF) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kPosition, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+        }
+    }
+
+    @Override
+    public void setTargetPosition(double target) {
+        if (_onBus) {
+            _pid.setReference(target, ControlType.kPosition, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
         }
     }
 
