@@ -33,6 +33,19 @@ public class CANDevice {
 		return new ArrayList<>(_canDevices.values());
 	}
 
+	public static void printMissingDevices() {
+		if (hasMissingDevices()) {
+			System.err.println("Missing CAN Devices!");
+			for (var device : getDevices()) {
+				if (!device._onBus) {
+					System.err.println(device.toString());
+				}
+			}
+		} else {
+			System.out.println("No missing CAN devices.");
+		}
+	}
+
 	@Override
 	public String toString() {
 		return String.format("Type: %12s. ID: %2d. On Bus: %5b.", _deviceName, _id, _onBus);

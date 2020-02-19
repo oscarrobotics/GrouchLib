@@ -3,15 +3,15 @@ package frc.team832.lib.drive;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import frc.team832.lib.motors.WheeledPowerTrain;
+import frc.team832.lib.util.ClosedLoopConfig;
 
 public class ClosedLoopDT extends OpenLoopDT {
-    public final PIDController leftController;
-    public final PIDController rightController;
+    public final ClosedLoopConfig rightConfig, leftConfig;
 
     public ClosedLoopDT(SimpleMotorFeedforward leftFeedforward, SimpleMotorFeedforward rightFeedforward,
-                        PIDController leftController, PIDController rightController, WheeledPowerTrain powerTrain) {
+                        ClosedLoopConfig leftConfig, ClosedLoopConfig rightConfig, WheeledPowerTrain powerTrain) {
         super(leftFeedforward, rightFeedforward, powerTrain);
-        this.leftController = leftController;
-        this.rightController = rightController;
+        this.leftConfig = leftConfig;
+        this.rightConfig = rightConfig;
     }
 }

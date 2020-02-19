@@ -165,21 +165,16 @@ public class SmartDiffDrive implements Sendable {
 				}
 				break;
 			case VELOCITY:
-				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
-				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
-				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
-
-				double leftMotorFF = 0;
-				double rightMotorFF = 0;
+				double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+				double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
 				if (isFF) {
-					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
-					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM, _closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM, _closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM);
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM);
 				}
-
-				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
@@ -310,21 +305,16 @@ public class SmartDiffDrive implements Sendable {
 				}
 				break;
 			case VELOCITY:
-				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
-				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
-				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
-
-				double leftMotorFF = 0;
-				double rightMotorFF = 0;
+				double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+				double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
 				if (isFF) {
-					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
-					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM, _closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM, _closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM);
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM);
 				}
-
-				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
@@ -398,21 +388,16 @@ public class SmartDiffDrive implements Sendable {
 				}
 				break;
 			case VELOCITY:
-				double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-				double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
-				double leftWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_leftMotor.getSensorVelocity());
-				double rightWheelMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(_rightMotor.getSensorVelocity());
-
-				double leftMotorFF = 0;
-				double rightMotorFF = 0;
+				double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+				double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
 				if (isFF) {
-					leftMotorFF = _closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
-					rightMotorFF = _closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel());
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM, _closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM, _closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
+				} else {
+					_leftMotor.setTargetVelocity(leftMotorTargetRPM);
+					_rightMotor.setTargetVelocity(rightMotorTargetRPM);
 				}
-
-				_leftMotor.set(_closedLoopDT.leftController.calculate(leftWheelMetersPerSecond, leftWheelTargetMetersPerSecond) + leftMotorFF);
-				_rightMotor.set(_closedLoopDT.rightController.calculate(rightWheelMetersPerSecond, rightWheelTargetMetersPerSecond) + rightMotorFF);
 				break;
 		}
 	}
