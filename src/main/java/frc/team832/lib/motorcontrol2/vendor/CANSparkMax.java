@@ -19,8 +19,6 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     private final CANPIDController _pid;
     private final Motor _motor;
 
-    private boolean _onBus;
-
     public CANSparkMax(int canID, Motor motor) {
         assert motor != Motor.kFalcon500 : "Invalid motor for CANSparkMax!";
 
@@ -33,8 +31,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
         _encoder = _spark.getEncoder();
         _pid = _spark.getPIDController();
 
-        _onBus = !_spark.getFirmwareString().equalsIgnoreCase("v0.0.0");
-        CANDevice.addDevice(new CANDevice(canID, _onBus, "SparkMax"));
+        CANDevice.addDevice(this, "Spark MAX");
     }
 
     @Override
@@ -44,7 +41,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
     @Override
     public void follow(SmartMC masterMC) {
-        if (_onBus) {
+        if (getCANConnection()) {
             if (masterMC instanceof CANSparkMax) {
                 _spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController());
             } else {
@@ -54,7 +51,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     }
 
     public void follow(SmartMC masterMC, boolean invert) {
-        if (_onBus) {
+        if (getCANConnection()) {
             if (masterMC instanceof CANSparkMax) {
                 _spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController(), invert);
             } else {
@@ -65,27 +62,27 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
     @Override
     public double getInputVoltage() {
-        return _onBus ? _spark.getBusVoltage() : Double.NaN;
+        return getCANConnection() ? _spark.getBusVoltage() : Double.NaN;
     }
 
     @Override
     public double getOutputVoltage() {
-        return _onBus ? _spark.getAppliedOutput() : Double.NaN;
+        return getCANConnection() ? _spark.getAppliedOutput() : Double.NaN;
     }
 
     @Override
     public double getInputCurrent() {
-        return _onBus ? _spark.getOutputCurrent() : Double.NaN; // todo: any way to do this?
+        return getCANConnection() ? _spark.getOutputCurrent() : Double.NaN; // todo: any way to do this?
     }
 
     @Override
     public double getOutputCurrent() {
-        return _onBus ? _spark.getOutputCurrent() : Double.NaN;
+        return getCANConnection() ? _spark.getOutputCurrent() : Double.NaN;
     }
 
     @Override
     public void setNeutralMode(NeutralMode mode) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.setIdleMode(mode == NeutralMode.kBrake ?
                     IdleMode.kBrake :
                     IdleMode.kCoast);
@@ -99,31 +96,31 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
     @Override
     public void wipeSettings() {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.restoreFactoryDefaults();
         }
     }
 
     @Override
     public void limitInputCurrent(int currentLimit) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.setSmartCurrentLimit(currentLimit);
         }
     }
 
     @Override
     public double getSensorPosition() {
-        return _onBus ? _encoder.getPosition() : Double.NaN;
+        return getCANConnection() ? _encoder.getPosition() : Double.NaN;
     }
 
     @Override
     public double getSensorVelocity() {
-        return _onBus ? _encoder.getVelocity() : Double.NaN;
+        return getCANConnection() ? _encoder.getVelocity() : Double.NaN;
     }
 
     @Override
     public void setMotionProfileVelocity(double velocity) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setSmartMotionMaxVelocity(velocity, _spark.getDeviceId());
         }
     }
@@ -133,80 +130,74 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
     @Override
     public void rezeroSensor() {
-        if (_onBus) {
+        if (getCANConnection()) {
             _encoder.setPosition(0);
         }
     }
 
     public void setTargetVelocity(double target, double arbFF, CANPIDController.ArbFFUnits arbFFUnits) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setReference(target, ControlType.kVelocity, 0, arbFF, arbFFUnits);
         }
     }
 
     @Override
     public void setTargetVelocity(double target, double arbFF) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setReference(target, ControlType.kVelocity, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
         }
     }
 
     @Override
     public void setTargetVelocity(double target) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setReference(target, ControlType.kVelocity, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
-        }
-    }
-
-    public void setTargetPosition(double target, double arbFF, CANPIDController.ArbFFUnits arbFFUnits) {
-        if (_onBus) {
-            _pid.setReference(target, ControlType.kPosition, 0, arbFF, arbFFUnits);
         }
     }
 
     @Override
     public void setTargetPosition(double target, double arbFF) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setReference(target, ControlType.kPosition, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
         }
     }
 
     @Override
     public void setTargetPosition(double target) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _pid.setReference(target, ControlType.kPosition, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
         }
     }
 
     @Override
     public void set(double power) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.set(power);
         }
     }
 
     @Override
     public double get() {
-        return _onBus ? _spark.getAppliedOutput() : Double.NaN;
+        return getCANConnection() ? _spark.getAppliedOutput() : Double.NaN;
     }
 
     @Override
     public void stop() {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.set(0);
         }
     }
 
     @Override
     public void setInverted(boolean inverted) {
-        if (_onBus) {
+        if (getCANConnection()) {
             _spark.setInverted(inverted);
         }
     }
 
     @Override
     public boolean getInverted() {
-        return _onBus && _spark.getInverted();
+        return getCANConnection() && _spark.getInverted();
     }
 
     @Override
@@ -218,5 +209,10 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
         _pid.setI(closedLoopConfig.getkI());
         _pid.setD(closedLoopConfig.getkD());
         _pid.setFF(closedLoopConfig.getkF());
+    }
+
+    @Override
+    public boolean getCANConnection() {
+        return !_spark.getFirmwareString().equalsIgnoreCase("v0.0.0");
     }
 }

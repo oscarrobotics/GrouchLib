@@ -1,5 +1,7 @@
 package frc.team832.lib;
 
+import frc.team832.lib.motorcontrol2.SmartMC;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +13,18 @@ public class CANDevice {
 	private boolean _onBus;
 	private String _deviceName;
 
-	public CANDevice(int id, boolean foundOnBus, String deviceName){
+	protected CANDevice(int id, boolean foundOnBus, String deviceName){
 		_id = id;
 		_onBus = foundOnBus;
 		_deviceName = deviceName;
 	}
 
-	public static void addDevice(CANDevice device) {
+	public static void addDevice(SmartMC mc, String name) {
+		var device = new CANDevice(mc.getCANID(), mc.getCANConnection(), name);
+	}
+
+	public static void addDevice(int id, boolean onBus, String deviceName) {
+		var device = new CANDevice(id, onBus, deviceName);
 		_canDevices.putIfAbsent(device._id, device);
 	}
 

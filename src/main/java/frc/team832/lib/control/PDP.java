@@ -13,7 +13,7 @@ public class PDP {
         _pdp = new PowerDistributionPanel(canID);
 
         onBus = _pdp.getVoltage() > 0; // TODO: better way to do this?
-        CANDevice.addDevice(new CANDevice(canID, onBus, "PDP"));
+        CANDevice.addDevice(canID, onBus, "PDP");
     }
 
     public double getTotalCurrent() {
