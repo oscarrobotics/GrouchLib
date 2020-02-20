@@ -63,4 +63,6 @@ public interface SmartMC<B> extends SimpleMC<B> {
     void setSensorPhase(boolean phase);
 
     void setPIDF(ClosedLoopConfig closedLoopConfig);
+
+    boolean getCANConnection();
 }

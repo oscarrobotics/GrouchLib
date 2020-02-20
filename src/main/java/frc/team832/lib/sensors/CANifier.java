@@ -24,7 +24,7 @@ public class CANifier {
 		_canifier = new com.ctre.phoenix.CANifier(canID);
 
 		onBus = _canifier.getBusVoltage() > 0;
-		CANDevice.addDevice(new CANDevice(canID, onBus, "CANifier"));
+		CANDevice.addDevice(canID, onBus, "CANifier");
 	}
 
 	public int getQuadVelocity() { return onBus ? _canifier.getQuadratureVelocity() : -1; }
