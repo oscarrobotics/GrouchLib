@@ -1,5 +1,8 @@
 package frc.team832.lib.motorcontrol.base;
 
+/** @deprecated Use {@link frc.team832.lib.motorcontrol2.SmartMC} instead.
+ */
+@Deprecated
 public interface CANMC<B> extends SimpleMC {
 
     B getBaseController();

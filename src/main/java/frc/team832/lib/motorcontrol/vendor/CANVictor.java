@@ -7,21 +7,18 @@ import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 
+@Deprecated
 public class CANVictor implements CANMC<VictorSPX> {
 
     private VictorSPX _victor;
     private ControlMode _ctrlMode;
 
-    /***
-     * Create an OscarCANTalon at the specified CAN ID.
-     * @param canId CAN ID of controller to attach.
-     */
     public CANVictor(int canId) {
         _victor = new VictorSPX(canId);
         _ctrlMode = ControlMode.PercentOutput;
 
         boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
-        CANDevice.addDevice(new CANDevice(canId, onBus, "Victor SPX"));
+        CANDevice.addDevice(canId, onBus, "Victor SPX");
     }
 
     @Override

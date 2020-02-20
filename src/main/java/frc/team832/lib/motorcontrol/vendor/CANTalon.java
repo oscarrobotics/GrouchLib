@@ -16,7 +16,10 @@ import frc.team832.lib.motorcontrol.base.GeniusMC;
 
 /**
  * Implementation of IOscarSmartMotor that is specific to a CTRE Talon SRX
+ *
+ * @deprecated Use {@link frc.team832.lib.motorcontrol2.vendor.CANTalonSRX} instead.
  */
+@Deprecated
 public class CANTalon implements GeniusMC<TalonSRX> {
 
     private TalonSRX _talon;
@@ -36,7 +39,7 @@ public class CANTalon implements GeniusMC<TalonSRX> {
         _ctrlMode = ControlMode.Disabled;
 
         boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
-        CANDevice.addDevice(new CANDevice(canId, onBus, "Talon SRX"));
+        CANDevice.addDevice(canId, onBus, "Talon SRX");
     }
 
     @Override
