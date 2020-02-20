@@ -6,6 +6,11 @@ import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 import frc.team832.lib.motorcontrol.base.SmartCANMC;
 
+/**
+ * @deprecated Use {@link frc.team832.lib.motorcontrol2.vendor.CANSparkMax} instead.
+ *
+ */
+@Deprecated
 public class CANSparkMax implements SmartCANMC<com.revrobotics.CANSparkMax> {
 
 	private int _id;
@@ -25,7 +30,7 @@ public class CANSparkMax implements SmartCANMC<com.revrobotics.CANSparkMax> {
 		_sparkMax = new com.revrobotics.CANSparkMax(canId, mType);
 
 		boolean onBus = _sparkMax.getFirmwareString() != null;
-		CANDevice.addDevice(new CANDevice(_id, onBus, "Spark MAX"));
+		CANDevice.addDevice(_id, onBus, "Spark MAX");
 
 		_pidController = _sparkMax.getPIDController();
 		_encoder = _sparkMax.getEncoder();

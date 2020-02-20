@@ -4,7 +4,10 @@ import frc.team832.lib.motorcontrol.NeutralMode;
 
 /**
  * Interface describing all methods a SmartMotor (CAN-based controller) must implement
+ *
+ * @deprecated Use {@link frc.team832.lib.motorcontrol2.SmartMC} instead.
  */
+@Deprecated
 public interface SmartMC extends SimpleMC, PIDMC {
 
     /**

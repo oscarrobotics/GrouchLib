@@ -2,6 +2,10 @@ package frc.team832.lib.motorcontrol.base;
 
 import frc.team832.lib.motorcontrol.NeutralMode;
 
+/**
+ * @deprecated Use {@link frc.team832.lib.motorcontrol2.SimpleMC} instead.
+ */
+@Deprecated
 public interface SimpleMC {
 
     /**

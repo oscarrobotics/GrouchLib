@@ -1,5 +1,6 @@
 package frc.team832.lib.motorcontrol.base;
 
+@Deprecated
 public interface PIDMC {
 
 	/**
