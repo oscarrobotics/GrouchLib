@@ -9,14 +9,13 @@ import frc.team832.lib.driverstation.dashboard.DashboardUpdatable;
 
 import java.util.List;
 
-public abstract class VisionSubsystemBase extends SubsystemBase implements DashboardUpdatable {
+public abstract class VisionSubsystemBase extends SubsystemBase {
 
 	private final VisionQueryRunnable visionQueryRunnable = new VisionQueryRunnable(this);
 
 	private final Notifier ntQueryNotifier;
 
 	public VisionSubsystemBase(double queryPeriod) {
-
 		ntQueryNotifier = new Notifier(visionQueryRunnable);
 		ntQueryNotifier.startPeriodic(queryPeriod);
 	}
