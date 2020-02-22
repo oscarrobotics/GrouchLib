@@ -154,11 +154,11 @@ public class SmartDiffDrive implements Sendable {
 			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
-					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+					double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
-					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
-					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
 				} else {
 					_leftMotor.set(leftMotorOutput);
 					_rightMotor.set(rightMotorOutput);
@@ -294,11 +294,11 @@ public class SmartDiffDrive implements Sendable {
 			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
-					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+					double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
-					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
-					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
 				} else {
 					_leftMotor.set(leftMotorOutput);
 					_rightMotor.set(rightMotorOutput);
@@ -377,11 +377,11 @@ public class SmartDiffDrive implements Sendable {
 			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
-					double leftWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(leftMotorOutput  * _maxMotorRPM );
-					double rightWheelTargetMetersPerSecond = _closedLoopDT.powerTrain.calculateMetersPerSec(rightMotorOutput * _maxMotorRPM);
+					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
+					double rightMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(rightMotorOutput * _maxMotorRPM);
 
-					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
-					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightWheelTargetMetersPerSecond, _closedLoopDT.getFFAccel()));
+					_leftMotor.set(_closedLoopDT.leftFeedforward.calculate(leftMotorTargetRPM, _closedLoopDT.getFFAccel()));
+					_rightMotor.set(_closedLoopDT.rightFeedforward.calculate(rightMotorTargetRPM, _closedLoopDT.getFFAccel()));
 				} else {
 					_leftMotor.set(leftMotorOutput);
 					_rightMotor.set(rightMotorOutput);
