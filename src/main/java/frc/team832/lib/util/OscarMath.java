@@ -69,4 +69,13 @@ public class OscarMath {
 
         return 0.0;
     }
+
+    public static double average(double... numbers) {
+        double sum = 0;
+        for (int i = 0; i < numbers.length - 1; i++) {
+            sum += numbers[i];
+        }
+
+        return sum / numbers.length;
+    }
 }
