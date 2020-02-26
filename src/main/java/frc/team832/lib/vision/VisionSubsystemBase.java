@@ -11,11 +11,12 @@ import java.util.List;
 
 public abstract class VisionSubsystemBase extends SubsystemBase {
 
-	private final VisionQueryRunnable visionQueryRunnable = new VisionQueryRunnable(this);
+	private final VisionQueryRunnable visionQueryRunnable;
 
 	private final Notifier ntQueryNotifier;
 
 	public VisionSubsystemBase(double queryPeriod) {
+		visionQueryRunnable = new VisionQueryRunnable(this);
 		ntQueryNotifier = new Notifier(visionQueryRunnable);
 		ntQueryNotifier.startPeriodic(queryPeriod);
 	}
