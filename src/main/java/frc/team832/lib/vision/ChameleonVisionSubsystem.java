@@ -14,6 +14,7 @@ public abstract class ChameleonVisionSubsystem extends VisionSubsystemBase {
     private final NetworkTableEntry pitchEntry;
     private final NetworkTableEntry yawEntry;
     private final NetworkTableEntry isValidEntry;
+    private final NetworkTableEntry driverModeEntry;
 
     public ChameleonVisionSubsystem(String cameraName, double queryPeriod) {
         super(queryPeriod);
@@ -23,6 +24,7 @@ public abstract class ChameleonVisionSubsystem extends VisionSubsystemBase {
         this.pitchEntry = rootTable.getEntry("targetPitch");
         this.yawEntry = rootTable.getEntry("targetYaw");
         this.isValidEntry = rootTable.getEntry("isValid");
+        this.driverModeEntry =  rootTable.getEntry("driverMode");
     }
 
     @Override
@@ -48,6 +50,10 @@ public abstract class ChameleonVisionSubsystem extends VisionSubsystemBase {
     @Override
     public NetworkTableEntry getIsValidEntry() {
         return isValidEntry;
+    }
+
+    public NetworkTableEntry getDriverModeEntry() {
+        return driverModeEntry;
     }
 
     @Override
