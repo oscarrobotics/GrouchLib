@@ -18,7 +18,7 @@ public abstract class ChameleonVisionSubsystem extends VisionSubsystemBase {
     public ChameleonVisionSubsystem(String cameraName, double queryPeriod) {
         super(queryPeriod);
 
-        this.rootTable = NetworkTableInstance.getDefault().getTable(cameraName);
+        this.rootTable = NetworkTableInstance.getDefault().getTable("chameleon-vision").getSubTable(cameraName);
         this.areaEntry = rootTable.getEntry("targetArea");
         this.pitchEntry = rootTable.getEntry("targetPitch");
         this.yawEntry = rootTable.getEntry("targetYaw");

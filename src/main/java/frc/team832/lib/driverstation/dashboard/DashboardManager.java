@@ -18,6 +18,13 @@ public class DashboardManager {
 
     private static HashMap<DashboardUpdatable, ShuffleboardTab> shuffleboardTabs = new HashMap<>();
 
+    public static void addTab(DashboardUpdatable updatable) {
+        if (!shuffleboardTabs.containsKey(updatable)) {
+            var tab = Shuffleboard.getTab(updatable.getDashboardTabName());
+            shuffleboardTabs.put(updatable, tab);
+        }
+    }
+
     public static void addTab(DashboardUpdatable updatable, SubsystemBase subsystemBase) {
         if (!shuffleboardTabs.containsKey(updatable)) {
             var tab = Shuffleboard.getTab(updatable.getDashboardTabName());

@@ -8,7 +8,7 @@ public class PCM {
     private Compressor _pcm;
     private int _id;
 
-    private boolean onBus;
+    private boolean onBus = true;
 
     public PCM(int canID) {
         _id = canID;
