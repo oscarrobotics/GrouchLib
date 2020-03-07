@@ -18,7 +18,7 @@ public class HallEffect extends DigitalInput {
 
     public void setupInterrupts(Runnable callback) {
         this.requestInterrupts((WaitResult result) -> {
-            if (WaitResult.getValue(true, false).equals(result)) {
+            if (WaitResult.getValue(true, true).equals(result)) {
                 callback.run();
             }
         });
