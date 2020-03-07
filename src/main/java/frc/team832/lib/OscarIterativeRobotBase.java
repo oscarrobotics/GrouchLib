@@ -248,7 +248,7 @@ public abstract class OscarIterativeRobotBase extends RobotBase {
         robotPeriodic();
         SmartDashboard.updateValues();
 
-        LiveWindow.updateValues();
+//        LiveWindow.updateValues();
         Shuffleboard.update();
 
     }
