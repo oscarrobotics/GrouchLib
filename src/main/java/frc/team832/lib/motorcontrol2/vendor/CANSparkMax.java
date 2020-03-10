@@ -19,6 +19,10 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     private final CANPIDController _pid;
     private final Motor _motor;
 
+    private double _openLoopSetpoint;
+    private double _closedLoopSetpoint;
+    private double _arbFF;
+
     public CANSparkMax(int canID, Motor motor) {
         assert motor != Motor.kFalcon500 : "Invalid motor for CANSparkMax!";
 
@@ -126,7 +130,8 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
-    public void setSensorPhase(boolean phase) { }
+    public void setSensorPhase(boolean phase) {
+    }
 
     @Override
     public void rezeroSensor() {
@@ -137,42 +142,65 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
     public void setTargetVelocity(double target, double arbFF, CANPIDController.ArbFFUnits arbFFUnits) {
         if (getCANConnection()) {
-            _pid.setReference(target, ControlType.kVelocity, 0, arbFF, arbFFUnits);
+            if (target != _closedLoopSetpoint || arbFF != _arbFF) {
+                _closedLoopSetpoint = target;
+                _arbFF = arbFF;
+                _pid.setReference(target, ControlType.kVelocity, 0, arbFF, arbFFUnits);
+            }
         }
     }
 
     @Override
     public void setTargetVelocity(double target, double arbFF) {
         if (getCANConnection()) {
-            _pid.setReference(target, ControlType.kVelocity, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+            if (target != _closedLoopSetpoint || arbFF != _arbFF) {
+                _closedLoopSetpoint = target;
+                _arbFF = arbFF;
+                _pid.setReference(target, ControlType.kVelocity, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+            }
         }
     }
 
     @Override
     public void setTargetVelocity(double target) {
         if (getCANConnection()) {
-            _pid.setReference(target, ControlType.kVelocity, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
+            if (target != _closedLoopSetpoint) {
+                _closedLoopSetpoint = target;
+                _pid.setReference(target, ControlType.kVelocity, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
+            }
         }
     }
 
     @Override
     public void setTargetPosition(double target, double arbFF) {
-        if (getCANConnection()) {
-            _pid.setReference(target, ControlType.kPosition, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+        if (target != _closedLoopSetpoint || arbFF != _arbFF) {
+            _closedLoopSetpoint = target;
+            _arbFF = arbFF;
+
+            if (getCANConnection()) {
+                _pid.setReference(target, ControlType.kPosition, 0, arbFF, Math.abs(arbFF) > 1 ? CANPIDController.ArbFFUnits.kVoltage : CANPIDController.ArbFFUnits.kPercentOut);
+            }
         }
     }
 
     @Override
     public void setTargetPosition(double target) {
-        if (getCANConnection()) {
-            _pid.setReference(target, ControlType.kPosition, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
+        if (target != _closedLoopSetpoint) {
+            _closedLoopSetpoint = target;
+
+            if (getCANConnection()) {
+                _pid.setReference(target, ControlType.kPosition, 0, 0, CANPIDController.ArbFFUnits.kPercentOut);
+            }
         }
     }
 
     @Override
     public void set(double power) {
-        if (getCANConnection()) {
-            _spark.set(power);
+        if (power != _openLoopSetpoint) {
+            _openLoopSetpoint = power;
+            if (getCANConnection()) {
+                _spark.set(power);
+            }
         }
     }
 
@@ -201,7 +229,9 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
     }
 
     @Override
-    public com.revrobotics.CANSparkMax getBaseController() { return _spark; }
+    public com.revrobotics.CANSparkMax getBaseController() {
+        return _spark;
+    }
 
     @Override
     public void setPIDF(ClosedLoopConfig closedLoopConfig) {
