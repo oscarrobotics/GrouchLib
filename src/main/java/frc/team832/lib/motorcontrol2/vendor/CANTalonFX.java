@@ -21,12 +21,15 @@ public class CANTalonFX implements SmartMC<TalonFX> {
     private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
     private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
 
+    private final boolean canConnectedAtBoot;    
 
     public CANTalonFX(int canId) {
         _talon = new TalonFX(canId);
         _canID = canId;
         _ctrlMode = ControlMode.Disabled;
 
+        canConnectedAtBoot = getCANConnection();
+        
         CANDevice.addDevice(this, "Talon FX");
     }
 
@@ -42,7 +45,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public void follow(SmartMC masterMC) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
 			_ctrlMode = ControlMode.Follower;
 			if (masterMC instanceof  CANTalonFX) {
 				_talon.follow(((CANTalonFX) masterMC).getBaseController());
@@ -56,27 +59,27 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public double getInputVoltage() {
-        return getCANConnection() ? _talon.getBusVoltage() : Double.NaN;
+        return canConnectedAtBoot ? _talon.getBusVoltage() : Double.NaN;
     }
 
     @Override
     public double getOutputVoltage() {
-        return getCANConnection() ? _talon.getMotorOutputVoltage() : Double.NaN;
+        return canConnectedAtBoot ? _talon.getMotorOutputVoltage() : Double.NaN;
     }
 
     @Override
     public double getInputCurrent() {
-        return getCANConnection() ? _talon.getSupplyCurrent() : Double.NaN;
+        return canConnectedAtBoot ? _talon.getSupplyCurrent() : Double.NaN;
     }
 
     @Override
     public double getOutputCurrent() {
-        return getCANConnection() ? _talon.getStatorCurrent() : Double.NaN;
+        return canConnectedAtBoot ? _talon.getStatorCurrent() : Double.NaN;
     }
 
     @Override
     public void setNeutralMode(NeutralMode mode) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.setNeutralMode(mode == NeutralMode.kBrake ?
                     com.ctre.phoenix.motorcontrol.NeutralMode.Brake :
                     com.ctre.phoenix.motorcontrol.NeutralMode.Coast);
@@ -90,21 +93,21 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public void wipeSettings() {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.configFactoryDefault();
         }
     }
 
     @Override
     public void limitInputCurrent(int currentLimit) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             inputCurrentConfig.currentLimit = currentLimit;
             _talon.configSupplyCurrentLimit(inputCurrentConfig);
         }
     }
 
     public void limitOutputCurrent(int currentLimit) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             outputCurrentConfig.currentLimit = currentLimit;
             _talon.configStatorCurrentLimit(outputCurrentConfig);
         }
@@ -112,52 +115,54 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public double getSensorPosition() {
-        return getCANConnection() ? (_talon.getSelectedSensorPosition() / 2048.0) : Double.NaN;
+        return canConnectedAtBoot ? (_talon.getSelectedSensorPosition() / 2048.0) : Double.NaN;
     }
 
     @Override
     public double getSensorVelocity() {
-        return getCANConnection() ? ((_talon.getSelectedSensorVelocity() / 2048.0) * 600) : Double.NaN;
+        if (canConnectedAtBoot) {
+            return (_talon.getSelectedSensorVelocity() / 2048.0) * 600;
+        } else return Double.NaN;
     }
 
     @Override
     public void setMotionProfileVelocity(double velocityPerSec) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.configMotionCruiseVelocity((int) (velocityPerSec / 10));
         }
     }
 
     @Override
     public void setTargetVelocity(double target) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.set(ControlMode.Velocity, target);
         }
     }
 
     @Override
     public void setTargetVelocity(double target, double arbFF) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, arbFF);
         }
     }
 
     @Override
     public void setTargetPosition(double target) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.set(ControlMode.Position, target);
         }
     }
 
     @Override
     public void setTargetPosition(double target, double arbFF) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.set(ControlMode.Position, target, DemandType.ArbitraryFeedForward, arbFF);
         }
     }
 
     @Override
     public void rezeroSensor() {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.setSelectedSensorPosition(0);
         }
     }
@@ -167,7 +172,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public void set(double power) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
 			_ctrlMode = ControlMode.PercentOutput;
             _talon.set(_ctrlMode, power);
         }
@@ -175,31 +180,31 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public double get() {
-        return getCANConnection() ? _talon.getMotorOutputPercent() : Double.NaN;
+        return canConnectedAtBoot ? _talon.getMotorOutputPercent() : Double.NaN;
     }
 
     @Override
     public void stop() {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.set(ControlMode.PercentOutput, 0);
         }
     }
 
     @Override
     public void setInverted(boolean inverted) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.setInverted(inverted);
         }
     }
 
     @Override
     public boolean getInverted() {
-        return getCANConnection() && _talon.getInverted();
+        return canConnectedAtBoot && _talon.getInverted();
     }
 
     @Override
     public void setPIDF(ClosedLoopConfig closedLoopConfig) {
-        if (getCANConnection()) {
+        if (canConnectedAtBoot) {
             _talon.config_kP(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkP());
             _talon.config_kI(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkI());
             _talon.config_kD(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkD());

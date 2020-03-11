@@ -9,11 +9,13 @@ public class OperatorInterface {
     private static Vector<HIDControllerType> attachedControllers = new Vector<>(6);
 
     private static final DriverStation driverStation = DriverStation.getInstance();
+    private static int detectedStickCount = 0;
 
     private static void init() {
         for (int i = 0; i < DriverStation.kJoystickPorts; i++) {
             HIDControllerType thisController = getHIDControllerAtIndex(i);
             if (thisController != null) {
+                detectedStickCount++;
                 attachedControllers.add(i, thisController);
             }
         }
@@ -21,6 +23,10 @@ public class OperatorInterface {
 
     static {
         init();
+    }
+
+    public static int getConnectedControllerCount() {
+        return detectedStickCount;
     }
 
     private static HIDControllerType getHIDControllerAtIndex(int index) {
