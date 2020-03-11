@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.HashMap;
@@ -40,6 +41,13 @@ public class DashboardManager {
 
     public static NetworkTableEntry addTabItem(DashboardUpdatable updatable, String itemName, Object defaultValue) {
         return addTabItem(updatable, itemName, defaultValue, DashboardWidget.TextView);
+    }
+
+    public static void addTabButton(DashboardUpdatable updatable, String buttonName, Runnable onPress) {
+        if (!shuffleboardTabs.containsKey(updatable)) return;
+        InstantCommand command = new InstantCommand(onPress);
+        command.setName(buttonName);
+        shuffleboardTabs.get(updatable).add(command);
     }
 
     public static void addTabSendable(DashboardUpdatable updatable, String itemName, Sendable sendable) {
