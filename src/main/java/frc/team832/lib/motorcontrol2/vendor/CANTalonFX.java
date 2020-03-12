@@ -1,5 +1,6 @@
 package frc.team832.lib.motorcontrol2.vendor;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -214,6 +215,6 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
     @Override
     public boolean getCANConnection() {
-        return _talon.getBusVoltage() > 0.0;
+        return _talon.getLastError() == ErrorCode.OK;
     }
 }

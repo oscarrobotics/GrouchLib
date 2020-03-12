@@ -37,7 +37,7 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
  * controller.
  */
 @SuppressWarnings("PMD.TooManyFields")
-public class RamseteCommand extends CommandBase {
+public class OscarRamseteCommand extends CommandBase {
   private final Timer m_timer = new Timer();
   private final boolean m_usePID;
   private final Trajectory m_trajectory;
@@ -78,17 +78,17 @@ public class RamseteCommand extends CommandBase {
    * @param requirements      The subsystems to require.
    */
   @SuppressWarnings("PMD.ExcessiveParameterList")
-  public RamseteCommand(Trajectory trajectory,
-                        Supplier<Pose2d> pose,
-                        RamseteController controller,
-                        SimpleMotorFeedforward leftFeedForward,
-                        SimpleMotorFeedforward rightFeedForward,
-                        DifferentialDriveKinematics kinematics,
-                        Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds,
-                        PIDController leftController,
-                        PIDController rightController,
-                        BiConsumer<Double, Double> outputVolts,
-                        Subsystem... requirements) {
+  public OscarRamseteCommand(Trajectory trajectory,
+                             Supplier<Pose2d> pose,
+                             RamseteController controller,
+                             SimpleMotorFeedforward leftFeedForward,
+                             SimpleMotorFeedforward rightFeedForward,
+                             DifferentialDriveKinematics kinematics,
+                             Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds,
+                             PIDController leftController,
+                             PIDController rightController,
+                             BiConsumer<Double, Double> outputVolts,
+                             Subsystem... requirements) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_pose = requireNonNullParam(pose, "pose", "RamseteCommand");
     m_follower = requireNonNullParam(controller, "controller", "RamseteCommand");
@@ -119,12 +119,12 @@ public class RamseteCommand extends CommandBase {
    *                              wheel speeds.
    * @param requirements          The subsystems to require.
    */
-  public RamseteCommand(Trajectory trajectory,
-                        Supplier<Pose2d> pose,
-                        RamseteController follower,
-                        DifferentialDriveKinematics kinematics,
-                        BiConsumer<Double, Double> outputMetersPerSecond,
-                        Subsystem... requirements) {
+  public OscarRamseteCommand(Trajectory trajectory,
+                             Supplier<Pose2d> pose,
+                             RamseteController follower,
+                             DifferentialDriveKinematics kinematics,
+                             BiConsumer<Double, Double> outputMetersPerSecond,
+                             Subsystem... requirements) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_pose = requireNonNullParam(pose, "pose", "RamseteCommand");
     m_follower = requireNonNullParam(follower, "follower", "RamseteCommand");
@@ -207,7 +207,7 @@ public class RamseteCommand extends CommandBase {
       rightOutput = rightSpeedSetpoint;
     }
 
-    m_output.accept(leftOutput, rightOutput);
+    m_output.accept(-leftOutput, rightOutput);
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;

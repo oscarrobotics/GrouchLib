@@ -5,5 +5,6 @@ package frc.team832.lib.motorcontrol.base;
  *
  * @param <B> Base controller type
  */
+@Deprecated
 public interface SmartCANMC<B> extends CANMC<B>, SmartMC {
 }
