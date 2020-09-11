@@ -5,13 +5,14 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team832.lib;
+package frc.team832.lib.structure;
 
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.NotifierJNI;
 import edu.wpi.first.wpilibj.RobotController;
+import frc.team832.lib.structure.OscarIterativeRobotBase;
 
 /**
  * TimedRobot implements the IterativeRobotBase robot program framework.

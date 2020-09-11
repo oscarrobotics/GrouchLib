@@ -1,11 +1,11 @@
 package frc.team832.lib.motorcontrol2;
 
-import com.revrobotics.CANPIDController;
-import com.revrobotics.ControlType;
 import frc.team832.lib.motorcontrol.NeutralMode;
-import frc.team832.lib.util.ClosedLoopConfig;
+import frc.team832.lib.motion.ClosedLoopConfig;
+import frc.team832.lib.control.can.OscarCANDevice;
 
-public interface SmartMC<B> extends SimpleMC<B> {
+@SuppressWarnings("rawtypes")
+public interface SmartMC<B> extends SimpleMC<B>, OscarCANDevice {
 
     void follow(SmartMC masterMC);
 
@@ -38,8 +38,6 @@ public interface SmartMC<B> extends SimpleMC<B> {
      */
     void setNeutralMode(NeutralMode mode);
 
-    int getCANID();
-
     void wipeSettings();
 
     void limitInputCurrent(int currentLimit);
@@ -47,8 +45,6 @@ public interface SmartMC<B> extends SimpleMC<B> {
     double getSensorPosition();
 
     double getSensorVelocity();
-
-    void setMotionProfileVelocity(double velocity);
 
     void rezeroSensor();
 
@@ -63,6 +59,4 @@ public interface SmartMC<B> extends SimpleMC<B> {
     void setSensorPhase(boolean phase);
 
     void setPIDF(ClosedLoopConfig closedLoopConfig);
-
-    boolean getCANConnection();
 }

@@ -1,4 +1,4 @@
-package frc.team832.lib.util;
+package frc.team832.lib.motion;
 
 public class ClosedLoopConfig {
     private double kP, kI, kD, kF;

@@ -1,4 +1,4 @@
-package frc.team832.lib.util;
+package frc.team832.lib.util.math;
 
 public class RollingAverage {
 	private int size;

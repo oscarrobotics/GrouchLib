@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
+@SuppressWarnings({"rawtypes", "unused"})
 public class GrouchPDP {
 
     private final PDP pdp;
@@ -19,8 +20,8 @@ public class GrouchPDP {
         pdp = new PDP(pdpCANID);
     }
 
-    private boolean hasAssignedPort(PDPPortNumber port) {
-        return ports.stream().anyMatch(p -> port == p.pdpPort);
+    private boolean hasNotAssignedPort(PDPPortNumber port) {
+        return ports.stream().noneMatch(p -> port == p.pdpPort);
     }
 
     public PDPSlot addDevice(PDPPortNumber portNumber) {
@@ -28,7 +29,7 @@ public class GrouchPDP {
     }
 
     public PDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker) {
-        assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
+        assert hasNotAssignedPort(portNumber) : "PDP Port already in use!";
         assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
 
         PDPSlot slot = new PDPSlot(pdp, portNumber, breaker);
@@ -44,7 +45,7 @@ public class GrouchPDP {
 
     public SimpleMCAttachedPDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker, SimpleMC motorController,
                              DoubleSupplier motorRPMSupplier) {
-        assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
+        assert hasNotAssignedPort(portNumber) : "PDP Port already in use!";
         assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
 
         SimpleMCAttachedPDPSlot slot = new SimpleMCAttachedPDPSlot(pdp, portNumber, breaker, motorController, motorRPMSupplier);
@@ -58,7 +59,7 @@ public class GrouchPDP {
     }
 
     public SmartMCAttachedPDPSlot addDevice(PDPPortNumber portNumber, PDPBreaker breaker, SmartMC motorController) {
-        assert !hasAssignedPort(portNumber) : "PDP Port already in use!";
+        assert hasNotAssignedPort(portNumber) : "PDP Port already in use!";
         assert breaker == portNumber.maxBreaker || breaker == portNumber.minBreaker : "Invalid breaker for given port!";
 
         SmartMCAttachedPDPSlot slot = new SmartMCAttachedPDPSlot(pdp, portNumber, breaker, motorController);

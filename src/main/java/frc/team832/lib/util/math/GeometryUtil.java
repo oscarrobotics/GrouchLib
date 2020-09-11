@@ -1,4 +1,4 @@
-package frc.team832.lib.util;
+package frc.team832.lib.util.math;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;

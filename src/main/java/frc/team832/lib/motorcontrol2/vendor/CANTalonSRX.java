@@ -4,13 +4,20 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import frc.team832.lib.CANDevice;
+import edu.wpi.first.wpilibj.RobotBase;
+import frc.team832.lib.control.can.CANDeviceManager;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol2.SmartMC;
 import frc.team832.lib.motors.Motor;
-import frc.team832.lib.util.ClosedLoopConfig;
+import frc.team832.lib.motion.ClosedLoopConfig;
 
+import java.util.List;
+
+@SuppressWarnings("rawtypes")
 public class CANTalonSRX implements SmartMC<TalonSRX> {
+
+    private static final List<Motor> allowedMotors = Motor.createAllowedList(Motor.kNEO, Motor.kNEO550, Motor.kFalcon500);
+
     private final TalonSRX _talon;
     private final Motor _motor;
     private final int _canID;
@@ -19,14 +26,14 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
     private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
 
     public CANTalonSRX(int canId, Motor motor) {
-        assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
+        assert allowedMotors.contains(motor) : "Invalid motor for CANTalonSRX!";
 
         _motor = motor;
         _talon = new TalonSRX(canId);
         _canID = canId;
         _ctrlMode = ControlMode.PercentOutput;
 
-        CANDevice.addDevice(this, "Talon SRX");
+        CANDeviceManager.addDevice(this, "Talon SRX");
     }
 
     @Override
@@ -51,27 +58,27 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 
     @Override
     public double getInputVoltage() {
-        return getCANConnection() ? _talon.getBusVoltage() : Double.NaN;
+        return getCANStatus() ? _talon.getBusVoltage() : Double.NaN;
     }
 
     @Override
     public double getOutputVoltage() {
-        return getCANConnection() ? _talon.getMotorOutputVoltage() : Double.NaN;
+        return getCANStatus() ? _talon.getMotorOutputVoltage() : Double.NaN;
     }
 
     @Override
     public double getInputCurrent() {
-        return getCANConnection() ? _talon.getSupplyCurrent() : Double.NaN;
+        return getCANStatus() ? _talon.getSupplyCurrent() : Double.NaN;
     }
 
     @Override
     public double getOutputCurrent() {
-        return getCANConnection() ? _talon.getStatorCurrent() : Double.NaN;
+        return getCANStatus() ? _talon.getStatorCurrent() : Double.NaN;
     }
 
     @Override
     public void setNeutralMode(NeutralMode mode) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.setNeutralMode(mode == NeutralMode.kBrake ?
                     com.ctre.phoenix.motorcontrol.NeutralMode.Brake :
                     com.ctre.phoenix.motorcontrol.NeutralMode.Coast);
@@ -85,14 +92,14 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 
     @Override
     public void wipeSettings() {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.configFactoryDefault();
         }
     }
 
     @Override
     public void limitInputCurrent(int currentLimit) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             inputCurrentConfig.currentLimit = currentLimit;
             _talon.configSupplyCurrentLimit(inputCurrentConfig);
         }
@@ -100,66 +107,59 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 
     @Override
     public double getSensorPosition() {
-        return getCANConnection() ? (_talon.getSelectedSensorPosition() / 4096.0) : Double.NaN;
+        return getCANStatus() ? (_talon.getSelectedSensorPosition() / 4096.0) : Double.NaN;
     }
 
     @Override
     public double getSensorVelocity() {
-        return getCANConnection() ? ((_talon.getSelectedSensorVelocity() / 4096.0) * 600) : Double.NaN;
-    }
-
-    @Override
-    public void setMotionProfileVelocity(double velocityPerSec) {
-        if (getCANConnection()) {
-            _talon.configMotionCruiseVelocity((int) (velocityPerSec / 10));
-        }
+        return getCANStatus() ? ((_talon.getSelectedSensorVelocity() / 4096.0) * 600) : Double.NaN;
     }
 
     @Override
     public void setTargetVelocity(double target) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.set(ControlMode.Velocity, target);
         }
     }
 
     @Override
     public void setTargetVelocity(double target, double arbFF) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, arbFF);
         }
     }
 
     @Override
     public void setTargetPosition(double target) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.set(ControlMode.Position, target);
         }
     }
 
     @Override
     public void setTargetPosition(double target, double arbFF) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.set(ControlMode.Position, target, DemandType.ArbitraryFeedForward, arbFF);
         }
     }
 
     @Override
     public void rezeroSensor() {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.setSelectedSensorPosition(0);
         }
     }
 
     @Override
     public void setSensorPhase(boolean phase) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.setSensorPhase(phase);
         }
     }
 
     @Override
     public void set(double power) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _ctrlMode = ControlMode.PercentOutput;
             _talon.set(_ctrlMode, power);
         }
@@ -167,31 +167,31 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 
     @Override
     public double get() {
-        return getCANConnection() ? _talon.getMotorOutputPercent() : Double.NaN;
+        return getCANStatus() ? _talon.getMotorOutputPercent() : Double.NaN;
     }
 
     @Override
     public void stop() {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.set(ControlMode.PercentOutput, 0);
         }
     }
 
     @Override
     public void setInverted(boolean inverted) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.setInverted(inverted);
         }
     }
 
     @Override
     public boolean getInverted() {
-        return getCANConnection() && _talon.getInverted();
+        return getCANStatus() && _talon.getInverted();
     }
 
     @Override
     public void setPIDF(ClosedLoopConfig closedLoopConfig) {
-        if (getCANConnection()) {
+        if (getCANStatus()) {
             _talon.config_kP(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkP());
             _talon.config_kI(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkI());
             _talon.config_kD(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkD());
@@ -200,7 +200,7 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
     }
 
     @Override
-    public boolean getCANConnection() {
-        return _talon.getBusVoltage() > 0.0;
+    public boolean getCANStatus() {
+        return RobotBase.isReal() && _talon.getBusVoltage() > 0.0;
     }
 }

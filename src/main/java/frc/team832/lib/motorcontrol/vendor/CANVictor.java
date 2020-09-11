@@ -2,8 +2,6 @@ package frc.team832.lib.motorcontrol.vendor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj.Victor;
-import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 
@@ -17,8 +15,8 @@ public class CANVictor implements CANMC<VictorSPX> {
         _victor = new VictorSPX(canId);
         _ctrlMode = ControlMode.PercentOutput;
 
-        boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
-        CANDevice.addDevice(canId, onBus, "Victor SPX");
+//        boolean onBus = _victor.getFirmwareVersion() > 0x0102; // TODO: better way to do this?
+//        CANDeviceManager.addDevice(canId, onBus, "Victor SPX");
     }
 
     @Override

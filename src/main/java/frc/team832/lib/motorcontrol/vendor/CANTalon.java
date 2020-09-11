@@ -8,8 +8,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Talon;
-import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 import frc.team832.lib.motorcontrol.base.GeniusMC;
@@ -38,8 +36,8 @@ public class CANTalon implements GeniusMC<TalonSRX> {
         _talon = new TalonSRX(canId);
         _ctrlMode = ControlMode.Disabled;
 
-        boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
-        CANDevice.addDevice(canId, onBus, "Talon SRX");
+//        boolean onBus = _talon.getBusVoltage() > 0.0; // TODO: better way to do this?
+//        CANDeviceManager.addDevice(canId, onBus, "Talon SRX");
     }
 
     @Override

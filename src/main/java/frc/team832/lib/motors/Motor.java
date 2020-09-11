@@ -1,5 +1,9 @@
 package frc.team832.lib.motors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Motor {
 
     public final double freeSpeed;
@@ -57,6 +61,12 @@ public class Motor {
         return outputV;
     }
 
+    public static List<Motor> createAllowedList(Motor... disallowedMotors) {
+        List<Motor> allowedMotors = new ArrayList<>(kAllMotors);
+        allowedMotors.removeAll(Arrays.asList(disallowedMotors));
+        return allowedMotors;
+    }
+
     public static final Motor kCIM = new Motor(5330, 2.7, 2.41, 131, 0.0916, 453.514, 0.0184);
     public static final Motor kMiniCIM = new Motor(5840, 3, 1.41, 89);
     public static final Motor kNEO = new Motor(5880, 1.3, 3.36, 166);
@@ -66,7 +76,11 @@ public class Motor {
     public static final Motor k775Pro = new Motor(18730, 0.7, 0.71, 134);
     public static final Motor kAndyMark9015 = new Motor(14720, 3.7, 0.36, 71);
     public static final Motor kAndyMarkNeveRest = new Motor(5480, 0.4, 0.17, 10);
-    public static final Motor kRS775_125 = new Motor(5800, 1.6, 0.28, 18);
+    public static final Motor kRS775_12V = new Motor(5800, 1.6, 0.28, 18);
     public static final Motor kRS775_18V = new Motor(13050, 2.7, 0.72, 97);
     public static final Motor kRS550 = new Motor(19000, 0.4, 0.38, 84);
+
+    public static final List<Motor> kAllMotors = List.of(kCIM, kMiniCIM, kNEO, kNEO550, kFalcon500, kBAG, k775Pro,
+            kAndyMark9015, kAndyMarkNeveRest, kRS775_12V, kRS775_18V, kRS550);
+
 }

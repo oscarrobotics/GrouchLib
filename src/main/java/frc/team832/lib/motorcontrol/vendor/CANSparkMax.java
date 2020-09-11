@@ -1,7 +1,6 @@
 package frc.team832.lib.motorcontrol.vendor;
 
 import com.revrobotics.*;
-import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.base.CANMC;
 import frc.team832.lib.motorcontrol.base.SmartCANMC;
@@ -29,8 +28,8 @@ public class CANSparkMax implements SmartCANMC<com.revrobotics.CANSparkMax> {
 		_id = canId;
 		_sparkMax = new com.revrobotics.CANSparkMax(canId, mType);
 
-		boolean onBus = _sparkMax.getFirmwareString() != null;
-		CANDevice.addDevice(_id, onBus, "Spark MAX");
+//		boolean onBus = _sparkMax.getFirmwareString() != null;
+//		CANDeviceManager.addDevice(_id, onBus, "Spark MAX");
 
 		_pidController = _sparkMax.getPIDController();
 		_encoder = _sparkMax.getEncoder();

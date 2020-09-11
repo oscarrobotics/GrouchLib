@@ -1,4 +1,4 @@
-package frc.team832.lib.util;
+package frc.team832.lib.util.math;
 
 public class OscarMath {
     private OscarMath() {}
@@ -12,6 +12,10 @@ public class OscarMath {
     public static double round(double value, int places) {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
+    }
+
+    public static int roundUp(double value) {
+        return (int) Math.ceil(value);
     }
 
     public static boolean inRange(double val, double lower, double upper) {

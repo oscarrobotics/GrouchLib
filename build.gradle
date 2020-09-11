@@ -12,18 +12,27 @@ repositories {
     maven{ url 'https://jitpack.io/'}
 }
 
+// Set this to true to enable desktop support.
+def includeDesktopSupport = true;
+
 dependencies {
-    compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
+    implementation wpi.deps.wpilib()
+    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
+
+    implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.22'
 
-    compile "org.ejml:ejml-simple:0.38"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
-    compile "com.fasterxml.jackson.core:jackson-core:2.10.0"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
+    testImplementation("org.knowm.xchart:xchart:3.2.2")
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
 
-    compile group: 'org.ejml', name: 'ejml-all', version: '0.38'
+    // Enable simulation gui support. Must check the box in vscode to enable support
+    // upon debugging
+    simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'java.awt.headless', 'true'
 }

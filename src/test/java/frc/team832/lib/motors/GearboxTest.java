@@ -1,16 +1,11 @@
 package frc.team832.lib.motors;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GearboxTest {
-	private Gearbox gearbox = null;
-
-	@Before
-	public void init() {
-		gearbox = new Gearbox(11.23f, 7.0f, 3.0f);
-	}
+	private static final Gearbox gearbox = new Gearbox(11.23f, 7.0f, 3.0f);
 
 	@Test
 	public void getReductionTest() {
@@ -35,17 +30,17 @@ public class GearboxTest {
 		double actualReduction = gearbox.getReduction(0);
 		double actualReduction1 = gearbox.getReduction(1);
 
-		assertFalse("GetReduction failed on inside index!", insideIndexException);
-		assertTrue("GetReduction failed on outside index!", outsideIndexException);
+		assertFalse(insideIndexException, "GetReduction failed on inside index!");
+		assertTrue(outsideIndexException, "GetReduction failed on outside index!");
 
-		assertEquals("GetReduction failed to return the appropriate value for a certain index", expectedReduction, actualReduction, 0);
-		assertEquals("GetReduction failed to return the appropriate value for a certain index", expectedReduction1, actualReduction1, 0);
+		assertEquals(expectedReduction, actualReduction, 0, "GetReduction failed to return the appropriate value for a certain index");
+		assertEquals(expectedReduction1, actualReduction1, 0, "GetReduction failed to return the appropriate value for a certain index");
 	}
 
 	@Test
 	public void getTotalReductionTest() {
 		double totalReduction = 235.83;
 
-		assertEquals("GetTotalReduction failed to output correctly", totalReduction, gearbox.getTotalReduction(), 0.001);
+		assertEquals(totalReduction, gearbox.getTotalReduction(), 0.001, "GetTotalReduction failed to output correctly");
 	}
 }

@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team832.lib;
+package frc.team832.lib.structure;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.RobotBase;
