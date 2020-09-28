@@ -1,94 +1,71 @@
 {
-    "cppDependencies": [
-        {
-            "artifactId": "SparkMax-cpp",
-            "binaryPlatforms": [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian"
-<<<<<<< Updated upstream
-            ]
-        }
-    ],
-    "cppDependencies": [
-        {
-            "groupId": "com.revrobotics.frc",
-            "artifactId": "SparkMax-cpp",
-            "version": "1.5.1",
-            "libName": "SparkMax",
-=======
-            ],
-            "groupId": "com.revrobotics.frc",
->>>>>>> Stashed changes
-            "headerClassifier": "headers",
-            "sharedLibrary": false,
-            "skipInvalidPlatforms": true,
-            "version": "1.5.2"
-        },
-        {
-            "artifactId": "SparkMax-driver",
-            "binaryPlatforms": [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian"
-<<<<<<< Updated upstream
-            ]
-        },
-        {
-            "groupId": "com.revrobotics.frc",
-            "artifactId": "SparkMax-driver",
-            "version": "1.5.1",
-            "libName": "SparkMaxDriver",
-=======
-            ],
-            "groupId": "com.revrobotics.frc",
->>>>>>> Stashed changes
-            "headerClassifier": "headers",
-            "sharedLibrary": false,
-            "skipInvalidPlatforms": true,
-            "version": "1.5.2"
-        }
-    ],
-    "fileName": "REVRobotics.json",
-    "javaDependencies": [
-        {
-            "artifactId": "SparkMax-java",
-            "groupId": "com.revrobotics.frc",
-            "version": "1.5.2"
-        }
-    ],
-    "jniDependencies": [
-        {
-            "artifactId": "SparkMax-driver",
-            "groupId": "com.revrobotics.frc",
-            "isJar": false,
-            "skipInvalidPlatforms": true,
-            "validPlatforms": [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian"
-            ],
-            "version": "1.5.2"
-        }
-<<<<<<< Updated upstream
-    ]
-=======
-    ],
-    "jsonUrl": "http://www.revrobotics.com/content/sw/max/sdk/REVRobotics.json",
-    "mavenUrls": [
-        "http://www.revrobotics.com/content/sw/max/sdk/maven/"
-    ],
-    "name": "REVRobotics",
-    "uuid": "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
-    "version": "1.5.2"
->>>>>>> Stashed changes
+
+  "fileName": "REVRobotics.json",
+  "name": "REVRobotics",
+  "version": "1.5.2",
+  "uuid": "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
+  "mavenUrls": [
+    "http://www.revrobotics.com/content/sw/max/sdk/maven/"
+  ],
+  "jsonUrl": "http://www.revrobotics.com/content/sw/max/sdk/REVRobotics.json",
+  "javaDependencies": [
+    {
+      "artifactId": "SparkMax-java",
+      "groupId": "com.revrobotics.frc",
+      "version": "1.5.2"
+    }
+  ],
+  "jniDependencies": [
+    {
+      "artifactId": "SparkMax-driver",
+      "groupId": "com.revrobotics.frc",
+      "isJar": false,
+      "skipInvalidPlatforms": true,
+      "validPlatforms": [
+        "windowsx86-64",
+        "windowsx86",
+        "linuxaarch64bionic",
+        "linuxx86-64",
+        "linuxathena",
+        "linuxraspbian"
+      ],
+      "version": "1.5.2"
+    }
+  ],
+  "cppDependencies": [
+    {
+      "artifactId": "SparkMax-cpp",
+      "binaryPlatforms": [
+        "windowsx86-64",
+        "windowsx86",
+        "linuxaarch64bionic",
+        "linuxx86-64",
+        "linuxathena",
+        "linuxraspbian"
+      ],
+      "groupId": "com.revrobotics.frc",
+      "headerClassifier": "headers",
+      "libName": "SparkMax",
+      "sharedLibrary": false,
+      "skipInvalidPlatforms": true,
+      "version": "1.5.2"
+    },
+    {
+      "artifactId": "SparkMax-driver",
+      "binaryPlatforms": [
+        "windowsx86-64",
+        "windowsx86",
+        "linuxaarch64bionic",
+        "linuxx86-64",
+        "linuxathena",
+        "linuxraspbian"
+      ],
+      "groupId": "com.revrobotics.frc",
+      "headerClassifier": "headers",
+      "libName": "SparkMaxDriver",
+      "sharedLibrary": false,
+      "skipInvalidPlatforms": true,
+      "version": "1.5.2"
+    }
+  ]
 }
