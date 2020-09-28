@@ -6,6 +6,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
+wpi.wpilibVersion = '2020.+'
+
 repositories {
     mavenLocal()
     mavenCentral()

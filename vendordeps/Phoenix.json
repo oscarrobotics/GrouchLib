@@ -1,7 +1,11 @@
 {
     "fileName": "Phoenix.json",
     "name": "CTRE-Phoenix",
+<<<<<<< Updated upstream
     "version": "5.18.1",
+=======
+    "version": "5.18.3",
+>>>>>>> Stashed changes
     "uuid": "ab676553-b602-441f-a38d-f1296eff6537",
     "mavenUrls": [
         "http://devsite.ctr-electronics.com/maven/release/"
@@ -11,19 +15,31 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-java",
+<<<<<<< Updated upstream
             "version": "5.18.1"
+=======
+            "version": "5.18.3"
+>>>>>>> Stashed changes
         },
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-java",
+<<<<<<< Updated upstream
             "version": "5.18.1"
+=======
+            "version": "5.18.3"
+>>>>>>> Stashed changes
         }
     ],
     "jniDependencies": [
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -35,7 +51,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "diagnostics",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -47,7 +67,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "canutils",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -58,7 +82,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "platform-stub",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -69,7 +97,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "core",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -83,7 +115,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-cpp",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_Phoenix_WPI",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -97,7 +133,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-cpp",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_Phoenix",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -111,7 +151,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_PhoenixCCI",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -125,7 +169,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "diagnostics",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_PhoenixDiagnostics",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -139,7 +187,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "canutils",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_PhoenixCanutils",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -152,7 +204,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "platform-stub",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_PhoenixPlatform",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -165,7 +221,11 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "core",
+<<<<<<< Updated upstream
             "version": "5.18.1",
+=======
+            "version": "5.18.3",
+>>>>>>> Stashed changes
             "libName": "CTRE_PhoenixCore",
             "headerClassifier": "headers",
             "sharedLibrary": false,
