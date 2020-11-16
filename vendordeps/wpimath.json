@@ -1,7 +1,7 @@
 {
   "fileName": "WPILibMath2020.json",
   "name": "WPILib-Math-2020",
-  "version": "2020.0.0",
+  "version": "2021.1.1-alpha-1",
   "uuid": "42aa5bbe-f8f5-493f-914a-16cb5d7507f3",
   "mavenUrls": [
     "https://frcmaven.wpi.edu/artifactory/development"
