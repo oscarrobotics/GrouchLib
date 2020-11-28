@@ -17,46 +17,54 @@ public class DashboardManager {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    private static HashMap<DashboardUpdatable, ShuffleboardTab> shuffleboardTabs = new HashMap<>();
+    private static HashMap<String, ShuffleboardTab> shuffleboardTabs = new HashMap<>();
 
-    public static void addTab(DashboardUpdatable updatable) {
-        if (!shuffleboardTabs.containsKey(updatable)) {
-            var tab = Shuffleboard.getTab(updatable.getDashboardTabName());
-            shuffleboardTabs.put(updatable, tab);
+    public static void addTab(String tabName) {
+        if (!shuffleboardTabs.containsKey(tabName)) {
+            var tab = Shuffleboard.getTab(tabName);
+            shuffleboardTabs.put(tabName, tab);
         }
     }
 
-    public static void addTab(DashboardUpdatable updatable, SubsystemBase subsystemBase) {
-        if (!shuffleboardTabs.containsKey(updatable)) {
-            var tab = Shuffleboard.getTab(updatable.getDashboardTabName());
-            shuffleboardTabs.put(updatable, tab);
+    public static void addTab(SubsystemBase subsystemBase) {
+        if (!shuffleboardTabs.containsKey(subsystemBase.getName())) {
+            var tab = Shuffleboard.getTab(subsystemBase.getName());
+            shuffleboardTabs.put(subsystemBase.getName(), tab);
             tab.add(subsystemBase);
         }
     }
 
-    public static NetworkTableEntry addTabItem(DashboardUpdatable updatable, String itemName, Object defaultValue, DashboardWidget widget) {
-        if (!shuffleboardTabs.containsKey(updatable)) return null;
-        return shuffleboardTabs.get(updatable).add(itemName, defaultValue).withWidget(widget.name).getEntry();
+    public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue, DashboardWidget widget) {
+        return addTabItem(subsystemBase.getName(), itemName, defaultValue, widget);
     }
 
-    public static NetworkTableEntry addTabItem(DashboardUpdatable updatable, String itemName, Object defaultValue) {
-        return addTabItem(updatable, itemName, defaultValue, DashboardWidget.TextView);
+    public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, DashboardWidget widget) {
+        if (!shuffleboardTabs.containsKey(tabName)) return null;
+        return shuffleboardTabs.get(tabName).add(itemName, defaultValue).withWidget(widget.name).getEntry();
     }
 
-    public static void addTabButton(DashboardUpdatable updatable, String buttonName, Runnable onPress) {
-        if (!shuffleboardTabs.containsKey(updatable)) return;
+    public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue) {
+        return addTabItem(subsystemBase.getName(), itemName, defaultValue);
+    }
+
+    public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue) {
+        return addTabItem(tabName, itemName, defaultValue, DashboardWidget.TextView);
+    }
+
+    public static void addTabButton(String tabName, String buttonName, Runnable onPress) {
+        if (!shuffleboardTabs.containsKey(tabName)) return;
         InstantCommand command = new InstantCommand(onPress);
         command.setName(buttonName);
-        shuffleboardTabs.get(updatable).add(command);
+        shuffleboardTabs.get(tabName).add(command);
     }
 
-    public static void addTabSendable(DashboardUpdatable updatable, String itemName, Sendable sendable) {
-        if (!shuffleboardTabs.containsKey(updatable)) return;
-        shuffleboardTabs.get(updatable).add(itemName, sendable);
+    public static void addTabSendable(String tabName, String itemName, Sendable sendable) {
+        if (!shuffleboardTabs.containsKey(tabName)) return;
+        shuffleboardTabs.get(tabName).add(itemName, sendable);
     }
 
-    public static <E extends Enum<E>> SendableChooser<E> addTabChooser(DashboardUpdatable updatable, String chooserName, E[] choosable, E defaultChosen) {
-        if (!shuffleboardTabs.containsKey(updatable)) return null;
+    public static <E extends Enum<E>> SendableChooser<E> addTabChooser(String tabName, String chooserName, E[] choosable, E defaultChosen) {
+        if (!shuffleboardTabs.containsKey(tabName)) return null;
 
         SendableChooser<E> chooser = new SendableChooser<>();
 
@@ -68,16 +76,16 @@ public class DashboardManager {
 			}
 		}
 
-        getTab(updatable).add(chooserName, chooser);
+        getTab(tabName).add(chooserName, chooser);
 
         return chooser;
     }
 
-    public static ShuffleboardTab getTab(DashboardUpdatable updatable) {
-        return shuffleboardTabs.get(updatable);
+    public static ShuffleboardTab getTab(String tabName) {
+        return shuffleboardTabs.get(tabName);
     }
 
-    public static void updateAllTabs() {
-        shuffleboardTabs.forEach((key, value) -> key.updateDashboardData());
+    public static ShuffleboardTab getTab(SubsystemBase subsystemBase) {
+        return shuffleboardTabs.get(subsystemBase.getName());
     }
 }
