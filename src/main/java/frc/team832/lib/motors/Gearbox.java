@@ -13,18 +13,6 @@ public class Gearbox {
         _totalReduction = tempVal;
     }
 
-    public Gearbox(GearReduction... reductions) {
-        _reductions = new float[reductions.length];
-
-        float tempVal = 1;
-
-        for (int i = 0; i < reductions.length; i++) {
-            _reductions[i] = reductions[i].getReduction();
-            tempVal = tempVal * _reductions[i];
-        }
-        _totalReduction = tempVal;
-    }
-
     protected float getReduction(int index) {
         return _reductions[index];
     }

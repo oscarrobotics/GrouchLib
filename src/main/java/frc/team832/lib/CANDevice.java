@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CANDevice {
-	private static HashMap<Integer, CANDevice> _canDevices = new HashMap<>();
+	private static final HashMap<Integer, CANDevice> _canDevices = new HashMap<>();
 
-	private int _id;
-	private boolean _onBus;
-	private String _deviceName;
+	private final int _id;
+	private final boolean _onBus;
+	private final String _deviceName;
 
 	protected CANDevice(int id, boolean foundOnBus, String deviceName){
 		_id = id;
@@ -19,8 +19,9 @@ public class CANDevice {
 		_deviceName = deviceName;
 	}
 
-	public static void addDevice(SmartMC mc, String name) {
+	public static void addDevice(SmartMC<?> mc, String name) {
 		var device = new CANDevice(mc.getCANID(), mc.getCANConnection(), name);
+		_canDevices.putIfAbsent(device._id, device);
 	}
 
 	public static void addDevice(int id, boolean onBus, String deviceName) {

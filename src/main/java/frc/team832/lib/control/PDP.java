@@ -5,9 +5,9 @@ import frc.team832.lib.CANDevice;
 
 public class PDP {
 
-    private PowerDistributionPanel _pdp;
+    public final PowerDistributionPanel _pdp;
 
-    private boolean onBus;
+    private final boolean onBus;
 
     public PDP(int canID) {
         _pdp = new PowerDistributionPanel(canID);
@@ -36,10 +36,4 @@ public class PDP {
 
     public boolean isOnBus () { return onBus; }
 
-
-    public PowerDistributionPanel getInstance() {
-        if (_pdp != null && onBus) {
-            return _pdp;
-        } else return null;
-    }
 }

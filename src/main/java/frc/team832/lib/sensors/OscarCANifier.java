@@ -1,5 +1,6 @@
 package frc.team832.lib.sensors;
 
+import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.team832.lib.CANDevice;
@@ -10,18 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"WeakerAccess", "unused", "FieldCanBeLocal"})
-public class CANifier {
+public class OscarCANifier {
 
-	private com.ctre.phoenix.CANifier _canifier;
-	private List<GeneralPin> _inputPins = new ArrayList<>();
-	private List<GeneralPin> _outputPins = new ArrayList<>();
-	private List<GeneralPin> _pwmPins = new ArrayList<>();
+	private final CANifier _canifier;
+	private final List<GeneralPin> _inputPins = new ArrayList<>();
+	private final List<GeneralPin> _outputPins = new ArrayList<>();
+	private final List<GeneralPin> _pwmPins = new ArrayList<>();
 
-	private boolean onBus;
-	private RemoteEncoder quadEnc;
+	private final boolean onBus;
 
-	public CANifier(int canID) {
-		_canifier = new com.ctre.phoenix.CANifier(canID);
+	public OscarCANifier(int canID) {
+		_canifier = new CANifier(canID);
 
 		onBus = _canifier.getBusVoltage() > 0;
 		CANDevice.addDevice(canID, onBus, "CANifier");
@@ -47,12 +47,12 @@ public class CANifier {
 		}
 	}
 
-	public Ultrasonic getUltrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin) {
+	public Ultrasonic getUltrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin) {
 		return new Ultrasonic(triggerPin, echoPin, this);
 	}
 
 
-	public void getPWMInput(com.ctre.phoenix.CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
+	public void getPWMInput(CANifier.PWMChannel pwmChannel, double[] pulseWidthAndPeriod) {
 		if (onBus) {
 			_canifier.getPWMInput(pwmChannel, pulseWidthAndPeriod);
 		}
@@ -64,6 +64,7 @@ public class CANifier {
 		}
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private void setPWMOutput(int pwmChannel, double dutyCycle) {
 		if (onBus) {
 			_canifier.setPWMOutput(pwmChannel, dutyCycle);
@@ -73,10 +74,11 @@ public class CANifier {
 	public static class Ultrasonic {
 		private static final double kTriggerPulseTime = 0.00238095238;
 		double[] _dutyCycleAndPeriod = new double[]{0, 0};
-		private CANifier _canifier;
-		private com.ctre.phoenix.CANifier.PWMChannel _triggerPin, _echoPin;
+		private final OscarCANifier _canifier;
+		private final CANifier.PWMChannel _triggerPin;
+		private final CANifier.PWMChannel _echoPin;
 
-		public Ultrasonic(com.ctre.phoenix.CANifier.PWMChannel triggerPin, com.ctre.phoenix.CANifier.PWMChannel echoPin, CANifier canifier) {
+		public Ultrasonic(CANifier.PWMChannel triggerPin, CANifier.PWMChannel echoPin, OscarCANifier canifier) {
 			_triggerPin = triggerPin;
 			_echoPin = echoPin;
 			_canifier = canifier;
@@ -114,9 +116,9 @@ public class CANifier {
 		}
 	}
 
-	private com.ctre.phoenix.CANifier.LEDChannel _rChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelA;
-	private com.ctre.phoenix.CANifier.LEDChannel _gChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelB;
-	private com.ctre.phoenix.CANifier.LEDChannel _bChannel = com.ctre.phoenix.CANifier.LEDChannel.LEDChannelC;
+	private CANifier.LEDChannel _rChannel = CANifier.LEDChannel.LEDChannelA;
+	private CANifier.LEDChannel _gChannel = CANifier.LEDChannel.LEDChannelB;
+	private CANifier.LEDChannel _bChannel = CANifier.LEDChannel.LEDChannelC;
 	private double _maxOutput = 1;
 	private LEDRunner _ledRunner;
 	private Notifier ledNotifier;
@@ -152,7 +154,7 @@ public class CANifier {
 	}
 
 	// Setters
-	public void setLedChannels(com.ctre.phoenix.CANifier.LEDChannel ledRChannel, com.ctre.phoenix.CANifier.LEDChannel ledGChannel, com.ctre.phoenix.CANifier.LEDChannel ledBChannel) {
+	public void setLedChannels(CANifier.LEDChannel ledRChannel, CANifier.LEDChannel ledGChannel, CANifier.LEDChannel ledBChannel) {
 		_rChannel = ledRChannel;
 		_gChannel = ledGChannel;
 		_bChannel = ledBChannel;
@@ -169,16 +171,16 @@ public class CANifier {
 		}
 		_lastColor = color;
 		_lastMaxOutput = _maxOutput;
-		double[] vals = ColorToPercentRGB(color);
+		double[] values = ColorToPercentRGB(color);
 		if (onBus) {
-			_canifier.setLEDOutput(vals[0] * _maxOutput, _rChannel);
-			_canifier.setLEDOutput(vals[1] * _maxOutput, _gChannel);
-			_canifier.setLEDOutput(vals[2] * _maxOutput, _bChannel);
+			_canifier.setLEDOutput(values[0] * _maxOutput, _rChannel);
+			_canifier.setLEDOutput(values[1] * _maxOutput, _gChannel);
+			_canifier.setLEDOutput(values[2] * _maxOutput, _bChannel);
 		}
 	}
 
-	public void sendHSB(float[] hsbVals) {
-		sendHSB(hsbVals[0], hsbVals[1], hsbVals[2]);
+	public void sendHSB(float[] hsbValues) {
+		sendHSB(hsbValues[0], hsbValues[1], hsbValues[2]);
 	}
 
 	public void sendHSB(float hue, float sat, float bri) {
@@ -206,7 +208,7 @@ public class CANifier {
 	}
 
 	public interface LEDMode {
-		// nothin
+		// nothing
 	}
 
 	public void setLEDs(LEDMode ledMode, Color color) {

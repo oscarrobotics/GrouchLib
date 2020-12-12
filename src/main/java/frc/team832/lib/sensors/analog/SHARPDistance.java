@@ -19,7 +19,7 @@ public class SHARPDistance extends DistanceSensor {
     private final MedianFilter filter;
 
     private FitType fitType;
-    private float[] polyCoeffs = new float[6];
+    private final float[] polyCoeffs = new float[6];
     private float powerCoeffC, powerCoeffP;
     private int valMin, valMax;
     private static final float[] SZLF_Coeffs = {1734, -9.005f, 2.023E-2f, -2.251E-5f, 1.167E-8f, 2.037E-12f};
