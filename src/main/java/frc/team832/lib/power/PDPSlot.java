@@ -14,7 +14,6 @@ public class PDPSlot {
         this.breaker = breaker;
     }
 
-
     int getPDPPortNumber() {
         return pdpPort.ordinal();
     }
