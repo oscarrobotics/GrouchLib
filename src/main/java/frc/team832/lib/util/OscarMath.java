@@ -42,6 +42,10 @@ public class OscarMath {
         return map(clip(value, in_min, in_max), in_min, in_max, out_min, out_max);
     }
 
+    public static boolean withinEpsilon(double epsilon, double target, double actual) {
+        return Math.abs(target - actual) < epsilon;
+    }
+
     public static double mid(double lower, double upper) {
         return (lower + upper) / 2.0;
     }
