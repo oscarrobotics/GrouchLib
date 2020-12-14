@@ -1,17 +1,18 @@
 package frc.team832.lib.motors;
 
 import frc.team832.lib.util.OscarMath;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class DTPowertrainTest {
-    private Motor motor = null;
-    private WheeledPowerTrain wheeledPowerTrain = null;
+    private static Motor motor = null;
+    private static WheeledPowerTrain wheeledPowerTrain = null;
 
-    @Before
-    public void init() {
+    @BeforeAll
+    static void init() {
         motor = Motor.kNEO;
         Gearbox gearbox = new Gearbox(11.259259f);
         wheeledPowerTrain = new WheeledPowerTrain(gearbox, motor, 2, .149);
@@ -22,7 +23,7 @@ public class DTPowertrainTest {
         double expectedFreeSpeed = 13.37;
         double actualFreeSpeed = OscarMath.round(wheeledPowerTrain.calculateFeetPerSec(motor.freeSpeed), 2);
 
-        assertEquals("Free Speed FAIL", expectedFreeSpeed, actualFreeSpeed, 0);
+        assertEquals(expectedFreeSpeed, actualFreeSpeed, 0, "Free Speed FAIL");
     }
 
     @Test
@@ -30,7 +31,7 @@ public class DTPowertrainTest {
         double expectedMetersPerSec = 2.08;
         double actualMeterPerSec = OscarMath.round(wheeledPowerTrain.calculateMetersPerSec(3000), 2);
 
-        assertEquals("Meters Per Second FAIL", expectedMetersPerSec, actualMeterPerSec, 0);
+        assertEquals(expectedMetersPerSec, actualMeterPerSec, 0, "Meters Per Second FAIL");
     }
 
     @Test
@@ -38,7 +39,7 @@ public class DTPowertrainTest {
         double expectedFeetPerSec = 12.28;
         double actualFeetPerSec = OscarMath.round(wheeledPowerTrain.calculateFeetPerSec(5400), 2);
 
-        assertEquals("Feet Per Second FAIL", expectedFeetPerSec, actualFeetPerSec, 0);
+        assertEquals(expectedFeetPerSec, actualFeetPerSec, 0, "Feet Per Second FAIL");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class DTPowertrainTest {
         double expectedMotorSpeed = 5412;
         double actualMotorSpeed = OscarMath.round(wheeledPowerTrain.calculateMotorRpmFromSurfaceSpeed(3.75), 0);
 
-        assertEquals("Feet Per Second FAIL", expectedMotorSpeed, actualMotorSpeed, 0);
+        assertEquals(expectedMotorSpeed, actualMotorSpeed, 0, "Feet Per Second FAIL");
     }
 
     @Test
@@ -54,6 +55,6 @@ public class DTPowertrainTest {
         double expectedWheelDistanceMeters = 3.1181;
         double actualWheelDistanceMeters = OscarMath.round(wheeledPowerTrain.calculateWheelDistanceMeters(75), 4);
 
-        assertEquals("Calculate Wheel Distance Meters FAIL", expectedWheelDistanceMeters, actualWheelDistanceMeters, 0);
+        assertEquals(expectedWheelDistanceMeters, actualWheelDistanceMeters, 0, "Calculate Wheel Distance Meters FAIL");
     }
 }

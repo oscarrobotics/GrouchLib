@@ -6,7 +6,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-wpi.wpilibVersion = '2021.+'
+//wpi.wpilibVersion = '2021.+'
 
 repositories {
     mavenLocal()
@@ -19,13 +19,11 @@ dependencies {
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.22'
 
-    compile "org.ejml:ejml-simple:0.38"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
-    compile "com.fasterxml.jackson.core:jackson-core:2.10.0"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
 
-    compile group: 'org.ejml', name: 'ejml-all', version: '0.38'
+test {
+    useJUnitPlatform()
 }
