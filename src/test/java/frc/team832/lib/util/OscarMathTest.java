@@ -1,7 +1,8 @@
 package frc.team832.lib.util;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OscarMathTest {
 
@@ -14,7 +15,7 @@ public class OscarMathTest {
         actualValues[1] = OscarMath.round(6.616087823455, 3);
         actualValues[2] = OscarMath.round(3.3080439117275, 5);
 
-        assertArrayEquals("Rounding failed!", expectedValues, actualValues, 0);
+        assertArrayEquals(expectedValues, actualValues, 0, "Rounding failed!");
     }
 
     @Test
@@ -27,8 +28,8 @@ public class OscarMathTest {
         boolean valid = OscarMath.inRange(validValue, min, max);
         boolean invalid = OscarMath.inRange(invalidValue, min, max);
 
-        assertTrue("InRange \"double\" failed on valid!", valid);
-        assertFalse("InRange \"double\" failed on invalid!", invalid);
+        assertTrue(valid, "InRange \"double\" failed on valid!");
+        assertFalse(invalid, "InRange \"double\" failed on invalid!");
     }
 
     @Test
@@ -41,8 +42,8 @@ public class OscarMathTest {
         boolean valid = OscarMath.inRange(validValue, min, max);
         boolean invalid = OscarMath.inRange(invalidValue, min, max);
 
-        assertTrue("InRange \"int\" failed on valid!", valid);
-        assertFalse("InRange \"int\" failed on invalid!", invalid);
+        assertTrue(valid, "InRange \"int\" failed on valid!");
+        assertFalse(invalid, "InRange \"int\" failed on invalid!");
     }
 
     @Test
@@ -56,7 +57,7 @@ public class OscarMathTest {
 
         double actualResult = OscarMath.map(value, inMin, inMax, outMin, outMax);
 
-        assertEquals("Map \"double\" failed!", expectedResult, actualResult, 0);
+        assertEquals(expectedResult, actualResult, 0, "Map \"double\" failed!");
     }
 
     @Test
@@ -70,7 +71,7 @@ public class OscarMathTest {
 
         int actualResult = OscarMath.map(value, inMin, inMax, outMin, outMax);
 
-        assertEquals("Map \"int\" failed!", expectedResult, actualResult, 0);
+        assertEquals(expectedResult, actualResult, 0, "Map \"int\" failed!");
     }
 
     @Test
@@ -86,8 +87,8 @@ public class OscarMathTest {
         double actualResult1 = OscarMath.clip(value1, min, max);
         double actualResult2 = OscarMath.clip(value2, min, max);
 
-        assertEquals("Clip \"double\" failed!", expectedResult1, actualResult1, 0);
-        assertEquals("Clip \"double\" failed!", expectedResult2, actualResult2, 0);
+        assertEquals(expectedResult1, actualResult1, 0, "Clip \"double\" failed!");
+        assertEquals(expectedResult2, actualResult2, 0, "Clip \"double\" failed!");
     }
 
     @Test
@@ -103,8 +104,8 @@ public class OscarMathTest {
         double actualResult1 = OscarMath.clip(value1, min, max);
         double actualResult2 = OscarMath.clip(value2, min, max);
 
-        assertEquals("Clip \"int\" failed!", expectedResult1, actualResult1, 0);
-        assertEquals("Clip \"int\" failed!", expectedResult2, actualResult2, 0);
+        assertEquals(expectedResult1, actualResult1, 0, "Clip \"int\" failed!");
+        assertEquals(expectedResult2, actualResult2, 0, "Clip \"int\" failed!");
     }
 
     @Test
@@ -122,8 +123,8 @@ public class OscarMathTest {
         double actualResult1 = OscarMath.clipMap(value1, inMin, inMax, outMin, outMax);
         double actualResult2 = OscarMath.clipMap(value2, inMin, inMax, outMin, outMax);
 
-        assertEquals("ClipMap \"double\" failed!", expectedResult1, actualResult1, 0);
-        assertEquals("ClipMap \"double\" failed!", expectedResult2, actualResult2, 0);
+        assertEquals(expectedResult1, actualResult1, 0, "ClipMap \"double\" failed!");
+        assertEquals(expectedResult2, actualResult2, 0, "ClipMap \"double\" failed!");
     }
 
     @Test
@@ -136,8 +137,8 @@ public class OscarMathTest {
         double actualResult1 = OscarMath.mid(lower, upper);
         double actualResult2 = OscarMath.mid(upper, lower);
 
-        assertEquals("Mid \"double\" failed!", expectedResult, actualResult1, 0);
-        assertEquals("Mid \"double\" inverse failed!", expectedResult, actualResult2, 0);
+        assertEquals(expectedResult, actualResult1, 0, "Mid \"double\" failed!");
+        assertEquals(expectedResult, actualResult2, 0, "Mid \"double\" inverse failed!");
     }
 
     @Test
@@ -150,8 +151,8 @@ public class OscarMathTest {
         int actualResult1 = OscarMath.mid(lower, upper);
         int actualResult2 = OscarMath.mid(upper, lower);
 
-        assertEquals("Mid \"int\" failed!", expectedResult, actualResult1, 0);
-        assertEquals("Mid \"int\" inverse failed!", expectedResult, actualResult2, 0);
+        assertEquals(expectedResult, actualResult1, 0, "Mid \"int\" failed!");
+        assertEquals(expectedResult, actualResult2, 0, "Mid \"int\" inverse failed!");
     }
 
     @Test
@@ -163,7 +164,7 @@ public class OscarMathTest {
 
         double actualResult = OscarMath.signumPow(value, power);
 
-        assertEquals("SignumPow \"double\" failed!", expectedResult, actualResult, 0);
+        assertEquals(expectedResult, actualResult, 0, "SignumPow \"double\" failed!");
     }
 
     @Test
@@ -179,7 +180,7 @@ public class OscarMathTest {
         double actualResult1 = OscarMath.keepSignedPow(value1, power);
         double actualResult2 = OscarMath.keepSignedPow(value2, power);
 
-        assertEquals("KeepSignedPow failed!", expectedResult1, actualResult1, 0);
-        assertEquals("KeepSignedPow failed!", expectedResult2, actualResult2, 0);
+        assertEquals(expectedResult1, actualResult1, 0, "KeepSignedPow failed!");
+        assertEquals(expectedResult2, actualResult2, 0, "KeepSignedPow failed!");
     }
 }
