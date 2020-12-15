@@ -22,7 +22,7 @@ public abstract class CSVFileWriter {
     BufferedWriter logWriter;
 
     public CSVFileWriter(String fileName) {
-        var folderPath = Path.of(Filesystem.getLaunchDirectory().getAbsolutePath(), "logs").toAbsolutePath().toString();
+        var folderPath = Path.of(Filesystem.getOperatingDirectory().getAbsolutePath(), "logs").toAbsolutePath().toString();
         var logFileName = "log_" + getDateTimeString() + "_" + fileName + ".csv";
         var filePath = Path.of(folderPath, logFileName).toAbsolutePath().toString();
 
@@ -86,7 +86,7 @@ public abstract class CSVFileWriter {
     }
 
     protected void writeFPGATimestamp() {
-        write(Timer.getFPGATimestamp());
+        write(Timer.getFPGATimestamp() + ", ");
     }
 
     protected String getDateTimeString() {
