@@ -1,4 +1,4 @@
-package frc.team832.lib.logging;
+package frc.team832.lib.logging.writers;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -18,6 +18,8 @@ import java.util.stream.DoubleStream;
 
 @SuppressWarnings("unused")
 public abstract class CSVFileWriter {
+
+    public static final String SEPARATOR = ", ";
 
     BufferedWriter logWriter;
 
@@ -64,11 +66,11 @@ public abstract class CSVFileWriter {
     }
 
     protected void writeWithSeparator(double value) {
-        write(value + ", ");
+        write(value + SEPARATOR);
     }
 
     protected void writeWithSeparator(String value) {
-        write(value + ", ");
+        write(value + SEPARATOR);
     }
 
     protected void writeValues(double... values) {
@@ -80,7 +82,7 @@ public abstract class CSVFileWriter {
     }
 
     private String doublesToString(double... values) {
-        StringJoiner sj = new StringJoiner(", ");
+        StringJoiner sj = new StringJoiner(SEPARATOR);
         DoubleStream.of(values).forEach(x -> sj.add(String.valueOf(x)));
         return sj.toString();
     }
