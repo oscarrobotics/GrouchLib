@@ -1,8 +1,8 @@
-package frc.team832.lib.logging;
+package frc.team832.lib.logging.writers;
 
-public class FlywheelStateSpaceLogger extends CSVFileWriter {
+public class FlywheelStateSpaceLogWriter extends CSVFileWriter {
 
-    public FlywheelStateSpaceLogger(String systemName) {
+    public FlywheelStateSpaceLogWriter(String systemName) {
         super(systemName + "-FlywheelStateSpace");
     }
 
