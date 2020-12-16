@@ -7,7 +7,7 @@ public class FlywheelStateSpaceLogWriter extends CSVFileWriter {
     }
 
     @Override
-    void writeHeader() {
+    protected void writeHeader() {
         writeLine("Timestamp, Reference, State, Input, Output");
     }
 

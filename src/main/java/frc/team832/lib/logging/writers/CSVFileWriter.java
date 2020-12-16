@@ -97,5 +97,5 @@ public abstract class CSVFileWriter {
         return df.format(new Date());
     }
 
-    abstract void writeHeader();
+    protected abstract void writeHeader();
 }
