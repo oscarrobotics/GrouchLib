@@ -11,15 +11,16 @@ public class ArmStateSpaceLogWriter extends CSVFileWriter {
 
     @Override
     protected void writeHeader() {
-        writeLine("Timestamp, Reference, PositionState, VelocityState, Input, Output");
+        writeLine("Timestamp, Reference, PositionState, VelocityState, Input, PositionOutput, VelocityOutput");
     }
 
-    public void logSystemState(LinearSystemLoop<N2, N1, N1> loop, double output) {
+    public void logSystemState(LinearSystemLoop<N2, N1, N1> loop, double outputVelocity, double outputPosition) {
         writeFPGATimestamp();
         writeWithSeparator(loop.getNextR(0));
         writeWithSeparator(loop.getXHat(0));
         writeWithSeparator(loop.getXHat(1));
         writeWithSeparator(loop.getU(0));
-        writeWithSeparator(output);
+        writeWithSeparator(outputVelocity);
+        writeWithSeparator(outputPosition);
     }
 }
