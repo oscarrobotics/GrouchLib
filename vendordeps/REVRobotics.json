@@ -2,7 +2,7 @@
 
   "fileName": "REVRobotics.json",
   "name": "REVRobotics",
-  "version": "1.5.2",
+  "version": "1.5.4",
   "uuid": "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
   "mavenUrls": [
     "https://www.revrobotics.com/content/sw/max/sdk/maven/"
@@ -12,7 +12,7 @@
     {
       "artifactId": "SparkMax-java",
       "groupId": "com.revrobotics.frc",
-      "version": "1.5.2"
+      "version": "1.5.4"
     }
   ],
   "jniDependencies": [
