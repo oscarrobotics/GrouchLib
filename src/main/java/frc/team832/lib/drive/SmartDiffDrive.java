@@ -1,8 +1,8 @@
 package frc.team832.lib.drive;
 
-import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
-import frc.team832.lib.motorcontrol2.SmartMC;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.util.OscarMath;
 
 public class SmartDiffDrive implements Sendable {
@@ -14,8 +14,8 @@ public class SmartDiffDrive implements Sendable {
 	private double _maxOutput = 1;
 	private double _deadband = 0.02;
 
-	private final SmartMC _leftMotor;
-	private final SmartMC _rightMotor;
+	private final SmartMC<?> _leftMotor;
+	private final SmartMC<?> _rightMotor;
 	private final ClosedLoopDT _closedLoopDT;
 	private final int _maxMotorRPM;
 
@@ -23,7 +23,7 @@ public class SmartDiffDrive implements Sendable {
 	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
 	private double m_quickStopAccumulator = 0.0;
 
-	public SmartDiffDrive(SmartMC leftMotor, SmartMC rightMotor, ClosedLoopDT closedLoopDT, int maxRPM) {
+	public SmartDiffDrive(SmartMC<?> leftMotor, SmartMC<?> rightMotor, ClosedLoopDT closedLoopDT, int maxRPM) {
 		_leftMotor = leftMotor;
 		_rightMotor = rightMotor;
 		_closedLoopDT = closedLoopDT;
