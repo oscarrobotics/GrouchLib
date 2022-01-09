@@ -1,10 +1,10 @@
 package frc.team832.lib;
 
-import frc.team832.lib.motorcontrol2.SmartMC;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import frc.team832.lib.motorcontrol.SmartMC;
 
 public class CANDevice {
 	private static final HashMap<Integer, CANDevice> _canDevices = new HashMap<>();

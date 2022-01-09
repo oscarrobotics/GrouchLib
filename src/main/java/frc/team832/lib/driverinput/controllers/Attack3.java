@@ -3,7 +3,6 @@ package frc.team832.lib.driverinput.controllers;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-@SuppressWarnings("unused")
 public class Attack3 extends Joystick {
 	/**
 	 * Construct an instance of a joystick. The joystick index is the USB port on the drivers
