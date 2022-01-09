@@ -39,14 +39,14 @@ public class GearboxTest {
 		assertFalse(insideIndexException, "GetReduction failed on inside index!");
 		assertTrue(outsideIndexException, "GetReduction failed on outside index!");
 
-		assertEquals(expectedReduction, actualReduction, 0, "GetReduction failed to return the appropriate value for a certain index");
-		assertEquals(expectedReduction1, actualReduction1, 0, "GetReduction failed to return the appropriate value for a certain index");
+		assertEquals(expectedReduction, actualReduction, 0.001f, "GetReduction failed to return the appropriate value for a certain index");
+		assertEquals(expectedReduction1, actualReduction1, 0.001f, "GetReduction failed to return the appropriate value for a certain index");
 	}
 
 	@Test
 	public void getTotalReductionTest() {
 		double totalReduction = 235.83;
 
-		assertEquals(totalReduction, gearbox.getTotalReduction(), 0.001, "GetTotalReduction failed to output correctly");
+		assertEquals(totalReduction, gearbox.getTotalReduction(), 0.001f, "GetTotalReduction failed to output correctly");
 	}
 }
