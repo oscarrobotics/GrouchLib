@@ -34,3 +34,4 @@ logs/
 
 exportToHTML/
 build/
+.settings/org.eclipse.buildship.core.prefs
