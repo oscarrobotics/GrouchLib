@@ -12,10 +12,11 @@ repositories {
 }
 
 dependencies {
-    compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
-    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
-    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    implementation wpi.java.deps.wpilib()
+    implementation wpi.java.vendor.java()
+
+    // nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    // nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
     implementation 'org.knowm.xchart:xchart:3.6.5'
 
