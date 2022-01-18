@@ -1,19 +1,17 @@
 package frc.team832.lib.power.impl;
 
-import frc.team832.lib.control.PDP;
-import frc.team832.lib.motorcontrol.SimpleMC;
-import frc.team832.lib.power.PDPBreaker;
-import frc.team832.lib.power.PDPPortNumber;
-import frc.team832.lib.power.PDPSlot;
-
 import java.util.function.DoubleSupplier;
 
-public class SimpleMCAttachedPDPSlot extends PDPSlot {
+import frc.team832.lib.motorcontrol.SimpleMC;
+import frc.team832.lib.power.GrouchPD;
+import frc.team832.lib.power.PDSlot;
+
+public class SimpleMCAttachedPDSlot extends PDSlot {
 	private final SimpleMC<?> motorController;
 	private final DoubleSupplier motorRPMSupplier;
 
-	public SimpleMCAttachedPDPSlot(PDP pdp,
-			PDPPortNumber portNumber, PDPBreaker breaker, 
+	public SimpleMCAttachedPDSlot(GrouchPD pdp,
+			int portNumber, Breaker breaker, 
 			SimpleMC<?> motorController, DoubleSupplier motorRPMSupplier) {
 		super(pdp, portNumber, breaker);
 		this.motorController = motorController;
