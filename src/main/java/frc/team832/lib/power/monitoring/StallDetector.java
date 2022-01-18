@@ -1,18 +1,23 @@
 package frc.team832.lib.power.monitoring;
 
 import edu.wpi.first.math.filter.MedianFilter;
-import frc.team832.lib.power.PDPSlot;
+import frc.team832.lib.power.PDSlot;
 
 public class StallDetector {
+	public class StallDetectorStatus {
+		public boolean isStalled;
+		public int stalledForMillis;
+	}
+
 	private int stallCurrent;
 	private int minStallMillis;
 	private long stallMillis;
 	private long lastRunMillis;
 	private StallDetectorStatus stallStatus = new StallDetectorStatus();
 	private final MedianFilter currentFilter = new MedianFilter(40); // enough to keep 1 second of data when called every 25ms
-	private final PDPSlot slot;
+	private final PDSlot slot;
 
-	public StallDetector(PDPSlot slot) {
+	public StallDetector(PDSlot slot) {
 		this.slot = slot;
 		stallCurrent = slot.getBreakerRatedCurrent();
 	}
