@@ -1,45 +1,47 @@
 package frc.team832.lib.motors;
 
+import edu.wpi.first.math.util.Units;
+
 public class WheeledPowerTrain extends Powertrain {
 
 	public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
-	private final double _wheelDiameterMeters;
-	private double _encoderRatio;
+	private final double m_wheelDiameterMeters;
+	private double m_encoderRatio;
 
 	/**
 	 *
 	 * @param gearbox Gearbox
 	 * @param motor Motor type
 	 * @param motorCount Amount of motors
-	 * @param wheelDiameterMeters Wheel diameter in meters
+	 * @param wheelDiameterInches Wheel diameter in inches
 	 */
-	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterMeters) {
+	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
 		super(gearbox, motor, motorCount);
-		_wheelDiameterMeters = wheelDiameterMeters;
+		m_wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
 		setEncoderRatioIndex(0);
 	}
 
 	public void setEncoderRatioIndex(int reductionIndex) {
 		if (reductionIndex == 0) {
-			_encoderRatio = gearbox.getTotalReduction();
+			m_encoderRatio = gearbox.getTotalReduction();
 		} else if (reductionIndex > 0) {
-			_encoderRatio = gearbox.getReduction(reductionIndex - 1);
+			m_encoderRatio = gearbox.getReduction(reductionIndex - 1);
 		}
 	}
 
 	public double getWheelCircumferenceMeters() {
-		return _wheelDiameterMeters * Math.PI;
+		return m_wheelDiameterMeters * Math.PI;
 	}
 
 	public int getWheelTicksPerRev(int encoderCPR) {
-		return (int) (encoderCPR / _encoderRatio * _wheelDiameterMeters);
+		return (int) (encoderCPR / m_encoderRatio * m_wheelDiameterMeters);
 	}
 
-	public double calculateWheelRPMFromMotorRPM(double currentRpm) { return currentRpm / _encoderRatio ; }
+	public double calculateWheelRPMFromMotorRPM(double currentRpm) { return currentRpm / m_encoderRatio ; }
 
 	public double calculateMotorRpmFromWheelRpm(double wheelRPM) {
-		return wheelRPM / _encoderRatio;
+		return wheelRPM / m_encoderRatio;
 	}
 
 	public double calculateTicksFromWheelDistance(double distanceMeters) {
@@ -47,7 +49,7 @@ public class WheeledPowerTrain extends Powertrain {
 	}
 
 	public double calculateWheelDistanceMeters(double encoderRotations) {
-		return (encoderRotations / _encoderRatio) * getWheelCircumferenceMeters();
+		return (encoderRotations / m_encoderRatio) * getWheelCircumferenceMeters();
 	}
 
 	public double calculateMetersPerSec(double currentRpm) {
@@ -59,10 +61,10 @@ public class WheeledPowerTrain extends Powertrain {
 	}
 
 	public double calculateMotorRpmFromSurfaceSpeed(double wheelMetersPerSec) {
-		return wheelMetersPerSec * 60f / (_wheelDiameterMeters * Math.PI * _encoderRatio);
+		return wheelMetersPerSec * 60f / (m_wheelDiameterMeters * Math.PI * m_encoderRatio);
 	}
 
 	public double calculateTicksFromPosition(double targetPosition) {
-		return targetPosition / _encoderRatio;
+		return targetPosition / m_encoderRatio;
 	}
 }
