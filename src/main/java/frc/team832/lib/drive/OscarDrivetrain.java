@@ -14,7 +14,6 @@ public class OscarDrivetrain {
 	private final DifferentialDriveOdometry m_odometry;
 	private final OscarDiffDrive m_diffDrive;
 
-	private double m_encoderConversionFactor = 1;
 	private Pose2d m_pose;
 	
 	// TODO: NTEs for all debug variables
@@ -47,14 +46,6 @@ public class OscarDrivetrain {
 	}
 	
 	/**
-	 * Set the encoder conversion factor for the drivetrain.
-	 * @param ticksPerRotation Number of ticks to count an entire rotation of the motor shaft.
-	 */
-	public void setEncoderConversionFactor(double ticksPerRotation) {
-		m_encoderConversionFactor = ticksPerRotation;
-	}
-	
-	/**
 	 * Get drivetrain pose
 	 * @return {@link edu.wpi.first.math.geometry.Pose2d} of the robot drivetrain.
 	 */
@@ -74,11 +65,10 @@ public class OscarDrivetrain {
 	 */
 	public void periodic() {
 		var gyroAngle = getGyroHeading();
-		
-		var leftRotations = m_leftMotor.getSensorPosition() * m_encoderConversionFactor;
+	
+		var leftRotations = m_leftMotor.getSensorPosition();
+		var rightRotations = m_rightMotor.getSensorPosition();
 		var leftMeters = m_powertrain.calculateWheelDistanceMeters(leftRotations);
-		
-		var rightRotations = m_rightMotor.getSensorPosition() * m_encoderConversionFactor;
 		var rightMeters = m_powertrain.calculateWheelDistanceMeters(rightRotations);
 		
 		m_pose = m_odometry.update(gyroAngle, leftMeters, rightMeters);
