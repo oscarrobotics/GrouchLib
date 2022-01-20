@@ -8,9 +8,51 @@ import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.util.OscarMath;
 
+/**
+ * A class for driving differential drive/skid-steer drive platforms such as the Kit of Parts drive
+ * base, "tank drive", or West Coast Drive.
+ *
+ * 
+ * 
+ * <p>These drive bases typically have drop-center / skid-steer with two or more wheels per side
+ * (e.g., 6WD or 8WD). This class takes a {@link frc.team832.lib.motorcontrol.SmartMC} per side. Use the
+ * {@link frc.team832.lib.motorcontrol.SmartMC#follow(SmartMC)} method to link motors on a given side 
+ * to each other, as follows.
+ * 
+ * <pre><code>
+ * public class DrivetrainSubsystem extends SubsystemBase {
+ *   SmartMC m_leftFalconOne = new CANTalonFX(1);
+ *   SmartMC m_leftFalconTwo = new CANTalonFX(2);
+ *   SmartMC m_rightFalconOne = new CANTalonFX(3);
+ *   SmartMC m_rightFalconTwo = new CANTalonFX(4);
+ *   OscarDiffDrive m_diffDrive;
+ * 
+ *   public DrivetrainSubsystem() {
+ *     m_leftFalconTwo.follow(leftFalconOne);
+ *     m_rightFalconTwo.follow(rightFalconOne);
+ * 
+ *     m_diffDrive = new OscarDiffDrive(m_leftFalconOne, m_rightFalconOne);
+ *   }
+ * }
+ * </code></pre>
+ * 
+ * <p>Alternatively, see {@link frc.team832.lib.drive.OscarDrivetrain}, which manages this class for you.
+ */
 public class OscarDiffDrive extends RobotDriveBase implements Sendable {
+	public static final double kDefaultQuickStopThreshold = 0.2;
+	public static final double kDefaultQuickStopAlpha = 0.1;
+	
 	private final SmartMC<?> m_leftMotor, m_rightMotor;
 
+	private double m_quickStopThreshold = kDefaultQuickStopThreshold;
+	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
+	private double m_quickStopAccumulator = 0.0;
+
+	/**
+	 * 
+	 * @param leftMotor
+	 * @param rightMotor
+	 */
 	public OscarDiffDrive(SmartMC<?> leftMotor, SmartMC<?> rightMotor) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
@@ -89,6 +131,72 @@ public class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		
 		m_leftMotor.set(speeds.left);
 		m_rightMotor.set(speeds.right);
+	}
+
+	public void curvatureDrive2(double xSpeed, double zRotation, boolean allowTurnInPlace) {
+		curvatureDrive2(xSpeed, zRotation, allowTurnInPlace, 1);
+	}
+
+	public void curvatureDrive2(double xSpeed, double zRotation, boolean allowTurnInPlace, double inputPow) {
+		xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
+		zRotation = MathUtil.applyDeadband(zRotation, m_deadband);
+		
+		xSpeed = OscarMath.signumPow(xSpeed, inputPow);
+		zRotation = OscarMath.signumPow(zRotation, inputPow);
+
+		double angularPower;
+		boolean overPower;
+
+		if (allowTurnInPlace) {
+			if (Math.abs(xSpeed) < m_quickStopThreshold) {
+				m_quickStopAccumulator = 
+					(1 - m_quickStopAlpha) * m_quickStopAccumulator
+					+ m_quickStopAlpha * zRotation * 2;
+			}
+			overPower = true;
+			angularPower = zRotation;
+		} else {
+			overPower = false;
+			angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator;
+
+			if (m_quickStopAccumulator > 1) {
+				m_quickStopAccumulator -= 1;
+			} else if (m_quickStopAccumulator < -1) {
+				m_quickStopAccumulator += 1;
+			} else {
+				m_quickStopAccumulator = 0.0;
+			}
+		}
+
+		double leftMotorOutput = xSpeed + angularPower;
+		double rightMotorOutput = xSpeed - angularPower;
+
+		// If rotation is overpowered, reduce both outputs to within acceptable range
+		if (overPower) {
+			if (leftMotorOutput > 1.0) {
+				rightMotorOutput -= leftMotorOutput - 1.0;
+				leftMotorOutput = 1.0;
+			} else if (rightMotorOutput > 1.0) {
+				leftMotorOutput -= rightMotorOutput - 1.0;
+				rightMotorOutput = 1.0;
+			} else if (leftMotorOutput < -1.0) {
+				rightMotorOutput -= leftMotorOutput + 1.0;
+				leftMotorOutput = -1.0;
+			} else if (rightMotorOutput < -1.0) {
+				leftMotorOutput -= rightMotorOutput + 1.0;
+				rightMotorOutput = -1.0;
+			}
+		}
+
+		// Normalize the wheel speeds
+		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+		if (maxMagnitude > 1.0) {
+			leftMotorOutput /= maxMagnitude;
+			rightMotorOutput /= maxMagnitude;
+		}
+
+		m_leftMotor.set(leftMotorOutput);
+		m_rightMotor.set(rightMotorOutput);
 	}
 	
 	/**

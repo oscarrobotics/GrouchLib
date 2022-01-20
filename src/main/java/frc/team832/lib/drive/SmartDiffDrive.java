@@ -56,8 +56,7 @@ public class SmartDiffDrive implements Sendable {
 
 	public enum LoopMode {
 		PERCENTAGE,
-		VELOCITY,
-		POSITION
+		VELOCITY
 	}
 
 	public boolean isQuickTurning() {
@@ -151,7 +150,6 @@ public class SmartDiffDrive implements Sendable {
 		rightMotorOutput = -(OscarMath.clip(rightMotorOutput, -1, 1) * _maxOutput);
 
 		switch (loopMode) {
-			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
 					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
@@ -291,7 +289,6 @@ public class SmartDiffDrive implements Sendable {
 		rightMotorOutput *= -1; // invert right side
 
 		switch (loopMode) {
-			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
 					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
@@ -374,7 +371,6 @@ public class SmartDiffDrive implements Sendable {
 		double rightMotorOutput = -rightSpeed * _maxOutput;
 
 		switch (loopMode) {
-			case POSITION:
 			case PERCENTAGE:
 				if (isFF) {
 					double leftMotorTargetRPM = _closedLoopDT.powerTrain.calculateMotorRpmFromWheelRpm(leftMotorOutput  * _maxMotorRPM);
