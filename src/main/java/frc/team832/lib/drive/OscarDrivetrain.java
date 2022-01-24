@@ -2,7 +2,9 @@ package frc.team832.lib.drive;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.WheeledPowerTrain;
@@ -11,15 +13,16 @@ public class OscarDrivetrain {
 	private final SmartMC<?> m_leftMotor, m_rightMotor;
 	private final Gyro m_gyro;
 	private final WheeledPowerTrain m_powertrain;
-	private final DifferentialDriveOdometry m_odometry;
 	private final OscarDiffDrive m_diffDrive;
+	private final DifferentialDriveOdometry m_odometry;
+	private final DifferentialDriveKinematics m_kinematics;
 
 	private Pose2d m_pose;
 	
 	// TODO: NTEs for all debug variables
 	// private NetworkTableEntry
 	
-	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, WheeledPowerTrain dtPowertrain) {
+	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, WheeledPowerTrain dtPowertrain, double wheelbaseInches) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
 		m_gyro = gyro;
@@ -27,6 +30,7 @@ public class OscarDrivetrain {
 		
 		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor);
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
+		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(wheelbaseInches));
 	}
 	
 	/**
