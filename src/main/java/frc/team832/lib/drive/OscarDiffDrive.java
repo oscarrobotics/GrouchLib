@@ -5,7 +5,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
-import frc.team832.lib.motorcontrol.SmartMC;
+import frc.team832.lib.motorcontrol.SimpleMC;
 import frc.team832.lib.util.OscarMath;
 
 /**
@@ -39,10 +39,10 @@ import frc.team832.lib.util.OscarMath;
  * <p>Alternatively, see {@link frc.team832.lib.drive.OscarDrivetrain}, which manages this class for you.
  */
 public class OscarDiffDrive extends RobotDriveBase implements Sendable {
-	public static final double kDefaultQuickStopThreshold = 0.2;
+	public static final double kDefaultQuickStopThreshold = 0.3;
 	public static final double kDefaultQuickStopAlpha = 0.1;
 	
-	private final SmartMC<?> m_leftMotor, m_rightMotor;
+	private final SimpleMC<?> m_leftMotor, m_rightMotor;
 
 	private double m_quickStopThreshold = kDefaultQuickStopThreshold;
 	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
@@ -53,7 +53,7 @@ public class OscarDiffDrive extends RobotDriveBase implements Sendable {
 	 * @param leftMotor
 	 * @param rightMotor
 	 */
-	public OscarDiffDrive(SmartMC<?> leftMotor, SmartMC<?> rightMotor) {
+	public OscarDiffDrive(SimpleMC<?> leftMotor, SimpleMC<?> rightMotor) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
 		setSafetyEnabled(false);
