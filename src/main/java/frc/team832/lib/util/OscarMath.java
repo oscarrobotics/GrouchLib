@@ -57,7 +57,7 @@ public class OscarMath {
 	}
 
 	public static double signumPow(double value, double power) {
-		return Math.copySign(Math.pow(value, power), value);
+		return Math.copySign(Math.pow(Math.abs(value), power), value);
 	}
 
 	public static double keepSignedPow(double input, double exponent) {
