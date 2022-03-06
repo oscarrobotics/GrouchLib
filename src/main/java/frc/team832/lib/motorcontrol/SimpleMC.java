@@ -1,36 +1,31 @@
 package frc.team832.lib.motorcontrol;
 
-// import edu.wpi.first.wpilibj.motorcontrol;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.team832.lib.motors.Motor;
 
-public interface SimpleMC<B> {
+/** Interface for simple motor controllers
+ * @param B Base motor controller type
+ */
+public interface SimpleMC<B> extends MotorController {
 
 	/**
-	 *
-	 * @param power setpoint from -1.0 to 1.0
+	 * Gets the motor attached to the controller.
+	 * @return Motor object.
 	 */
-	void set(double power);
-
-	/**
-	 *
-	 * @return setpoint
-	 */
-	double get();
-
-	void stop();
-
-	void setInverted(boolean inverted);
-
-	boolean getInverted();
-
 	Motor getMotor();
 
+	/**
+	 * Gets the base object of the controller.
+	 * @return Base object.
+	 */
 	B getBaseController();
 
 	/**
 	 * Gets the current output voltage of the controller.
-	 *
 	 * @return Output in Volts.
 	 */
-	double getOutputVoltage();
+  default double getOutputVoltage() {
+    return RobotController.getBatteryVoltage() / get();
+  }
 }

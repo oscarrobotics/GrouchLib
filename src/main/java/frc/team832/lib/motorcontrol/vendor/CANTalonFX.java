@@ -18,10 +18,11 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 	private final int _canID;
 
 	private ControlMode _ctrlMode;
+	private double voltageCompSaturation = 12.0;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
 	private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
 
-	private final boolean canConnectedAtBoot;    
+	private final boolean canConnectedAtBoot;
 
 	public CANTalonFX(int canId) {
 		_talon = new TalonFX(canId);
@@ -179,27 +180,33 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 	}
 
 	@Override
-	public double get() {
-		return canConnectedAtBoot ? _talon.getMotorOutputPercent() : Double.NaN;
+	public void setVoltage(double voltage) {
+		double compVoltage = Math.max(12.0, getInputVoltage());
+		_ctrlMode = ControlMode.PercentOutput;
+
+		_talon.configVoltageCompSaturation(compVoltage);
+		_talon.enableVoltageCompensation(true);
+		_talon.set(_ctrlMode, voltage)
 	}
 
 	@Override
-	public void stop() {
-		if (canConnectedAtBoot) {
-			_talon.set(ControlMode.PercentOutput, 0);
-		}
+	public double get() {
+		return _talon.getMotorOutputPercent();
+	}
+
+	@Override
+	public void stopMotor() {
+		_talon.set(ControlMode.PercentOutput, 0);
 	}
 
 	@Override
 	public void setInverted(boolean inverted) {
-		if (canConnectedAtBoot) {
-			_talon.setInverted(inverted);
-		}
+		_talon.setInverted(inverted);
 	}
 
 	@Override
 	public boolean getInverted() {
-		return canConnectedAtBoot && _talon.getInverted();
+		return _talon.getInverted();
 	}
 
 	@Override
