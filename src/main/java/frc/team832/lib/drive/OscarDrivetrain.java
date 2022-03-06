@@ -1,5 +1,6 @@
 package frc.team832.lib.drive;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -16,19 +17,27 @@ public class OscarDrivetrain {
 	private final OscarDiffDrive m_diffDrive;
 	private final DifferentialDriveOdometry m_odometry;
 	private final DifferentialDriveKinematics m_kinematics;
+	private final SimpleMotorFeedforward m_leftFF, m_rightFF;
 
 	private Pose2d m_pose;
 	
 	// TODO: NTEs for all debug variables
 	// private NetworkTableEntry
 	
-	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, WheeledPowerTrain dtPowertrain, double wheelbaseInches) {
+	public OscarDrivetrain(
+		SmartMC<?> leftMotor, SmartMC<?> rightMotor, 
+		SimpleMotorFeedforward leftFeedforward, 
+		SimpleMotorFeedforward rightFeedforward, 
+		Gyro gyro, WheeledPowerTrain dtPowertrain,
+		double wheelbaseInches) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
+		m_leftFF = leftFeedforward;
+		m_rightFF = rightFeedforward;
 		m_gyro = gyro;
 		m_powertrain = dtPowertrain;
 		
-		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor);
+		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor, leftFeedforward, rightFeedforward);
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
 		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(wheelbaseInches));
 	}

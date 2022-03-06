@@ -1,6 +1,7 @@
 package frc.team832.lib.drive;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -38,15 +39,19 @@ import frc.team832.lib.util.OscarMath;
  * 
  * <p>Alternatively, see {@link frc.team832.lib.drive.OscarDrivetrain}, which manages this class for you.
  */
-public class OscarDiffDrive extends RobotDriveBase implements Sendable {
+public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 	public static final double kDefaultQuickStopThreshold = 0.3;
 	public static final double kDefaultQuickStopAlpha = 0.1;
 	
 	private final SimpleMC<?> m_leftMotor, m_rightMotor;
+	private final SimpleMotorFeedforward m_leftFF, m_rightFF;
+	private final boolean m_useFF;
 
 	private double m_quickStopThreshold = kDefaultQuickStopThreshold;
 	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
 	private double m_quickStopAccumulator = 0.0;
+
+	private double m_maxVelocity = 0;
 
 	/**
 	 * 
@@ -56,9 +61,32 @@ public class OscarDiffDrive extends RobotDriveBase implements Sendable {
 	public OscarDiffDrive(SimpleMC<?> leftMotor, SimpleMC<?> rightMotor) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
+		m_leftFF = new SimpleMotorFeedforward(0, 0);
+		m_rightFF =  new SimpleMotorFeedforward(0, 0);
+		m_useFF = false;
 		setSafetyEnabled(false);
 	}
 	
+	/**
+	 * 
+	 * @param leftMotor
+	 * @param rightMotor
+	 */
+	public OscarDiffDrive(
+			SimpleMC<?> leftMotor, SimpleMC<?> rightMotor,
+			SimpleMotorFeedforward leftFeedforward,
+			SimpleMotorFeedforward rightFeedforward,
+			double maxVelocity
+		) {
+		m_leftMotor = leftMotor;
+		m_rightMotor = rightMotor;
+		m_leftFF = leftFeedforward;
+		m_rightFF = rightFeedforward;
+		m_useFF = true;
+		m_maxVelocity = maxVelocity;
+		setSafetyEnabled(false);
+	}
+
 	/**
    * Arcade drive method for differential drive platform. The calculated values will be squared to
    * decrease sensitivity at low speeds.
@@ -89,6 +117,14 @@ public class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		
 		var speeds = DifferentialDrive.arcadeDriveIK(xSpeed, zRotation, false);
 		
+		if (m_useFF) {
+			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * maxVelocity);
+			double rightFFEffortVolts = m_rightFF.calculate(speeds.left * maxVelocity);
+
+			m_leftMotor.setVoltage(leftFFEffortVolts);
+			m_rightMotor.setVoltage(rightFFEffortVolts);
+		}
+
 		m_leftMotor.set(speeds.left);
 		m_rightMotor.set(speeds.right);
 	}
