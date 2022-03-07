@@ -37,7 +37,7 @@ public class OscarDrivetrain {
 		m_gyro = gyro;
 		m_powertrain = dtPowertrain;
 		
-		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor, leftFeedforward, rightFeedforward);
+		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor, leftFeedforward, rightFeedforward, wheelbaseInches);
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
 		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(wheelbaseInches));
 	}

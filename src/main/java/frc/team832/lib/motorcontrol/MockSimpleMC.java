@@ -25,7 +25,7 @@ public class MockSimpleMC implements SimpleMC<MockSimpleMC> {
 	}
 
 	@Override
-	public void stop() {
+	public void stopMotor() {
 		m_power = 0;		
 	}
 
@@ -52,5 +52,10 @@ public class MockSimpleMC implements SimpleMC<MockSimpleMC> {
 	@Override
 	public double getOutputVoltage() {
 		return m_power * 12;
+	}
+
+	@Override
+	public void disable() {
+		stopMotor();
 	}
 }

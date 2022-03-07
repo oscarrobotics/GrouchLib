@@ -2,7 +2,7 @@ package frc.team832.lib.motorcontrol.vendor;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
@@ -10,8 +10,8 @@ import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public class CANTalonSRX implements SmartMC<TalonSRX> {
-	private final TalonSRX _talon;
+public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
+	private final WPI_TalonSRX _talon;
 	private final Motor _motor;
 	private final int _canID;
 
@@ -22,7 +22,7 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 		assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
 
 		_motor = motor;
-		_talon = new TalonSRX(canId);
+		_talon = new WPI_TalonSRX(canId);
 		_canID = canId;
 		_ctrlMode = ControlMode.PercentOutput;
 
@@ -35,7 +35,7 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 	}
 
 	@Override
-	public TalonSRX getBaseController() {
+	public WPI_TalonSRX getBaseController() {
 		return _talon;
 	}
 
@@ -45,8 +45,8 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 			_talon.follow(((CANTalonSRX)masterMC).getBaseController());
 		} else {
 			_ctrlMode = ControlMode.Follower;
-			_talon.set(_ctrlMode, masterMC.getCANID());
 		}
+		_talon.set(_ctrlMode, masterMC.getCANID());
 	}
 
 	@Override
@@ -159,10 +159,7 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 
 	@Override
 	public void set(double power) {
-		if (getCANConnection()) {
-			_ctrlMode = ControlMode.PercentOutput;
-			_talon.set(_ctrlMode, power);
-		}
+		_talon.set(power);
 	}
 
 	@Override
@@ -171,7 +168,7 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 	}
 
 	@Override
-	public void stop() {
+	public void stopMotor() {
 		if (getCANConnection()) {
 			_talon.set(ControlMode.PercentOutput, 0);
 		}
@@ -202,5 +199,11 @@ public class CANTalonSRX implements SmartMC<TalonSRX> {
 	@Override
 	public boolean getCANConnection() {
 		return _talon.getBusVoltage() > 0.0;
+	}
+
+	@Override
+	public void disable() {
+		_talon.disable();
+		
 	}
 }

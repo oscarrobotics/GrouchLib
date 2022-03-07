@@ -5,16 +5,17 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public class CANTalonFX implements SmartMC<TalonFX> {
+public class CANTalonFX implements SmartMC<WPI_TalonFX> {
 
-	private final TalonFX _talon;
+	private final WPI_TalonFX _talon;
 	private final int _canID;
 
 	private ControlMode _ctrlMode;
@@ -25,7 +26,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 	private final boolean canConnectedAtBoot;
 
 	public CANTalonFX(int canId) {
-		_talon = new TalonFX(canId);
+		_talon = new WPI_TalonFX(canId);
 		_canID = canId;
 		_ctrlMode = ControlMode.Disabled;
 
@@ -40,7 +41,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 	}
 
 	@Override
-	public TalonFX getBaseController() {
+	public WPI_TalonFX getBaseController() {
 		return _talon;
 	}
 
@@ -173,10 +174,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
 	@Override
 	public void set(double power) {
-		if (canConnectedAtBoot) {
-			_ctrlMode = ControlMode.PercentOutput;
-			_talon.set(_ctrlMode, power);
-		}
+		_talon.set(power);
 	}
 
 	@Override
@@ -186,7 +184,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
 		_talon.configVoltageCompSaturation(compVoltage);
 		_talon.enableVoltageCompensation(true);
-		_talon.set(_ctrlMode, voltage)
+		_talon.set(_ctrlMode, voltage / compVoltage);
 	}
 
 	@Override
@@ -196,7 +194,7 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 
 	@Override
 	public void stopMotor() {
-		_talon.set(ControlMode.PercentOutput, 0);
+		_talon.stopMotor();
 	}
 
 	@Override
@@ -222,5 +220,10 @@ public class CANTalonFX implements SmartMC<TalonFX> {
 	@Override
 	public boolean getCANConnection() {
 		return _talon.getLastError() == ErrorCode.OK;
+	}
+
+	@Override
+	public void disable() {
+		_talon.disable();
 	}
 }

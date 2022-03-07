@@ -118,8 +118,8 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		var speeds = DifferentialDrive.arcadeDriveIK(xSpeed, zRotation, false);
 		
 		if (m_useFF) {
-			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * maxVelocity);
-			double rightFFEffortVolts = m_rightFF.calculate(speeds.left * maxVelocity);
+			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * m_maxVelocity);
+			double rightFFEffortVolts = m_rightFF.calculate(speeds.left * m_maxVelocity);
 
 			m_leftMotor.setVoltage(leftFFEffortVolts);
 			m_rightMotor.setVoltage(rightFFEffortVolts);
@@ -270,8 +270,8 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 	}
 	
 	public void stopMotor() {
-		m_leftMotor.stop();
-		m_rightMotor.stop();
+		m_leftMotor.stopMotor();
+		m_rightMotor.stopMotor();
 	}
 
 	@Override
