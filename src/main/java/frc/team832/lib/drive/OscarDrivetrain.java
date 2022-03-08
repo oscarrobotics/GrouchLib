@@ -6,14 +6,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.WheeledPowerTrain;
 
 public class OscarDrivetrain {
-	private final SmartMC<?> m_leftMotor, m_rightMotor;
+	private final SmartMC<?, ?> m_leftMotor, m_rightMotor;
 	private final Gyro m_gyro;
 	private final WheeledPowerTrain m_powertrain;
 	private final OscarDiffDrive m_diffDrive;

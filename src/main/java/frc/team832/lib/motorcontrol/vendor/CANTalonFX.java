@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.team832.lib.CANDevice;
@@ -13,10 +14,11 @@ import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public class CANTalonFX implements SmartMC<WPI_TalonFX> {
+public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection> {
 
 	private final WPI_TalonFX _talon;
 	private final int _canID;
+	private final CANTalonFXSimCollection _simCollection = new CANTalonFXSimCollection(this);
 
 	private ControlMode _ctrlMode;
 	private double voltageCompSaturation = 12.0;
@@ -46,13 +48,13 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX> {
 	}
 
 	@Override
-	public void follow(SmartMC<?> masterMC) {
+	public void follow(SmartMC<?, ?> masterMC) {
 		if (canConnectedAtBoot) {
 			_ctrlMode = ControlMode.Follower;
 			if (masterMC instanceof  CANTalonFX) {
 				_talon.follow(((CANTalonFX) masterMC).getBaseController());
-			} else if (masterMC instanceof CANTalonSRX) {
-				_talon.follow(((CANTalonSRX) masterMC).getBaseController());
+			// } else if (masterMC instanceof CANTalonSRX) {
+				// _talon.follow(((CANTalonSRX) masterMC).getBaseController());
 			} else {
 				_talon.set(_ctrlMode, masterMC.getCANID());
 			}
@@ -222,6 +224,10 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX> {
 		return _talon.getLastError() == ErrorCode.OK;
 	}
 
+	@Override
+	public CANTalonFXSimCollection getSimCollection() {
+		return _simCollection;
+		
 	@Override
 	public void disable() {
 		_talon.disable();

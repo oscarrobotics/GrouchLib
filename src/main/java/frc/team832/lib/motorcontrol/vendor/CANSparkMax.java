@@ -11,15 +11,15 @@ import frc.team832.lib.util.ClosedLoopConfig;
 import static com.revrobotics.CANSparkMax.*;
 import static com.revrobotics.SparkMaxPIDController.*;
 
-import com.revrobotics.REVLibError;
-
-public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
+public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSparkMaxSimCollection> {
 
 	private final com.revrobotics.CANSparkMax _spark;
 	private final int _canID;
 	private final RelativeEncoder _encoder;
 	private final SparkMaxPIDController _pid;
 	private final Motor _motor;
+
+	private final CANSparkMaxSimCollection _simCollection = new CANSparkMaxSimCollection(this);
 
 	private double _openLoopSetpoint;
 	private double _closedLoopSetpoint;
@@ -47,7 +47,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 	}
 
 	@Override
-	public void follow(SmartMC<?> masterMC) {
+	public void follow(SmartMC<?, ?> masterMC) {
 		if (getCANConnection()) {
 			if (masterMC instanceof CANSparkMax) {
 				_spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController());
@@ -57,7 +57,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 		}
 	}
 
-	public void follow(SmartMC<?> masterMC, boolean invert) {
+	public void follow(SmartMC<?, ?> masterMC, boolean invert) {
 		if (getCANConnection()) {
 			if (masterMC instanceof CANSparkMax) {
 				_spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController(), invert);
@@ -250,5 +250,10 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 	public void disable() {
 		_spark.disable();
 		
+	}
+
+	@Override
+	public CANSparkMaxSimCollection getSimCollection() {
+		return _simCollection;
 	}
 }

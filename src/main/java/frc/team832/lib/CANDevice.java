@@ -19,7 +19,7 @@ public class CANDevice {
 		_deviceName = deviceName;
 	}
 
-	public static void addDevice(SmartMC<?> mc, String name) {
+	public static void addDevice(SmartMC<?, ?> mc, String name) {
 		var device = new CANDevice(mc.getCANID(), mc.getCANConnection(), name);
 		_canDevices.putIfAbsent(device._id, device);
 	}

@@ -30,6 +30,10 @@ public class WheeledPowerTrain extends Powertrain {
 		}
 	}
 
+	public double getWheelDiameterMeters() {
+		return m_wheelDiameterMeters;
+	}
+
 	public double getWheelCircumferenceMeters() {
 		return m_wheelDiameterMeters * Math.PI;
 	}

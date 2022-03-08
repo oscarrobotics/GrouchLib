@@ -2,9 +2,9 @@ package frc.team832.lib.motorcontrol;
 
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public interface SmartMC<B> extends SimpleMC<B> {
+public interface SmartMC<B, S extends SmartMCSimCollection> extends SimpleMC<B> {
 
-	void follow(SmartMC<?> masterMC);
+	void follow(SmartMC<?, ?> masterMC);
 
 	/**
 	 * Gets the current input voltage of the controller.
@@ -59,6 +59,8 @@ public interface SmartMC<B> extends SimpleMC<B> {
 	void setSensorPhase(boolean phase);
 
 	void setPIDF(ClosedLoopConfig closedLoopConfig);
+
+	S getSimCollection();	
 
 	boolean getCANConnection();
 }

@@ -45,7 +45,7 @@ public class GrouchPD extends PowerDistribution {
 		return slot;
 	}
 
-	public SmartMCAttachedPDSlot addDevice(int portNumber, Breaker breaker, SmartMC<?> motorController) {
+	public SmartMCAttachedPDSlot addDevice(int portNumber, Breaker breaker, SmartMC<?, ?> motorController) {
 		assert !hasAssignedPort(portNumber) : "PD Port already in use!";
 		var slot = new SmartMCAttachedPDSlot(this, portNumber, breaker, motorController);
 

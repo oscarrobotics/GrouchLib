@@ -5,9 +5,9 @@ import frc.team832.lib.power.GrouchPD;
 import frc.team832.lib.power.PDSlot;
 
 public class SmartMCAttachedPDSlot extends PDSlot {
-	private final SmartMC<?> motorController;
+	private final SmartMC<?, ?> motorController;
 
-	public SmartMCAttachedPDSlot(GrouchPD pd, int portNumber, Breaker breaker, SmartMC<?> motorController) {
+	public SmartMCAttachedPDSlot(GrouchPD pd, int portNumber, Breaker breaker, SmartMC<?, ?> motorController) {
 		super(pd, portNumber, breaker);
 		this.motorController = motorController;
 	}
