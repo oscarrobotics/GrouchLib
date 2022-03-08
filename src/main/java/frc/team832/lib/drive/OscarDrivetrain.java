@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.WheeledPowerTrain;
 
@@ -20,6 +21,7 @@ public class OscarDrivetrain {
 	private final SimpleMotorFeedforward m_leftFF, m_rightFF;
 
 	private Pose2d m_pose;
+	private Field2d m_field;
 	
 	// TODO: NTEs for all debug variables
 	// private NetworkTableEntry
@@ -37,7 +39,7 @@ public class OscarDrivetrain {
 		m_gyro = gyro;
 		m_powertrain = dtPowertrain;
 		
-		m_diffDrive = new OscarDiffDrive(leftMotor, rightMotor, leftFeedforward, rightFeedforward, wheelbaseInches);
+		m_diffDrive = new OscarDiffDrive(m_leftMotor, m_rightMotor, m_leftFF, m_rightFF, wheelbaseInches);
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
 		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(wheelbaseInches));
 	}
@@ -85,5 +87,7 @@ public class OscarDrivetrain {
 		var rightMeters = m_powertrain.calculateWheelDistanceMeters(rightRotations);
 		
 		m_pose = m_odometry.update(gyroAngle, leftMeters, rightMeters);
+
+		m_field.getRobotObject().setPose(m_pose);
 	}
 }
