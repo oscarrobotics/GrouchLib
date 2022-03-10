@@ -53,11 +53,6 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 
 	private double m_maxVelocity = 0;
 
-	/**
-	 * 
-	 * @param leftMotor
-	 * @param rightMotor
-	 */
 	public OscarDiffDrive(SimpleMC<?> leftMotor, SimpleMC<?> rightMotor) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
@@ -66,12 +61,7 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		m_useFF = false;
 		setSafetyEnabled(false);
 	}
-	
-	/**
-	 * 
-	 * @param leftMotor
-	 * @param rightMotor
-	 */
+
 	public OscarDiffDrive(
 			SimpleMC<?> leftMotor, SimpleMC<?> rightMotor,
 			SimpleMotorFeedforward leftFeedforward,
@@ -85,6 +75,15 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		m_useFF = true;
 		m_maxVelocity = maxVelocity;
 		setSafetyEnabled(false);
+	}
+
+	/**
+	 * Set the max velocity to scale inputs to for 
+	 * feed forward controlled open-loop driving.
+	 * @param maxVelocity Maximum velocity (in the same units as feed forward).
+	 */
+	public void setMaxFFVelocity(double maxVelocity) {
+		m_maxVelocity = maxVelocity;
 	}
 
 	/**
@@ -123,10 +122,10 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 
 			m_leftMotor.setVoltage(leftFFEffortVolts);
 			m_rightMotor.setVoltage(rightFFEffortVolts);
-		}
-
-		m_leftMotor.set(speeds.left);
-		m_rightMotor.set(speeds.right);
+		} else {
+			m_leftMotor.set(speeds.left);
+			m_rightMotor.set(speeds.right);
+		}		
 	}
 	
 	/**
@@ -165,74 +164,16 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		
 		var speeds = DifferentialDrive.curvatureDriveIK(xSpeed, zRotation, allowTurnInPlace);
 		
-		m_leftMotor.set(speeds.left);
-		m_rightMotor.set(speeds.right);
-	}
+		if (m_useFF) {
+			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * m_maxVelocity);
+			double rightFFEffortVolts = m_rightFF.calculate(speeds.left * m_maxVelocity);
 
-	public void curvatureDrive2(double xSpeed, double zRotation, boolean allowTurnInPlace) {
-		curvatureDrive2(xSpeed, zRotation, allowTurnInPlace, 1);
-	}
-
-	public void curvatureDrive2(double xSpeed, double zRotation, boolean allowTurnInPlace, double inputPow) {
-		xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
-		zRotation = MathUtil.applyDeadband(zRotation, m_deadband);
-		
-		xSpeed = OscarMath.signumPow(xSpeed, inputPow);
-		zRotation = OscarMath.signumPow(zRotation, inputPow);
-
-		double angularPower;
-		boolean overPower;
-
-		if (allowTurnInPlace) {
-			if (Math.abs(xSpeed) < m_quickStopThreshold) {
-				m_quickStopAccumulator = 
-					(1 - m_quickStopAlpha) * m_quickStopAccumulator
-					+ m_quickStopAlpha * zRotation * 2;
-			}
-			overPower = true;
-			angularPower = zRotation;
+			m_leftMotor.setVoltage(leftFFEffortVolts);
+			m_rightMotor.setVoltage(rightFFEffortVolts);
 		} else {
-			overPower = false;
-			angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator;
-
-			if (m_quickStopAccumulator > 1) {
-				m_quickStopAccumulator -= 1;
-			} else if (m_quickStopAccumulator < -1) {
-				m_quickStopAccumulator += 1;
-			} else {
-				m_quickStopAccumulator = 0.0;
-			}
-		}
-
-		double leftMotorOutput = xSpeed + angularPower;
-		double rightMotorOutput = xSpeed - angularPower;
-
-		// If rotation is overpowered, reduce both outputs to within acceptable range
-		if (overPower) {
-			if (leftMotorOutput > 1.0) {
-				rightMotorOutput -= leftMotorOutput - 1.0;
-				leftMotorOutput = 1.0;
-			} else if (rightMotorOutput > 1.0) {
-				leftMotorOutput -= rightMotorOutput - 1.0;
-				rightMotorOutput = 1.0;
-			} else if (leftMotorOutput < -1.0) {
-				rightMotorOutput -= leftMotorOutput + 1.0;
-				leftMotorOutput = -1.0;
-			} else if (rightMotorOutput < -1.0) {
-				leftMotorOutput -= rightMotorOutput + 1.0;
-				rightMotorOutput = -1.0;
-			}
-		}
-
-		// Normalize the wheel speeds
-		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
-		if (maxMagnitude > 1.0) {
-			leftMotorOutput /= maxMagnitude;
-			rightMotorOutput /= maxMagnitude;
-		}
-
-		m_leftMotor.set(leftMotorOutput);
-		m_rightMotor.set(rightMotorOutput);
+			m_leftMotor.set(speeds.left);
+			m_rightMotor.set(speeds.right);
+		}		
 	}
 	
 	/**
@@ -264,9 +205,18 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		rightSpeed = OscarMath.signumPow(rightSpeed, inputPow);
 
 		var speeds = DifferentialDrive.tankDriveIK(leftSpeed, rightSpeed, false);
+		
+		if (m_useFF) {
+			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * m_maxVelocity);
+			double rightFFEffortVolts = m_rightFF.calculate(speeds.right * m_maxVelocity);
 
-		m_leftMotor.set(speeds.left * m_maxOutput);
-		m_rightMotor.set(speeds.right * m_maxOutput);
+			m_leftMotor.setVoltage(leftFFEffortVolts);
+			m_rightMotor.setVoltage(rightFFEffortVolts);
+		} else {
+			m_leftMotor.set(speeds.left * m_maxOutput);
+			m_rightMotor.set(speeds.right * m_maxOutput);
+		}
+		
 	}
 	
 	public void stopMotor() {
