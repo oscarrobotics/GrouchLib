@@ -72,7 +72,9 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		m_rightMotor = rightMotor;
 		m_leftFF = leftFeedforward;
 		m_rightFF = rightFeedforward;
-		m_useFF = true;
+		boolean leftFFInvalid = leftFeedforward.kv == 0 || leftFeedforward.ka == 0;
+		boolean rightFFInvalid = rightFeedforward.kv == 0 || rightFeedforward.ka == 0;
+		m_useFF = !(leftFFInvalid || rightFFInvalid);
 		m_maxVelocity = maxVelocity;
 		setSafetyEnabled(false);
 	}
