@@ -11,6 +11,8 @@ import frc.team832.lib.util.ClosedLoopConfig;
 import static com.revrobotics.CANSparkMax.*;
 import static com.revrobotics.SparkMaxPIDController.*;
 
+import com.revrobotics.REVLibError;
+
 public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSparkMaxSimCollection> {
 
 	private final com.revrobotics.CANSparkMax _spark;

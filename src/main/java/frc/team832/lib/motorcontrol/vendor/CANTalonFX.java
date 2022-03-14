@@ -227,6 +227,7 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 	@Override
 	public CANTalonFXSimCollection getSimCollection() {
 		return _simCollection;
+	}
 		
 	@Override
 	public void disable() {

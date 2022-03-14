@@ -10,13 +10,14 @@ import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
+public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollection> {
 	private final WPI_TalonSRX _talon;
 	private final Motor _motor;
 	private final int _canID;
 
 	private ControlMode _ctrlMode;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
+	private final CANTalonSRXSimCollection _simCollection = new CANTalonSRXSimCollection(this);
 
 	public CANTalonSRX(int canId, Motor motor) {
 		assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
@@ -40,7 +41,7 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
 	}
 
 	@Override
-	public void follow(SmartMC<?> masterMC) {
+	public void follow(SmartMC<?, ?> masterMC) {
 		if (!(masterMC instanceof CANSparkMax)) {
 			_talon.follow(((CANTalonSRX)masterMC).getBaseController());
 		} else {
@@ -205,5 +206,10 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
 	public void disable() {
 		_talon.disable();
 		
+	}
+
+	@Override
+	public CANTalonSRXSimCollection getSimCollection() {
+		return _simCollection;
 	}
 }

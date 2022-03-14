@@ -2,6 +2,8 @@ package frc.team832.lib.motors;
 
 import org.junit.jupiter.api.Test;
 
+import edu.wpi.first.math.util.Units;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DTPowertrainTest {

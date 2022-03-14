@@ -19,13 +19,13 @@ public class PowertrainTest {
 
 	@Test
 	public void outputSpeedTest() {
-		double expected = Motor.kNEO.freeSpeed / GEARBOX_REDUCTION;
+		double expected = Motor.kNEO.freeSpeedRadPerSec / GEARBOX_REDUCTION;
 		double actual = neoPowertrain.getOutputSpeed();
 
 		System.out.printf("Single getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", expected, actual);
 		assertEquals( expected, actual, 0.001f, "Single getOutputSpeed failed");
 
-		double dualExpected = Motor.kNEO.freeSpeed / GEARBOX_REDUCTION;
+		double dualExpected = Motor.kNEO.freeSpeedRadPerSec / GEARBOX_REDUCTION;
 		double dualActual = dualNeoPowertrain.getOutputSpeed();
 
 		System.out.printf("Dual getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", dualExpected, dualActual);
@@ -34,13 +34,13 @@ public class PowertrainTest {
 
 	@Test
 	public void freeCurrentTest(){
-		double expected = Motor.kNEO.freeCurrent * neoPowertrain.getMotorCount();
+		double expected = Motor.kNEO.freeCurrentAmps * neoPowertrain.getMotorCount();
 		double actual = neoPowertrain.getFreeCurrent();
 
 		System.out.printf("Single getFreeCurrent Test - Expected: %.2f, Actual: %.2f\n", expected, actual);
 		assertEquals(expected, actual, 0.001f, "Single getFreeCurrent failed");
 
-		double dualExpected = Motor.kNEO.freeCurrent * dualNeoPowertrain.getMotorCount();
+		double dualExpected = Motor.kNEO.freeCurrentAmps * dualNeoPowertrain.getMotorCount();
 		double dualActual = dualNeoPowertrain.getFreeCurrent();
 
 		System.out.printf("Dual getFreeCurrent Test - Expected: %.2f, Actual: %.2f\n", dualExpected, dualActual);
@@ -49,12 +49,12 @@ public class PowertrainTest {
 
 	@Test
 	public void stallCurrentTest(){
-		double expected = Motor.kNEO.stallCurrent * neoPowertrain.getMotorCount();
+		double expected = Motor.kNEO.stallCurrentAmps * neoPowertrain.getMotorCount();
 		double actual = neoPowertrain.getStallCurrent();
 
 		assertEquals(expected, actual, 0.001f, "getStallCurrent failed");
 
-		double dualExpected = Motor.kNEO.stallCurrent * dualNeoPowertrain.getMotorCount();
+		double dualExpected = Motor.kNEO.stallCurrentAmps * dualNeoPowertrain.getMotorCount();
 		double dualActual = dualNeoPowertrain.getStallCurrent();
 
 		System.out.printf("Dual getStallCurrent Test - Expected: %.2f, Actual: %.2f\n", dualExpected, dualActual);
@@ -63,7 +63,7 @@ public class PowertrainTest {
 
 	@Test
 	public void stallTorqueTest(){
-		double expected = (neoPowertrain.getMotorCount() * Motor.kNEO.stallTorque) * GEARBOX_REDUCTION;
+		double expected = (neoPowertrain.getMotorCount() * Motor.kNEO.stallTorqueNewtonMeters) * GEARBOX_REDUCTION;
 		double actual = neoPowertrain.getStallTorque();
 
 		assertEquals(expected, actual, 0.001f, "getStallTorque failed");

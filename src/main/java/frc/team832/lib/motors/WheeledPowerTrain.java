@@ -1,5 +1,6 @@
 package frc.team832.lib.motors;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class WheeledPowerTrain extends Powertrain {
@@ -16,7 +17,7 @@ public class WheeledPowerTrain extends Powertrain {
 	 * @param motorCount Amount of motors
 	 * @param wheelDiameterInches Wheel diameter in inches
 	 */
-	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
+	public WheeledPowerTrain(Gearbox gearbox, DCMotor motor, int motorCount, double wheelDiameterInches) {
 		super(gearbox, motor, motorCount);
 		m_wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
 		setEncoderRatioIndex(0);
