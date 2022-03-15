@@ -1,6 +1,7 @@
 package frc.team832.lib.drive;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -18,7 +19,9 @@ public class OscarDrivetrain {
 	private final OscarDiffDrive m_diffDrive;
 	private final DifferentialDriveOdometry m_odometry;
 	private final DifferentialDriveKinematics m_kinematics;
-	private final SimpleMotorFeedforward m_leftFF, m_rightFF;
+
+	private final PIDController m_leftPIDController, m_rightPIDController;
+	private final RamseteController m_ramseteController = new RamseteController();
 
 	private Pose2d m_pose;
 	private Field2d m_field;
@@ -26,22 +29,23 @@ public class OscarDrivetrain {
 	// TODO: NTEs for all debug variables
 	// private NetworkTableEntry
 	
-	public OscarDrivetrain(
-		SmartMC<?> leftMotor, SmartMC<?> rightMotor, 
-		SimpleMotorFeedforward leftFeedforward, 
-		SimpleMotorFeedforward rightFeedforward, 
-		Gyro gyro, WheeledPowerTrain dtPowertrain,
-		double wheelbaseInches) {
+	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
-		m_leftFF = leftFeedforward;
-		m_rightFF = rightFeedforward;
 		m_gyro = gyro;
-		m_powertrain = dtPowertrain;
+		m_powertrain = dtCharacteristics.powertrain;
 		
-		m_diffDrive = new OscarDiffDrive(m_leftMotor, m_rightMotor, m_leftFF, m_rightFF, wheelbaseInches);
+		m_diffDrive = new OscarDiffDrive(
+			leftMotor, rightMotor, 
+			dtCharacteristics.leftFeedforward, 
+			dtCharacteristics.rightFeedforward,
+			dtCharacteristics.wheelbaseInches);
+
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
-		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(wheelbaseInches));
+		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(dtCharacteristics.wheelbaseInches));
+
+		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
+		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
 	}
 	
 	/**
@@ -88,6 +92,8 @@ public class OscarDrivetrain {
 		
 		m_pose = m_odometry.update(gyroAngle, leftMeters, rightMeters);
 
-		m_field.getRobotObject().setPose(m_pose);
+		
+		// TODO: investigate why this causes NPE
+		// m_field.setRobotPose(m_pose);
 	}
 }
