@@ -5,6 +5,9 @@ import edu.wpi.first.math.util.Units;
 
 public class Motor extends DCMotor {
 
+	public final double freeSpeedRPM;
+	public final double KvRPMPerVolt;
+
 	public static Motor fromDCMotor(DCMotor wpilibMotor) {
 		return new Motor(
 			wpilibMotor.nominalVoltageVolts,
@@ -22,6 +25,9 @@ public class Motor extends DCMotor {
 			nominalVoltageVolts, stallTorqueNewtonMeters, 
 			stallCurrentAmps, freeCurrentAmps,
 			Units.rotationsPerMinuteToRadiansPerSecond(freeSpeedRPM), 1);
+
+		this.freeSpeedRPM = Units.radiansPerSecondToRotationsPerMinute(freeSpeedRadPerSec);
+		this.KvRPMPerVolt = Units.radiansPerSecondToRotationsPerMinute(KvRadPerSecPerVolt);
 	}
 
 

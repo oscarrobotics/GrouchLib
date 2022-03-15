@@ -3,6 +3,8 @@ package frc.team832.lib.motors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import edu.wpi.first.math.util.Units;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PowertrainTest {
@@ -19,13 +21,13 @@ public class PowertrainTest {
 
 	@Test
 	public void outputSpeedTest() {
-		double expected = Motor.kNEO.freeSpeedRadPerSec / GEARBOX_REDUCTION;
+		double expected = Motor.kNEO.freeSpeedRPM / GEARBOX_REDUCTION;
 		double actual = neoPowertrain.getOutputSpeed();
 
 		System.out.printf("Single getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", expected, actual);
 		assertEquals( expected, actual, 0.001f, "Single getOutputSpeed failed");
 
-		double dualExpected = Motor.kNEO.freeSpeedRadPerSec / GEARBOX_REDUCTION;
+		double dualExpected = Motor.kNEO.freeSpeedRPM / GEARBOX_REDUCTION;
 		double dualActual = dualNeoPowertrain.getOutputSpeed();
 
 		System.out.printf("Dual getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", dualExpected, dualActual);

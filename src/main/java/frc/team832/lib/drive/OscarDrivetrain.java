@@ -31,7 +31,7 @@ public class OscarDrivetrain {
 	// TODO: NTEs for all debug variables
 	// private NetworkTableEntry
 	
-	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
+	public OscarDrivetrain(SmartMC<?, ?> leftMotor, SmartMC<?, ?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
 		m_gyro = gyro;

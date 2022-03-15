@@ -14,7 +14,7 @@ public class DTPowertrainTest {
     @Test
     public void freeSpeedCorrect() {
         double expectedFreeSpeed = 15.31;
-        double actualFreeSpeed = m_wheeledPowerTrain.calculateFeetPerSec(m_motor.freeSpeed);
+        double actualFreeSpeed = m_wheeledPowerTrain.calculateFeetPerSec(m_motor.freeSpeedRPM);
 
         assertEquals(expectedFreeSpeed, actualFreeSpeed, 0.009f, "Free Speed FAIL");
     }
