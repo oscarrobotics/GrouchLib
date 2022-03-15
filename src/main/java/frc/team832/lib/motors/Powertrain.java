@@ -7,7 +7,7 @@ public class Powertrain {
 
 	public final DCMotor motor;
 	public final Gearbox gearbox;
-	private final int _motorCount;
+	public final int motorCount;
 
 	public Powertrain(Gearbox gearbox, DCMotor motor) {
 		this(gearbox, motor, 1);
@@ -16,23 +16,18 @@ public class Powertrain {
 	public Powertrain(Gearbox gearbox, DCMotor motor, int motorCount) {
 		this.motor = motor;
 		this.gearbox = gearbox;
-		_motorCount = motorCount;
+		this.motorCount = motorCount;
 	}
 
-	public int getMotorCount() { return _motorCount; }
+	public double getOutputSpeed() { return motor.freeSpeed / gearbox.getTotalReduction(); }
 
-	public double getOutputSpeed() {
-		var motorFreeRPM = Units.radiansPerSecondToRotationsPerMinute(motor.freeSpeedRadPerSec);
-		return motorFreeRPM / gearbox.getTotalReduction();
-	}
-
-	public double getFreeCurrent() { return motor.freeCurrentAmps * _motorCount; }
+	public double getFreeCurrent() { return motor.freeCurrent * motorCount; }
 
 	public double getStallCurrent() {
-		return motor.stallCurrentAmps * _motorCount;
+		return motor.stallCurrent * motorCount;
 	}
 
 	public double getStallTorque() {
-		return (motor.stallTorqueNewtonMeters * _motorCount) * gearbox.getTotalReduction();
+		return (motor.stallTorque * motorCount) * gearbox.getTotalReduction();
 	}
 }

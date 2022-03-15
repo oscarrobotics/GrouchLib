@@ -7,7 +7,7 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
-	private final double m_wheelDiameterMeters;
+	public final double wheelDiameterMeters;
 	private double m_encoderRatio;
 
 	/**
