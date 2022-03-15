@@ -59,11 +59,7 @@ public class WheeledPowerTrain extends Powertrain {
 	public double calculateFeetPerSec(double currentRpm) {
 		return calculateMetersPerSec(currentRpm) * METERS_SEC_TO_FEET_SEC;
 	}
-
-	public double calculateMotorRpmFromSurfaceSpeed(double wheelMetersPerSec) {
-		return wheelMetersPerSec * 60f / (m_wheelDiameterMeters * Math.PI * m_encoderRatio);
-	}
-
+	
 	public double calculateTicksFromPosition(double targetPosition) {
 		return targetPosition / m_encoderRatio;
 	}
