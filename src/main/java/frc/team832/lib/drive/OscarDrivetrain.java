@@ -116,7 +116,9 @@ public class OscarDrivetrain {
 			leftRotations = m_leftMotor.getSensorPosition();
 			rightRotations = m_rightMotor.getSensorPosition();
 		} else {
-			leftRotations
+			// TODO: Sim encoder
+			leftRotations = 0;
+			rightRotations = 0;
 		}
 
 		var leftMeters = m_powertrain.calculateWheelDistanceMeters(leftRotations);

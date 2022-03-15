@@ -1,33 +1,30 @@
 package frc.team832.lib.motors;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-
 public class Powertrain {
 
-	public final DCMotor motor;
+	public final Motor motor;
 	public final Gearbox gearbox;
 	public final int motorCount;
 
-	public Powertrain(Gearbox gearbox, DCMotor motor) {
+	public Powertrain(Gearbox gearbox, Motor motor) {
 		this(gearbox, motor, 1);
 	}
 
-	public Powertrain(Gearbox gearbox, DCMotor motor, int motorCount) {
+	public Powertrain(Gearbox gearbox, Motor motor, int motorCount) {
 		this.motor = motor;
 		this.gearbox = gearbox;
 		this.motorCount = motorCount;
 	}
 
-	public double getOutputSpeed() { return motor.freeSpeed / gearbox.getTotalReduction(); }
+	public double getOutputSpeed() { return motor.freeSpeedRPM / gearbox.getTotalReduction(); }
 
-	public double getFreeCurrent() { return motor.freeCurrent * motorCount; }
+	public double getFreeCurrent() { return motor.freeCurrentAmps * motorCount; }
 
 	public double getStallCurrent() {
-		return motor.stallCurrent * motorCount;
+		return motor.stallCurrentAmps * motorCount;
 	}
 
 	public double getStallTorque() {
-		return (motor.stallTorque * motorCount) * gearbox.getTotalReduction();
+		return (motor.stallTorqueNewtonMeters * motorCount) * gearbox.getTotalReduction();
 	}
 }
