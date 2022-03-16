@@ -6,6 +6,7 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
+	private final Motor wpilibPlantMotor;
 	public final double wheelDiameterMeters;
 	private double m_encoderRatio;
 
@@ -18,6 +19,7 @@ public class WheeledPowerTrain extends Powertrain {
 	 */
 	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
 		super(gearbox, motor, motorCount);
+		wpilibPlantMotor = new Motor(motor, motorCount);
 		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
 		setEncoderRatioIndex(0);
 	}
@@ -66,5 +68,12 @@ public class WheeledPowerTrain extends Powertrain {
 	
 	public double calculateTicksFromPosition(double targetPosition) {
 		return targetPosition / m_encoderRatio;
+	}
+
+	/**
+	 * Returns a Motor modified to use the motor count, as WPILib uses in their system plants.
+	 */
+	public Motor getWPILibPlantMotor() {
+		return wpilibPlantMotor;
 	}
 }

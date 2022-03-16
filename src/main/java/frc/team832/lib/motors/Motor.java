@@ -30,6 +30,16 @@ public class Motor extends DCMotor {
 		this.KvRPMPerVolt = Units.radiansPerSecondToRotationsPerMinute(KvRadPerSecPerVolt);
 	}
 
+	public Motor(Motor existingMotor, int motorCount) {
+		this(
+			existingMotor.nominalVoltageVolts,
+			existingMotor.stallTorqueNewtonMeters * motorCount,
+			existingMotor.stallCurrentAmps * motorCount,
+			existingMotor.freeCurrentAmps * motorCount,
+			existingMotor.freeSpeedRPM
+		);
+	}
+
 
 	public static double predictiveCurrentLimit(DCMotor motor, double currentVolts, double maxI, double speedRPM) {
 		double radsPerSec = Units.radiansPerSecondToRotationsPerMinute(speedRPM);
