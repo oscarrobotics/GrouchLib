@@ -26,6 +26,6 @@ public interface SimpleMC<B> extends MotorController {
 	 * @return Output in Volts.
 	 */
   default double getOutputVoltage() {
-    return RobotController.getBatteryVoltage() / get();
+    return RobotController.getBatteryVoltage() * get();
   }
 }
