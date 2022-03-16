@@ -2,13 +2,16 @@ package frc.team832.lib.driverstation.dashboard;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class DashboardManager {
 
@@ -33,13 +36,22 @@ public class DashboardManager {
 		}
 	}
 
-	public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue, DashboardWidget widget) {
+	public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue, WidgetType widget) {
 		return addTabItem(subsystemBase.getName(), itemName, defaultValue, widget);
 	}
 
-	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, DashboardWidget widget) {
+	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget) {
+		return addTabItem(tabName, itemName, defaultValue, widget);
+	}
+
+	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget, Map<String, Object> properties) {
 		if (!shuffleboardTabs.containsKey(tabName)) return null;
-		return shuffleboardTabs.get(tabName).add(itemName, defaultValue).withWidget(widget.name).getEntry();
+		return shuffleboardTabs.get(tabName).add(itemName, defaultValue).withWidget(widget).withProperties(properties).getEntry();
+	}
+
+	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget, int width, int height, Map<String, Object> properties) {
+		if (!shuffleboardTabs.containsKey(tabName)) return null;
+		return shuffleboardTabs.get(tabName).add(itemName, defaultValue).withWidget(widget).withSize(width, height).withProperties(properties).getEntry();
 	}
 
 	public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue) {
@@ -47,7 +59,7 @@ public class DashboardManager {
 	}
 
 	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue) {
-		return addTabItem(tabName, itemName, defaultValue, DashboardWidget.TextView);
+		return addTabItem(tabName, itemName, defaultValue, BuiltInWidgets.kTextView);
 	}
 
 	public static void addTabButton(String tabName, String buttonName, Runnable onPress) {
