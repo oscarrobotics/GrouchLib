@@ -21,7 +21,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	private final SparkMaxPIDController _pid;
 	private final Motor _motor;
 
-	private final CANSparkMaxSimCollection _simCollection = new CANSparkMaxSimCollection(this);
+	private final CANSparkMaxSimCollection _simCollection;
 
 	private double _openLoopSetpoint;
 	private double _closedLoopSetpoint;
@@ -39,6 +39,8 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 		_spark = new com.revrobotics.CANSparkMax(canID, motorType);
 		_encoder = _spark.getEncoder();
 		_pid = _spark.getPIDController();
+
+		_simCollection = new CANSparkMaxSimCollection(this);
 
 		CANDevice.addDevice(this, "Spark MAX");
 	}

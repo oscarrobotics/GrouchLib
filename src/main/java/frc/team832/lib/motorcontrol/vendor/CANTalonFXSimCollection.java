@@ -4,7 +4,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import frc.team832.lib.motorcontrol.SmartMCSimCollection;
 
 public class CANTalonFXSimCollection implements SmartMCSimCollection {
-    private final TalonFXSimCollection m_simCollection;
+    private TalonFXSimCollection m_simCollection;
+    
     public CANTalonFXSimCollection(CANTalonFX controller) {
         m_simCollection = controller.getBaseController().getSimCollection();
     }

@@ -18,7 +18,7 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	private final WPI_TalonFX _talon;
 	private final int _canID;
-	private final CANTalonFXSimCollection _simCollection = new CANTalonFXSimCollection(this);
+	private final CANTalonFXSimCollection _simCollection;
 
 	private ControlMode _ctrlMode;
 	private double voltageCompSaturation = 12.0;
@@ -31,6 +31,8 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 		_talon = new WPI_TalonFX(canId);
 		_canID = canId;
 		_ctrlMode = ControlMode.Disabled;
+
+		_simCollection = new CANTalonFXSimCollection(this);
 
 		canConnectedAtBoot = getCANConnection();
 		

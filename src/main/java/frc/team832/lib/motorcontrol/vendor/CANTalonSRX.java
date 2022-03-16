@@ -17,7 +17,7 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 
 	private ControlMode _ctrlMode;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
-	private final CANTalonSRXSimCollection _simCollection = new CANTalonSRXSimCollection(this);
+	private final CANTalonSRXSimCollection _simCollection;
 
 	public CANTalonSRX(int canId, Motor motor) {
 		assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
@@ -26,6 +26,8 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 		_talon = new WPI_TalonSRX(canId);
 		_canID = canId;
 		_ctrlMode = ControlMode.PercentOutput;
+
+		_simCollection = new CANTalonSRXSimCollection(this);
 
 		CANDevice.addDevice(this, "Talon SRX");
 	}
