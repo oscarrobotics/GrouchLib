@@ -7,16 +7,21 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
+import frc.team832.lib.motorcontrol.SmartMCSimCollection;
 import frc.team832.lib.motors.WheeledPowerTrain;
 
 public class OscarDrivetrain {
+	private static final String DB_TABNAME = "OscarDrivetrain";
+
 	private final SmartMC<?, ?> m_leftMotor, m_rightMotor;
 	private final Gyro m_gyro;
 	private final WheeledPowerTrain m_powertrain;
@@ -31,10 +36,23 @@ public class OscarDrivetrain {
 	private Field2d m_field;
 
 	private final DifferentialDrivetrainSim m_driveSim;
+	private final SmartMCSimCollection m_leftSimCollection, m_rightSimCollection;
 
 	// TODO: NTEs for all debug variables
-	// private NetworkTableEntry
-	
+
+	// Motor data
+	private final NetworkTableEntry nte_leftMotorDutyCycle, nte_rightMotorDutyCycle,
+		nte_leftMotorInputCurrent, nte_rightMotorInputCurrent;
+
+	// Sensor data
+	private final NetworkTableEntry nte_gyroYaw,
+		nte_leftEncoderRaw, nte_rightEncoderRaw, 
+		nte_leftEncoderMeters, nte_rightEncoderMeters,
+		nte_leftEncoderMetersPerSec, nte_rightEncoderMetersPerSec;
+
+	// Odometry data
+	private final NetworkTableEntry nte_robotPoseX, nte_robotPoseY, nte_robotPoseRot;
+
 	public OscarDrivetrain(SmartMC<?, ?> leftMotor, SmartMC<?, ?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
@@ -45,25 +63,24 @@ public class OscarDrivetrain {
 			leftMotor, rightMotor, 
 			dtCharacteristics.leftFeedforward, 
 			dtCharacteristics.rightFeedforward,
-			dtCharacteristics.wheelbaseInches);
-
+			dtCharacteristics.wheelbaseInches
+		);
+			
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
 		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(dtCharacteristics.wheelbaseInches));
-
+		
 		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
 		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
-
-		// TODO: fix!
-		var simMotor = DCMotor.getFalcon500(dtCharacteristics.powertrain.motorCount);
-
+		
+		
 		m_driveSim = new DifferentialDrivetrainSim(
-			simMotor, // motors
+			dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
 			dtCharacteristics.powertrain.gearbox.getTotalReduction(), // gearbox reduction
 			5.120993184, // MoI (kg / m^2) from CAD
 			Units.lbsToKilograms(118.9), // Mass (kg), from competition weight
 			dtCharacteristics.powertrain.wheelDiameterMeters / 2, // wheel radius (meters)
 			Units.inchesToMeters(dtCharacteristics.wheelbaseInches), // robot track width (meters)
-
+			
 			// The standard deviations for measurement noise:
 			// x and y:          0.001 m
 			// heading:          0.001 rad
@@ -71,8 +88,37 @@ public class OscarDrivetrain {
 			// l and r position: 0.005 m
 			VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
 		);
+
+		m_leftSimCollection = m_leftMotor.getSimCollection();
+		m_rightSimCollection = m_rightMotor.getSimCollection();
+
+		// Telemetry setup
+		DashboardManager.addTab(DB_TABNAME);
+		
+		// Motor data
+		nte_leftMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Left DutyCycle", 0.0);
+		nte_rightMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Right DutyCycle", 0.0);
+
+		nte_leftMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Left Input Current", 0.0);
+		nte_rightMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Right Input Current", 0.0);
+
+		// Sensor data
+		nte_gyroYaw = DashboardManager.addTabItem(DB_TABNAME, "Gyro Yaw", 0.0, BuiltInWidgets.kGyro);
+
+		nte_leftEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Raw", 0.0);
+		nte_leftEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Meters", 0.0);
+		nte_leftEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Meter/sec", 0.0);
+
+		nte_rightEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Raw", 0.0);
+		nte_rightEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Meters", 0.0);
+		nte_rightEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Meter/sec", 0.0);
+
+		// Odometry data
+		nte_robotPoseX = DashboardManager.addTabItem(DB_TABNAME, "Robot Pose/X", 0.0);
+		nte_robotPoseY = DashboardManager.addTabItem(DB_TABNAME, "Robot Pose/Y", 0.0);
+		nte_robotPoseRot = DashboardManager.addTabItem(DB_TABNAME, "Robot Pose/Rotation", 0.0);
 	}
-	
+			
 	/**
 	 * Get differential drive controller for tele-op control.
 	 * @return {@link frc.team832.lib.drive.OscarDiffDrive} 
@@ -105,27 +151,73 @@ public class OscarDrivetrain {
 	}
 	
 	/**
-	 * Call this in a high-frequency loop to update drivetrain odometry.
+	 * Call this in a high-frequency loop to update drivetrain telemetry and odometry.
 	 */
 	public void periodic() {
-		var gyroAngle = getGyroHeading();
-	
+		Rotation2d gyroYaw;
 		double leftRotations, rightRotations;
+		double leftMeters, rightMeters;
+		double leftMetersPerSec, rightMetersPerSec;
+		double leftAmps, rightAmps;
 
 		if (RobotBase.isReal()) {
 			leftRotations = m_leftMotor.getSensorPosition();
 			rightRotations = m_rightMotor.getSensorPosition();
+			leftMeters = m_powertrain.calculateWheelDistanceMeters(leftRotations);
+			rightMeters = m_powertrain.calculateWheelDistanceMeters(rightRotations);
+			leftMetersPerSec = m_powertrain.calculateMetersPerSec(m_leftMotor.getSensorVelocity());
+			rightMetersPerSec = m_powertrain.calculateMetersPerSec(m_rightMotor.getSensorVelocity());
+			leftAmps = m_leftMotor.getInputCurrent();
+			rightAmps = m_leftMotor.getInputCurrent();
+
+			gyroYaw = m_gyro.getRotation2d();
+			
+			// Update pose
+			m_pose = m_odometry.update(gyroYaw, leftMeters, rightMeters);
 		} else {
-			// TODO: Sim encoder
-			leftRotations = 0;
-			rightRotations = 0;
+			// run drive simulation
+			m_driveSim.setInputs(m_leftMotor.getOutputVoltage(), m_rightMotor.getOutputVoltage());
+			m_driveSim.update(0.02);
+
+			leftMeters = m_driveSim.getLeftPositionMeters();
+			rightMeters = m_driveSim.getRightPositionMeters();
+
+			leftRotations = m_powertrain.calculateTicksFromPosition(m_driveSim.getLeftPositionMeters());
+			rightRotations = m_powertrain.calculateTicksFromPosition(m_driveSim.getRightPositionMeters());
+
+			leftMetersPerSec = m_driveSim.getLeftVelocityMetersPerSecond();
+			rightMetersPerSec = m_driveSim.getRightVelocityMetersPerSecond();
+
+			leftAmps = m_driveSim.getLeftCurrentDrawAmps();
+			rightAmps = m_driveSim.getRightCurrentDrawAmps();
+
+			m_leftSimCollection.setSensorPosition(leftRotations);
+			m_rightSimCollection.setSensorPosition(rightRotations);
+
+			m_pose = m_driveSim.getPose();
+			gyroYaw = m_driveSim.getHeading();
 		}
 
-		var leftMeters = m_powertrain.calculateWheelDistanceMeters(leftRotations);
-		var rightMeters = m_powertrain.calculateWheelDistanceMeters(rightRotations);
-		
-		m_pose = m_odometry.update(gyroAngle, leftMeters, rightMeters);
+		nte_gyroYaw.setDouble(gyroYaw.getDegrees());
 
+		nte_leftMotorDutyCycle.setDouble(m_leftMotor.get());
+		nte_rightMotorDutyCycle.setDouble(m_rightMotor.get());
+
+		nte_leftEncoderRaw.setDouble(leftRotations);
+		nte_rightEncoderRaw.setDouble(rightRotations);
+
+		nte_leftEncoderMeters.setDouble(leftMeters);
+		nte_rightEncoderMeters.setDouble(rightMeters);
+
+		nte_leftEncoderMetersPerSec.setDouble(leftMetersPerSec);
+		nte_rightEncoderMetersPerSec.setDouble(rightMetersPerSec);
+
+		nte_leftMotorInputCurrent.setDouble(leftAmps);
+		nte_rightMotorInputCurrent.setDouble(rightAmps);
+		
+		nte_robotPoseX.setDouble(m_pose.getX());
+		nte_robotPoseY.setDouble(m_pose.getY());
+		nte_robotPoseRot.setDouble(m_pose.getRotation().getDegrees());
 		
 		// TODO: investigate why this causes NPE
 		// m_field.setRobotPose(m_pose);
