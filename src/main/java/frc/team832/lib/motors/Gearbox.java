@@ -10,7 +10,7 @@ public class Gearbox {
 		for (double reduction : _reductions) {
 			tempVal = tempVal * reduction;
 		}
-		_totalReduction = tempVal;
+		_totalReduction = 1 / tempVal;
 	}
 
 	protected double getReduction(int index) {
