@@ -60,10 +60,11 @@ public class OscarDrivetrain {
 		m_powertrain = dtCharacteristics.powertrain;
 		
 		m_diffDrive = new OscarDiffDrive(
-			leftMotor, rightMotor, 
-			dtCharacteristics.leftFeedforward, 
-			dtCharacteristics.rightFeedforward,
-			dtCharacteristics.wheelbaseInches
+			leftMotor, rightMotor
+			// uncomment for feedforward openloop teleop control
+			// dtCharacteristics.leftFeedforward, 
+			// dtCharacteristics.rightFeedforward,
+			// 3.0 // meters per sec
 		);
 			
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
