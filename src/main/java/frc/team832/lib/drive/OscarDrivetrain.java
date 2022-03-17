@@ -1,6 +1,6 @@
 package frc.team832.lib.drive;
 
-import edu.wpi.first.math.VecBuilder;
+import java.util.Map;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -44,6 +44,7 @@ public class OscarDrivetrain {
 
 	// Motor data
 	private final NetworkTableEntry nte_leftMotorDutyCycle, nte_rightMotorDutyCycle,
+		nte_leftMotorOutputVoltage, nte_rightMotorOutputVoltage,
 		nte_leftMotorInputCurrent, nte_rightMotorInputCurrent;
 
 	// Sensor data
@@ -100,22 +101,30 @@ public class OscarDrivetrain {
 		DashboardManager.addTab(DB_TABNAME);
 		
 		// Motor data
-		nte_leftMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Left DutyCycle", 0.0);
-		nte_rightMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Right DutyCycle", 0.0);
+		Map<String, Object> dutycycleRange = Map.of("Min", -1.0, "Max", 1.0);
+		nte_leftMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Left DutyCycle", 0.0, BuiltInWidgets.kNumberBar, dutycycleRange);
+		nte_rightMotorDutyCycle = DashboardManager.addTabItem(DB_TABNAME, "Right DutyCycle", 0.0, BuiltInWidgets.kNumberBar, dutycycleRange);
 
-		nte_leftMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Left Input Current", 0.0);
-		nte_rightMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Right Input Current", 0.0);
+		Map<String, Object> voltageRange = Map.of("Min", -13.0, "Max", 13.0);
+		nte_leftMotorOutputVoltage = DashboardManager.addTabItem(DB_TABNAME, "Left Out Voltage", 0.0, BuiltInWidgets.kNumberBar, voltageRange);
+		nte_rightMotorOutputVoltage = DashboardManager.addTabItem(DB_TABNAME, "Right Out Voltage", 0.0, BuiltInWidgets.kNumberBar, voltageRange);
+
+		Map<String, Object> currentRange = Map.of("Min", -100.0, "Max", 100.0);
+		nte_leftMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Left Input Amps", 0.0, BuiltInWidgets.kNumberBar, currentRange);
+		nte_rightMotorInputCurrent = DashboardManager.addTabItem(DB_TABNAME, "Right Input Amps", 0.0, BuiltInWidgets.kNumberBar, currentRange);
 
 		// Sensor data
-		nte_gyroYaw = DashboardManager.addTabItem(DB_TABNAME, "Gyro Yaw", 0.0, BuiltInWidgets.kGyro);
+		nte_gyroYaw = DashboardManager.addTabItem(DB_TABNAME, "Gyro Yaw", 0.0);
 
-		nte_leftEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Raw", 0.0);
-		nte_leftEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Meters", 0.0);
-		nte_leftEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Left Encoder Meter/sec", 0.0);
+		nte_leftEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Left Enc Raw", 0.0);
+		nte_rightEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Right Enc Raw", 0.0);
 
-		nte_rightEncoderRaw = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Raw", 0.0);
-		nte_rightEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Meters", 0.0);
-		nte_rightEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Right Encoder Meter/sec", 0.0);
+		nte_leftEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Left Enc Meters", 0.0);
+		nte_rightEncoderMeters = DashboardManager.addTabItem(DB_TABNAME, "Right Enc Meters", 0.0);
+
+		Map<String, Object> velocityRange = Map.of("Min", -5.0, "Max", 5.0);
+		nte_leftEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Left Enc MpS", 0.0, BuiltInWidgets.kNumberBar, velocityRange);
+		nte_rightEncoderMetersPerSec = DashboardManager.addTabItem(DB_TABNAME, "Right Enc MpS", 0.0, BuiltInWidgets.kNumberBar, velocityRange);
 
 		// Odometry data
 		nte_robotPoseX = DashboardManager.addTabItem(DB_TABNAME, "Robot Pose/X", 0.0);
@@ -213,6 +222,9 @@ public class OscarDrivetrain {
 
 		nte_leftMotorDutyCycle.setDouble(m_leftMotor.get());
 		nte_rightMotorDutyCycle.setDouble(m_rightMotor.get());
+
+		nte_leftMotorOutputVoltage.setDouble(leftVolts);
+		nte_rightMotorOutputVoltage.setDouble(rightVolts);
 
 		nte_leftEncoderRaw.setDouble(leftRotations);
 		nte_rightEncoderRaw.setDouble(rightRotations);
