@@ -9,11 +9,13 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motorcontrol.SmartMCSimCollection;
@@ -31,9 +33,9 @@ public class OscarDrivetrain {
 
 	private final PIDController m_leftPIDController, m_rightPIDController;
 	private final RamseteController m_ramseteController = new RamseteController();
+	private final Field2d m_field = new Field2d();
 
-	private Pose2d m_pose;
-	private Field2d m_field;
+	private Pose2d m_pose = new Pose2d();
 
 	private final DifferentialDrivetrainSim m_driveSim;
 	private final SmartMCSimCollection m_leftSimCollection, m_rightSimCollection;
@@ -68,7 +70,7 @@ public class OscarDrivetrain {
 		);
 			
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
-		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(dtCharacteristics.wheelbaseInches));
+		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(dtCharacteristics.wheelbaseMeters));
 		
 		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
 		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
@@ -77,17 +79,18 @@ public class OscarDrivetrain {
 		m_driveSim = new DifferentialDrivetrainSim(
 			dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
 			dtCharacteristics.powertrain.gearbox.getTotalReduction(), // gearbox reduction
-			5.120993184, // MoI (kg / m^2) from CAD
-			Units.lbsToKilograms(118.9), // Mass (kg), from competition weight
+			dtCharacteristics.moiKgM2, // MoI (kg / m^2) from CAD
+			dtCharacteristics.massKg, // Mass (kg), from competition weight
 			dtCharacteristics.powertrain.wheelDiameterMeters / 2, // wheel radius (meters)
-			Units.inchesToMeters(dtCharacteristics.wheelbaseInches), // robot track width (meters)
+			Units.inchesToMeters(dtCharacteristics.wheelbaseMeters), // robot track width (meters)
 			
 			// The standard deviations for measurement noise:
 			// x and y:          0.001 m
 			// heading:          0.001 rad
 			// l and r velocity: 0.1   m/s
 			// l and r position: 0.005 m
-			VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+			null
+			// VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
 		);
 
 		m_leftSimCollection = m_leftMotor.getSimCollection();
@@ -155,11 +158,16 @@ public class OscarDrivetrain {
 	 * Call this in a high-frequency loop to update drivetrain telemetry and odometry.
 	 */
 	public void periodic() {
+		// values that differ between sim and real
 		Rotation2d gyroYaw;
 		double leftRotations, rightRotations;
 		double leftMeters, rightMeters;
 		double leftMetersPerSec, rightMetersPerSec;
 		double leftAmps, rightAmps;
+
+		// the same between sim/real
+		double leftVolts = m_leftMotor.getOutputVoltage();
+		double rightVolts = m_rightMotor.getOutputVoltage();
 
 		if (RobotBase.isReal()) {
 			leftRotations = m_leftMotor.getSensorPosition();
@@ -177,8 +185,10 @@ public class OscarDrivetrain {
 			m_pose = m_odometry.update(gyroYaw, leftMeters, rightMeters);
 		} else {
 			// run drive simulation
-			m_driveSim.setInputs(m_leftMotor.getOutputVoltage(), m_rightMotor.getOutputVoltage());
+			if (DriverStation.isEnabled()) {
+				m_driveSim.setInputs(leftVolts, rightVolts);
 			m_driveSim.update(0.02);
+			}
 
 			leftMeters = m_driveSim.getLeftPositionMeters();
 			rightMeters = m_driveSim.getRightPositionMeters();
@@ -220,7 +230,7 @@ public class OscarDrivetrain {
 		nte_robotPoseY.setDouble(m_pose.getY());
 		nte_robotPoseRot.setDouble(m_pose.getRotation().getDegrees());
 		
-		// TODO: investigate why this causes NPE
-		// m_field.setRobotPose(m_pose);
+		m_field.setRobotPose(m_pose);
+		SmartDashboard.putData("Oscar Drivetrain/Field", m_field);
 	}
 }
