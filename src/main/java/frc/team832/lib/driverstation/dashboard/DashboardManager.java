@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.ObjLongConsumer;
 
 public class DashboardManager {
 
@@ -41,7 +42,7 @@ public class DashboardManager {
 	}
 
 	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget) {
-		return addTabItem(tabName, itemName, defaultValue, widget);
+		return addTabItem(tabName, itemName, defaultValue, widget, Map.of());
 	}
 
 	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget, Map<String, Object> properties) {
