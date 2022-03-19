@@ -24,7 +24,7 @@ public class OscarFlywheel {
 
 	private boolean m_runClosedLoop = false;
 
-	private double m_desiredVelocityRpm;
+	private double m_targetVelocityRpm;
 	private double m_ffEffortVolts;
 	private double m_pEffortVolts;
 
@@ -32,7 +32,7 @@ public class OscarFlywheel {
 	private final NetworkTableEntry nte_motorDutyCycle, nte_motorOutputVoltage, nte_motorInputCurrent;
 
 	// Control data
-	private final NetworkTableEntry nte_desiredVelocityRpm;
+	private final NetworkTableEntry nte_targetVelocityRpm;
 
 	// Sensor data
 	private final NetworkTableEntry nte_encVelocityRpm, nte_encSurfaceSpeedMps;
@@ -66,7 +66,7 @@ public class OscarFlywheel {
 		nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, "Input Amps", -60.0, 60.0);
 
 		var maxRpm = powertrain.getOutputSpeed();
-		nte_desiredVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Desired RPM", -maxRpm, maxRpm);
+		nte_targetVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Target RPM", -maxRpm, maxRpm);
 		nte_encVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Enc RPM", -maxRpm, maxRpm);
 
 		var maxSurfaceSpeed = powertrain.calculateMetersPerSec(maxRpm);
@@ -82,6 +82,14 @@ public class OscarFlywheel {
 	 */
 	public void setClosedLoop(boolean closedLoop) {
 		m_runClosedLoop = closedLoop;
+	}
+
+	/**
+	 * Sets the target velocity for the flywheel in RPM.
+	 * @param rpm New target RPM.
+	 */
+	public void setTargetVelocityRpm(double rpm) {
+		m_targetVelocityRpm = rpm;
 	}
 
 	/**
@@ -111,7 +119,7 @@ public class OscarFlywheel {
 		updateControlLoops(encoderRpm);
 		
 		// telemetry
-		nte_desiredVelocityRpm.setDouble(m_desiredVelocityRpm);
+		nte_targetVelocityRpm.setDouble(m_targetVelocityRpm);
 		nte_encVelocityRpm.setDouble(encoderRpm);
 		nte_motorDutyCycle.setDouble(m_motor.get());
 		nte_motorOutputVoltage.setDouble(outputVoltage);
@@ -125,11 +133,11 @@ public class OscarFlywheel {
 		double totalEffortVolts = 0;
 
 		// only perform calculations if the desired velocity is not zero.
-		if (m_desiredVelocityRpm != 0) {
+		if (m_targetVelocityRpm != 0) {
 			m_ffEffortVolts = m_feedforward.calculate(currentRpm);
 
 			if (m_runClosedLoop) {
-				m_pEffortVolts = m_pidController.calculate(currentRpm, m_desiredVelocityRpm);
+				m_pEffortVolts = m_pidController.calculate(currentRpm, m_targetVelocityRpm);
 			} else {
 				m_pEffortVolts = 0;
 			}
