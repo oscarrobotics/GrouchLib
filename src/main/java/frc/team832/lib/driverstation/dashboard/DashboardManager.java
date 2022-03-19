@@ -45,7 +45,11 @@ public class DashboardManager {
 	}
 
 	public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue, WidgetType widget) {
-		return addTabItem(subsystemBase.getName(), itemName, defaultValue, widget);
+		return addTabItem(subsystemBase, itemName, defaultValue, widget, Map.of());
+	}
+
+	public static NetworkTableEntry addTabItem(SubsystemBase subsystemBase, String itemName, Object defaultValue, WidgetType widget, Map<String, Object> properties) {
+		return addTabItem(subsystemBase.getName(), itemName, defaultValue, widget, properties);
 	}
 
 	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue, WidgetType widget) {
