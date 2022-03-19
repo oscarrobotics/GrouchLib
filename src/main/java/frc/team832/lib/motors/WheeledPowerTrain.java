@@ -6,9 +6,9 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
 
-	private final Motor wpilibPlantMotor;
-	public final double wheelDiameterMeters;
+	private final Motor m_wpilibPlantMotor;
 	private double m_encoderRatio;
+	public final double wheelDiameterMeters;
 
 	/**
 	 *
@@ -16,20 +16,44 @@ public class WheeledPowerTrain extends Powertrain {
 	 * @param motor Motor type
 	 * @param motorCount Amount of motors
 	 * @param wheelDiameterInches Wheel diameter in inches
+	 * Note: this assumes the encoder is at the output of the gearbox.
 	 */
 	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
 		super(gearbox, motor, motorCount);
-		wpilibPlantMotor = new Motor(motor, motorCount);
-		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
+		m_wpilibPlantMotor = new Motor(motor, motorCount);
+		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);		
 		setEncoderRatioIndex(0);
 	}
 
+	/**
+	 *
+	 * @param gearbox Gearbox
+	 * @param motor Motor type
+	 * @param motorCount Amount of motors
+	 * @param wheelDiameterInches Wheel diameter in inches
+	 * @param encoderRatioIndex Reduction index of the encoder relative to the gearbox.
+	 */
+	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches, int encoderRatioIndex) {
+		super(gearbox, motor, motorCount);
+		m_wpilibPlantMotor = new Motor(motor, motorCount);
+		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
+		setEncoderRatioIndex(encoderRatioIndex);
+	}
+
+	/**
+	 * Set an arbitrary encoder ratio instead of one based on a reduction index
+	 * @param ratio
+	 */
+	public void setEncoderRatio(double ratio) {
+		m_encoderRatio = ratio;
+	}
+
 	public void setEncoderRatioIndex(int reductionIndex) {
-		if (reductionIndex == 0) {
-			m_encoderRatio = gearbox.getTotalReduction();
-		} else if (reductionIndex > 0) {
-			m_encoderRatio = gearbox.getReduction(reductionIndex - 1);
-		}
+			if (reductionIndex == 0) {
+				m_encoderRatio = gearbox.getTotalReduction();
+			} else if (reductionIndex > 0) {
+				m_encoderRatio = gearbox.getReduction(reductionIndex - 1);
+			}
 	}
 
 	public double getWheelDiameterMeters() {
@@ -74,6 +98,6 @@ public class WheeledPowerTrain extends Powertrain {
 	 * Returns a Motor modified to use the motor count, as WPILib uses in their system plants.
 	 */
 	public Motor getWPILibPlantMotor() {
-		return wpilibPlantMotor;
+		return m_wpilibPlantMotor;
 	}
 }
