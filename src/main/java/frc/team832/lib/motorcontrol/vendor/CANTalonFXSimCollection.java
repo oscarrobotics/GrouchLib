@@ -4,9 +4,11 @@ import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import frc.team832.lib.motorcontrol.SmartMCSimCollection;
 
 public class CANTalonFXSimCollection implements SmartMCSimCollection {
+    private final CANTalonFX controller;
     private TalonFXSimCollection m_simCollection;
     
     public CANTalonFXSimCollection(CANTalonFX controller) {
+        this.controller = controller;
         m_simCollection = controller.getBaseController().getSimCollection();
     }
 
@@ -15,7 +17,7 @@ public class CANTalonFXSimCollection implements SmartMCSimCollection {
     }
 
     public void setSensorPosition(double position) {
-        m_simCollection.setIntegratedSensorRawPosition((int)position);
+        m_simCollection.setIntegratedSensorRawPosition((int)position * 2048);
     }
 
     /**
@@ -23,6 +25,9 @@ public class CANTalonFXSimCollection implements SmartMCSimCollection {
      * @param velocity Velocity in native Falcon units (2048/100ms)
      */
     public void setSensorVelocity(double velocity) {
-        m_simCollection.setIntegratedSensorVelocity((int)velocity);
+        if (controller.getInverted()) velocity *= -1;
+        double rp100ms = velocity / 600;
+        int ticks = (int) (rp100ms * 2048);
+        m_simCollection.setIntegratedSensorVelocity((int)ticks);
     }
 }
