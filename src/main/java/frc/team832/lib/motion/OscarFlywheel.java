@@ -114,6 +114,8 @@ public class OscarFlywheel {
 			
 			inputAmps = m_sim.getCurrentDrawAmps();
 			encoderRpm =  m_powertrain.calculateMotorRpmFromWheelRpm(m_sim.getAngularVelocityRPM());
+
+			m_motor.getSimCollection().setSensorVelocity(encoderRpm);
 		}
 		
 		updateControlLoops(encoderRpm);
