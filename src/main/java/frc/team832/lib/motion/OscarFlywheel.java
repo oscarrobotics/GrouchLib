@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
@@ -38,15 +39,24 @@ public class OscarFlywheel {
 	private final NetworkTableEntry nte_encVelocityRpm, nte_encSurfaceSpeedMps;
 
 	// Control loop data
-	private final NetworkTableEntry nte_ffEffortVolts, nte_pEffortVolts;
+	private final NetworkTableEntry nte_ffEffortVolts, nte_pEffortVolts, nte_atTarget;
 
 	public OscarFlywheel(
 		SmartMC<?, ?> motor, WheeledPowerTrain powertrain,
 		SimpleMotorFeedforward feedforward, 
 		double kP, double moiKgM2
 	) {
+		this(GetInstanceName(), motor, powertrain, feedforward, kP, moiKgM2);
+	}
+
+	public OscarFlywheel(
+		String dashboardName,
+		SmartMC<?, ?> motor, WheeledPowerTrain powertrain,
+		SimpleMotorFeedforward feedforward, 
+		double kP, double moiKgM2
+	) {
 		INSTANCE_COUNT++;
-		var DB_TABNAME = GetInstanceName();
+		var DB_TABNAME = dashboardName;
 
 		m_motor = motor;
 		m_powertrain = powertrain;
@@ -74,6 +84,8 @@ public class OscarFlywheel {
 
 		nte_ffEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, "FF Effort Volts", -13.0, 13.0);
 		nte_pEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, "P Effort Volts", -13.0, 13.0);
+
+		nte_atTarget = DashboardManager.addTabItem(DB_TABNAME, "At Target", false, BuiltInWidgets.kBooleanBox);
 	}
 
 	/**
@@ -90,6 +102,16 @@ public class OscarFlywheel {
 	 */
 	public void setTargetVelocityRpm(double rpm) {
 		m_targetVelocityRpm = rpm;
+	}
+
+	private double getWheelRpm() {
+		return m_powertrain.calcWheelFromEncoder(m_motor.getSensorVelocity());
+	}
+
+	public boolean atTarget(double epsilon) {
+		double wheelRpm = getWheelRpm();
+		double error = m_targetVelocityRpm - wheelRpm;
+		return Math.abs(error) <= epsilon;
 	}
 
 	/**
@@ -113,7 +135,7 @@ public class OscarFlywheel {
 			}
 			
 			inputAmps = m_sim.getCurrentDrawAmps();
-			encoderRpm =  m_powertrain.calcMotorFromWheel(m_sim.getAngularVelocityRPM());
+			encoderRpm =  m_sim.getAngularVelocityRPM();
 
 			m_motor.getSimCollection().setSensorVelocity(encoderRpm);
 		}
@@ -129,6 +151,9 @@ public class OscarFlywheel {
 		nte_encSurfaceSpeedMps.setDouble(m_powertrain.calcMetersPerSec(encoderRpm));
 		nte_ffEffortVolts.setDouble(m_ffEffortVolts);
 		nte_pEffortVolts.setDouble(m_pEffortVolts);
+
+		double fivePercent = m_targetVelocityRpm * 0.05;
+		nte_atTarget.setBoolean(atTarget(fivePercent));
 	}
 
 	private void updateControlLoops(double currentRpm) {
@@ -136,7 +161,7 @@ public class OscarFlywheel {
 
 		// only perform calculations if the desired velocity is not zero.
 		if (m_targetVelocityRpm != 0) {
-			m_ffEffortVolts = m_feedforward.calculate(currentRpm);
+			m_ffEffortVolts = m_feedforward.calculate(m_targetVelocityRpm);
 
 			if (m_runClosedLoop) {
 				m_pEffortVolts = m_pidController.calculate(currentRpm, m_targetVelocityRpm);
