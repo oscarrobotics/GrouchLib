@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.ObjLongConsumer;
 
 public class DashboardManager {
 
@@ -20,6 +20,13 @@ public class DashboardManager {
 		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
 	}
 
+	public static Map<String, Object> getRangePropertiesMap(double both) {
+		return Collections.unmodifiableMap(Map.of("Min", -both, "Max", both));
+	}
+
+	public static Map<String, Object> getRangePropertiesMap(double min, double max) {
+		return Collections.unmodifiableMap(Map.of("Min", min, "Max", max));
+	}
 	private static HashMap<String, ShuffleboardTab> shuffleboardTabs = new HashMap<>();
 
 	public static void addTab(String tabName) {
@@ -61,6 +68,10 @@ public class DashboardManager {
 
 	public static NetworkTableEntry addTabItem(String tabName, String itemName, Object defaultValue) {
 		return addTabItem(tabName, itemName, defaultValue, BuiltInWidgets.kTextView);
+	}
+
+	public static NetworkTableEntry addTabNumberBar(String tabName, String itemName, double min, double max) {
+		return addTabItem(tabName, itemName, 0.0, BuiltInWidgets.kNumberBar, getRangePropertiesMap(min, max));
 	}
 
 	public static void addTabButton(String tabName, String buttonName, Runnable onPress) {
