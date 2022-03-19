@@ -8,26 +8,21 @@ import edu.wpi.first.math.util.Units;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PowertrainTest {
-	private static Powertrain neoPowertrain = null;
-	private static Powertrain dualNeoPowertrain = null;
-	private static final float GEARBOX_REDUCTION = 11.23f;
-
-	@BeforeAll
-	public static void init() {
-		Gearbox gearbox = new Gearbox(GEARBOX_REDUCTION);
-		neoPowertrain = new Powertrain(gearbox, Motor.kNEO);
-		dualNeoPowertrain = new Powertrain(gearbox, Motor.kNEO, 2);
-	}
+	private static final float GEARBOX_REDUCTION = 1 / 11.23f;
+	private static Gearbox gearbox = new Gearbox(GEARBOX_REDUCTION);
+	private static Powertrain neoPowertrain = new Powertrain(gearbox, Motor.kNEO);
+	
+	private static Powertrain dualNeoPowertrain = new Powertrain(gearbox, Motor.kNEO, 2);
 
 	@Test
 	public void outputSpeedTest() {
-		double expected = Motor.kNEO.freeSpeedRPM / GEARBOX_REDUCTION;
+		double expected = Motor.kNEO.freeSpeedRPM / gearbox.totalReduction;
 		double actual = neoPowertrain.getOutputSpeed();
 
 		System.out.printf("Single getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", expected, actual);
 		assertEquals( expected, actual, 0.001f, "Single getOutputSpeed failed");
 
-		double dualExpected = Motor.kNEO.freeSpeedRPM / GEARBOX_REDUCTION;
+		double dualExpected = Motor.kNEO.freeSpeedRPM / gearbox.totalReduction;
 		double dualActual = dualNeoPowertrain.getOutputSpeed();
 
 		System.out.printf("Dual getOutputSpeed Test - Expected: %.2f, Actual: %.2f\n", dualExpected, dualActual);
@@ -65,7 +60,7 @@ public class PowertrainTest {
 
 	@Test
 	public void stallTorqueTest(){
-		double expected = (neoPowertrain.motorCount * Motor.kNEO.stallTorqueNewtonMeters) * GEARBOX_REDUCTION;
+		double expected = (neoPowertrain.motorCount * Motor.kNEO.stallTorqueNewtonMeters) * gearbox.totalReduction;
 		double actual = neoPowertrain.getStallTorque();
 
 		assertEquals(expected, actual, 0.001f, "getStallTorque failed");

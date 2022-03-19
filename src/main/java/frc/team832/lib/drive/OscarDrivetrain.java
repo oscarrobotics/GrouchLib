@@ -1,6 +1,5 @@
 package frc.team832.lib.drive;
 
-import java.util.Map;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -79,7 +78,7 @@ public class OscarDrivetrain {
 		
 		m_driveSim = new DifferentialDrivetrainSim(
 			dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
-			dtCharacteristics.powertrain.gearbox.getTotalReduction(), // gearbox reduction
+			dtCharacteristics.powertrain.gearbox.totalReduction, // gearbox reduction
 			dtCharacteristics.moiKgM2, // MoI (kg / m^2) from CAD
 			dtCharacteristics.massKg, // Mass (kg), from competition weight
 			dtCharacteristics.powertrain.wheelDiameterMeters / 2, // wheel radius (meters)
@@ -177,10 +176,10 @@ public class OscarDrivetrain {
 		if (RobotBase.isReal()) {
 			leftRotations = m_leftMotor.getSensorPosition();
 			rightRotations = m_rightMotor.getSensorPosition();
-			leftMeters = m_powertrain.calculateWheelDistanceMeters(leftRotations);
-			rightMeters = m_powertrain.calculateWheelDistanceMeters(rightRotations);
-			leftMetersPerSec = m_powertrain.calculateMetersPerSec(m_leftMotor.getSensorVelocity());
-			rightMetersPerSec = m_powertrain.calculateMetersPerSec(m_rightMotor.getSensorVelocity());
+			leftMeters = m_powertrain.calcWheelDistanceMeters(leftRotations);
+			rightMeters = m_powertrain.calcWheelDistanceMeters(rightRotations);
+			leftMetersPerSec = m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity());
+			rightMetersPerSec = m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity());
 			leftAmps = m_leftMotor.getInputCurrent();
 			rightAmps = m_leftMotor.getInputCurrent();
 
@@ -198,8 +197,8 @@ public class OscarDrivetrain {
 			leftMeters = m_driveSim.getLeftPositionMeters();
 			rightMeters = m_driveSim.getRightPositionMeters();
 
-			leftRotations = m_powertrain.calculateTicksFromPosition(m_driveSim.getLeftPositionMeters());
-			rightRotations = m_powertrain.calculateTicksFromPosition(m_driveSim.getRightPositionMeters());
+			leftRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getLeftPositionMeters());
+			rightRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getRightPositionMeters());
 
 			leftMetersPerSec = m_driveSim.getLeftVelocityMetersPerSecond();
 			rightMetersPerSec = m_driveSim.getRightVelocityMetersPerSecond();

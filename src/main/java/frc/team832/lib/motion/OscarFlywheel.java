@@ -55,7 +55,7 @@ public class OscarFlywheel {
 
 		m_sim = new FlywheelSim(
 			powertrain.getWPILibPlantMotor(),
-			powertrain.gearbox.getTotalReduction(),
+			powertrain.gearbox.totalReduction,
 			moiKgM2
 		);
 
@@ -69,7 +69,7 @@ public class OscarFlywheel {
 		nte_targetVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Target RPM", -maxRpm, maxRpm);
 		nte_encVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Enc RPM", -maxRpm, maxRpm);
 
-		var maxSurfaceSpeed = powertrain.calculateMetersPerSec(maxRpm);
+		var maxSurfaceSpeed = powertrain.calcMetersPerSec(maxRpm);
 		nte_encSurfaceSpeedMps = DashboardManager.addTabNumberBar(DB_TABNAME, "Enc Surface Mps", -maxSurfaceSpeed, maxSurfaceSpeed);
 
 		nte_ffEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, "FF Effort Volts", -13.0, 13.0);
@@ -113,7 +113,7 @@ public class OscarFlywheel {
 			}
 			
 			inputAmps = m_sim.getCurrentDrawAmps();
-			encoderRpm =  m_powertrain.calculateMotorRpmFromWheelRpm(m_sim.getAngularVelocityRPM());
+			encoderRpm =  m_powertrain.calcMotorFromWheel(m_sim.getAngularVelocityRPM());
 
 			m_motor.getSimCollection().setSensorVelocity(encoderRpm);
 		}
@@ -126,7 +126,7 @@ public class OscarFlywheel {
 		nte_motorDutyCycle.setDouble(m_motor.get());
 		nte_motorOutputVoltage.setDouble(outputVoltage);
 		nte_motorInputCurrent.setDouble(inputAmps);
-		nte_encSurfaceSpeedMps.setDouble(m_powertrain.calculateMetersPerSec(encoderRpm));
+		nte_encSurfaceSpeedMps.setDouble(m_powertrain.calcMetersPerSec(encoderRpm));
 		nte_ffEffortVolts.setDouble(m_ffEffortVolts);
 		nte_pEffortVolts.setDouble(m_pEffortVolts);
 	}

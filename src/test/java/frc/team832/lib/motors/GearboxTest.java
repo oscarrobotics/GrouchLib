@@ -6,35 +6,30 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GearboxTest {
-	private static Gearbox gearbox = null;
-
-	@BeforeAll
-	public static void init() {
-		gearbox = new Gearbox(11.23f, 7.0f, 3.0f);
-	}
+	private static final Gearbox m_drivetrainGearbox = new Gearbox(11.0 / 60.0, 16.0 / 32.0);
 
 	@Test
 	public void getReductionTest() {
 		boolean insideIndexException = false;
 		boolean outsideIndexException = false;
 
-		float expectedReduction = 11.23f;
-		float expectedReduction1 = 7.0f;
+		double expectedReduction = 11.0 / 60.0;
+		double expectedReduction1 = 16.0 / 32.0;
 
 		try {
-			gearbox.getReduction(0);
+			m_drivetrainGearbox.getReduction(0);
 		} catch (Exception ex) {
 			insideIndexException = true;
 		}
 
 		try {
-			gearbox.getReduction(3);
+			m_drivetrainGearbox.getReduction(3);
 		} catch (Exception ex){
 			outsideIndexException = true;
 		}
 
-		double actualReduction = gearbox.getReduction(0);
-		double actualReduction1 = gearbox.getReduction(1);
+		double actualReduction = m_drivetrainGearbox.getReduction(0);
+		double actualReduction1 = m_drivetrainGearbox.getReduction(1);
 
 		assertFalse(insideIndexException, "GetReduction failed on inside index!");
 		assertTrue(outsideIndexException, "GetReduction failed on outside index!");
@@ -45,8 +40,9 @@ public class GearboxTest {
 
 	@Test
 	public void getTotalReductionTest() {
-		double totalReduction = 235.83;
+		var gearbox = new Gearbox(11.23f, 7.0f, 3.0f);
+		double totalReduction = 1 / 235.83;
 
-		assertEquals(totalReduction, gearbox.getTotalReduction(), 0.001f, "GetTotalReduction failed to output correctly");
+		assertEquals(totalReduction, gearbox.totalReduction, 0.001f, "GetTotalReduction failed to output correctly");
 	}
 }
