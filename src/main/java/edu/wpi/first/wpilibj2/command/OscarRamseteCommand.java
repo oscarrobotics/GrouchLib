@@ -200,7 +200,7 @@ public class OscarRamseteCommand extends CommandBase {
       rightOutput = rightSpeedSetpoint;
     }
 
-    m_output.accept(-leftOutput, rightOutput);
+    m_output.accept(leftOutput, rightOutput);
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
