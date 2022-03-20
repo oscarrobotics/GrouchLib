@@ -1,20 +1,29 @@
 package frc.team832.lib.drive;
 
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.OscarRamseteCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motorcontrol.SmartMCSimCollection;
@@ -29,6 +38,7 @@ public class OscarDrivetrain {
 	private final OscarDiffDrive m_diffDrive;
 	private final DifferentialDriveOdometry m_odometry;
 	private final DifferentialDriveKinematics m_kinematics;
+	private final SimpleMotorFeedforward m_leftFeedforward, m_rightFeedforward;
 
 	private final PIDController m_leftPIDController, m_rightPIDController;
 	private final RamseteController m_ramseteController = new RamseteController();
@@ -74,7 +84,9 @@ public class OscarDrivetrain {
 		
 		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
 		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
-		
+
+		m_leftFeedforward = dtCharacteristics.leftFeedforward;
+		m_rightFeedforward = dtCharacteristics.rightFeedforward;
 		
 		m_driveSim = new DifferentialDrivetrainSim(
 			dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
@@ -155,7 +167,30 @@ public class OscarDrivetrain {
 	 * Reset drivetrain pose.
 	 */
 	public void resetPose() {
+		m_leftMotor.rezeroSensor();
+		m_rightMotor.rezeroSensor();
 		m_odometry.resetPosition(new Pose2d(), getGyroHeading());
+	}
+
+	public OscarRamseteCommand generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem) {
+		Supplier<DifferentialDriveWheelSpeeds> wheelSpeedsSupplier = () -> {
+			return new DifferentialDriveWheelSpeeds(
+				m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity()),
+				m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity())
+			);
+		};
+
+		BiConsumer<Double, Double> outputVoltsConsumer = (Double left, Double right) -> {
+			m_leftMotor.setVoltage(left);
+			m_rightMotor.setVoltage(right);
+		};
+
+		return new OscarRamseteCommand(
+			path, this::getPose, m_ramseteController,
+			m_leftFeedforward, m_rightFeedforward,
+			m_kinematics, wheelSpeedsSupplier,
+			m_leftPIDController, m_rightPIDController,
+			outputVoltsConsumer, drivetrainSubsystem);
 	}
 	
 	/**
