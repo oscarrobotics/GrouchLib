@@ -80,7 +80,7 @@ public class OscarDrivetrain {
 		);
 			
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
-		m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(dtCharacteristics.wheelbaseMeters));
+		m_kinematics = new DifferentialDriveKinematics(dtCharacteristics.wheelbaseMeters);
 		
 		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
 		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
