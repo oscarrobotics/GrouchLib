@@ -166,17 +166,24 @@ public class OscarDrivetrain {
 	public void resetPose() {
 		m_leftMotor.rezeroSensor();
 		m_rightMotor.rezeroSensor();
+
+		if (RobotBase.isSimulation()) {
+			m_leftSimCollection.setSensorPosition(0);
+			m_rightSimCollection.setSensorPosition(0);
+			m_driveSim.setPose(new Pose2d());
+		}
+
 		m_odometry.resetPosition(new Pose2d(), getGyroHeading());
 	}
 
-	public OscarRamseteCommand generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem) {
-		Supplier<DifferentialDriveWheelSpeeds> wheelSpeedsSupplier = () -> {
-			return new DifferentialDriveWheelSpeeds(
-				m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity()),
-				m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity())
-			);
-		};
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(
+			m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity()),
+			m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity())
+		);
+	}
 
+	public OscarRamseteCommand generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem) {
 		BiConsumer<Double, Double> outputVoltsConsumer = (Double left, Double right) -> {
 			m_leftMotor.setVoltage(left);
 			m_rightMotor.setVoltage(right);
@@ -185,7 +192,7 @@ public class OscarDrivetrain {
 		return new OscarRamseteCommand(
 			path, this::getPose, m_ramseteController,
 			m_leftFeedforward, m_rightFeedforward,
-			m_kinematics, wheelSpeedsSupplier,
+			m_kinematics, this::getWheelSpeeds,
 			m_leftPIDController, m_rightPIDController,
 			outputVoltsConsumer, drivetrainSubsystem);
 	}
