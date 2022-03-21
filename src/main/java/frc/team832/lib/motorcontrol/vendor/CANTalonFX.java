@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.team832.lib.CANDevice;
@@ -21,7 +20,6 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 	private final CANTalonFXSimCollection _simCollection;
 
 	private ControlMode _ctrlMode;
-	private double voltageCompSaturation = 12.0;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
 	private StatorCurrentLimitConfiguration outputCurrentConfig = new StatorCurrentLimitConfiguration(true, 40, 0, 0);
 

@@ -63,7 +63,6 @@ public class WheeledPowerTrain extends Powertrain {
 	}
 	
 	public double calcEncoderTicksFromMeters(double meters) {
-		double wheelTicks = calcWheelFromEncoder(meters);
 		return 1 / calcWheelFromEncoder(meters);
 	}
 

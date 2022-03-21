@@ -7,9 +7,6 @@ public class OscarSimpleDrivetrain {
 	public final SimpleMC<?> m_rightMotor;
 	private final OscarDiffDrive m_diffDrive;
 
-	// TODO: NTEs for all debug variables
-	// private NetworkTableEntry
-	
 	public OscarSimpleDrivetrain(SimpleMC<?> leftMotor, SimpleMC<?> rightMotor) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;

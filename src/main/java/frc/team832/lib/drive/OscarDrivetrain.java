@@ -16,7 +16,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
@@ -48,9 +47,7 @@ public class OscarDrivetrain {
 
 	private final DifferentialDrivetrainSim m_driveSim;
 	private final SmartMCSimCollection m_leftSimCollection, m_rightSimCollection;
-
-	// TODO: NTEs for all debug variables
-
+	
 	// Motor data
 	private final NetworkTableEntry nte_leftMotorDutyCycle, nte_rightMotorDutyCycle,
 		nte_leftMotorOutputVoltage, nte_rightMotorOutputVoltage,
