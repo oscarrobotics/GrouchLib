@@ -71,21 +71,22 @@ public class OscarFlywheel {
 
 		DashboardManager.addTab(DB_TABNAME);
 
-		nte_motorDutyCycle = DashboardManager.addTabNumberBar(DB_TABNAME, "Duty Cycle", -1.0, 1.0);
-		nte_motorOutputVoltage = DashboardManager.addTabNumberBar(DB_TABNAME, "Output Volts", -13.0, 13.0);
-		nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, "Input Amps", -60.0, 60.0);
+		nte_motorDutyCycle = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Duty Cycle", -1.0, 1.0);
+		nte_motorOutputVoltage = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Output Volts", -13.0, 13.0);
+		nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Input Amps", -60.0, 60.0);
+		// nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Output Amps", -60.0, 60.0);
 
 		var maxRpm = powertrain.getOutputSpeed();
-		nte_targetVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Target RPM", -maxRpm, maxRpm);
-		nte_encVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, "Enc RPM", -maxRpm, maxRpm);
+		nte_targetVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Target RPM", -maxRpm, maxRpm);
+		nte_encVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Enc RPM", -maxRpm, maxRpm);
 
 		var maxSurfaceSpeed = powertrain.calcMetersPerSec(maxRpm);
-		nte_encSurfaceSpeedMps = DashboardManager.addTabNumberBar(DB_TABNAME, "Enc Surface Mps", -maxSurfaceSpeed, maxSurfaceSpeed);
+		nte_encSurfaceSpeedMps = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Enc Surface Mps", -maxSurfaceSpeed, maxSurfaceSpeed);
 
-		nte_ffEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, "FF Effort Volts", -13.0, 13.0);
-		nte_pEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, "P Effort Volts", -13.0, 13.0);
+		nte_ffEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/FF Effort Volts", -13.0, 13.0);
+		nte_pEffortVolts = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/P Effort Volts", -13.0, 13.0);
 
-		nte_atTarget = DashboardManager.addTabItem(DB_TABNAME, "At Target", false, BuiltInWidgets.kBooleanBox);
+		nte_atTarget = DashboardManager.addTabItem(DB_TABNAME, DB_TABNAME + "/At Target", false, BuiltInWidgets.kBooleanBox);
 	}
 
 	/**
@@ -108,10 +109,17 @@ public class OscarFlywheel {
 		return m_powertrain.calcWheelFromEncoder(m_motor.getSensorVelocity());
 	}
 
+	private double getTargetError() {
+		return m_targetVelocityRpm - getWheelRpm();
+	}
+
 	public boolean atTarget(double epsilon) {
-		double wheelRpm = getWheelRpm();
-		double error = m_targetVelocityRpm - wheelRpm;
-		return Math.abs(error) <= epsilon;
+		return Math.abs(getTargetError()) <= epsilon;
+	}
+
+	public boolean atTargetPercent(double percentErrorAllowed) {
+		double percentError = m_targetVelocityRpm / Math.abs(getTargetError());
+		return percentError <= percentErrorAllowed;
 	}
 
 	/**
