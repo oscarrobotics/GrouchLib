@@ -240,4 +240,11 @@ public class OscarDrivetrain {
 		m_field.setRobotPose(m_pose);
 		SmartDashboard.putData("Oscar Drivetrain/Field", m_field);
 	}
+
+	/**
+	 * Stop the drivetrain.
+	 */
+	public void stop() {
+		m_diffDrive.stopMotor();
+	}
 }
