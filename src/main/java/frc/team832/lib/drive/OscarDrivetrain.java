@@ -47,6 +47,8 @@ public class OscarDrivetrain {
 
 	private final DifferentialDrivetrainSim m_driveSim;
 	private final SmartMCSimCollection m_leftSimCollection, m_rightSimCollection;
+
+	private Rotation2d m_lastGyroYaw = Rotation2d.fromDegrees(0);
 	
 	// Motor data
 	private final NetworkTableEntry nte_leftMotorDutyCycle, nte_rightMotorDutyCycle,
@@ -105,6 +107,8 @@ public class OscarDrivetrain {
 		m_leftSimCollection = m_leftMotor.getSimCollection();
 		m_rightSimCollection = m_rightMotor.getSimCollection();
 
+		// m_field.setRobotPose(new Pose2d());
+
 		// Telemetry setup
 		DashboardManager.addTab(DB_TABNAME);
 		
@@ -161,19 +165,28 @@ public class OscarDrivetrain {
 	}
 	
 	/**
-	 * Reset drivetrain pose.
+	 * Reset drivetrain pose to 0, 0
 	 */
 	public void resetPose() {
+		resetPose(new Pose2d());
+	}
+
+	/**
+	 * Reset drivetrain pose
+	 * @param newPose {@link edu.wpi.first.math.geometry.Pose2d} of the robot drivetrain.
+	 */
+	public void resetPose(Pose2d newPose) {
 		m_leftMotor.rezeroSensor();
 		m_rightMotor.rezeroSensor();
 
 		if (RobotBase.isSimulation()) {
 			m_leftSimCollection.setSensorPosition(0);
 			m_rightSimCollection.setSensorPosition(0);
-			m_driveSim.setPose(new Pose2d());
 		}
 
-		m_odometry.resetPosition(new Pose2d(), getGyroHeading());
+		m_odometry.resetPosition(newPose, getGyroHeading());
+		m_driveSim.setPose(newPose);
+		m_pose = newPose;
 	}
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -222,19 +235,24 @@ public class OscarDrivetrain {
 			leftAmps = m_leftMotor.getInputCurrent();
 			rightAmps = m_leftMotor.getInputCurrent();
 
-			gyroYaw = m_gyro.getRotation2d();
+			m_lastGyroYaw = m_gyro.getRotation2d();
 			
 			// Update pose
-			m_pose = m_odometry.update(gyroYaw, leftMeters, rightMeters);
+			m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
 		} else {
 			// run drive simulation
 			if (DriverStation.isEnabled()) {
 				m_driveSim.setInputs(leftVolts, rightVolts);
-			m_driveSim.update(0.02);
+				m_driveSim.update(0.02);
 			}
+
+			// m_pose = m_driveSim.getPose();
+			m_lastGyroYaw = m_driveSim.getHeading();
 
 			leftMeters = m_driveSim.getLeftPositionMeters();
 			rightMeters = m_driveSim.getRightPositionMeters();
+
+			m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
 
 			leftRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getLeftPositionMeters());
 			rightRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getRightPositionMeters());
@@ -247,12 +265,9 @@ public class OscarDrivetrain {
 
 			m_leftSimCollection.setSensorPosition(leftRotations);
 			m_rightSimCollection.setSensorPosition(rightRotations);
-
-			m_pose = m_driveSim.getPose();
-			gyroYaw = m_driveSim.getHeading();
 		}
 
-		nte_gyroYaw.setDouble(gyroYaw.getDegrees());
+		nte_gyroYaw.setDouble(m_lastGyroYaw.getDegrees());
 
 		nte_leftMotorDutyCycle.setDouble(m_leftMotor.get());
 		nte_rightMotorDutyCycle.setDouble(m_rightMotor.get());
@@ -286,4 +301,18 @@ public class OscarDrivetrain {
 	public void stop() {
 		m_diffDrive.stopMotor();
 	}
+
+	public void addPoseToField(Pose2d pose, String name) {
+		var obj = m_field.getObject(name);
+		obj.setPose(pose);
+	}
+
+	public void addTrajectoryToField(Trajectory traj, String name) {
+		var obj = m_field.getObject(name);
+		obj.setTrajectory(traj);
+	}
+
+	// public void addRobotTrajectoryToField(Trajectory traj) {
+		// m_field.getRobotObject().setTrajectory(traj);
+	// }
 }
