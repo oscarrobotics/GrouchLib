@@ -48,17 +48,8 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 	}
 
 	@Override
-	public void follow(SmartMC<?, ?> masterMC) {
-		if (canConnectedAtBoot) {
-			_ctrlMode = ControlMode.Follower;
-			if (masterMC instanceof  CANTalonFX) {
-				_talon.follow(((CANTalonFX) masterMC).getBaseController());
-			// } else if (masterMC instanceof CANTalonSRX) {
-				// _talon.follow(((CANTalonSRX) masterMC).getBaseController());
-			} else {
-				_talon.set(_ctrlMode, masterMC.getCANID());
-			}
-		}
+	public void follow(WPI_TalonFX master) {
+		_talon.follow(master);
 	}
 
 	@Override
@@ -83,11 +74,11 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	@Override
 	public void setNeutralMode(NeutralMode mode) {
-		if (canConnectedAtBoot) {
+		// if (canConnectedAtBoot) {
 			_talon.setNeutralMode(mode == NeutralMode.kBrake ?
 					com.ctre.phoenix.motorcontrol.NeutralMode.Brake :
 					com.ctre.phoenix.motorcontrol.NeutralMode.Coast);
-		}
+		// }
 	}
 
 	@Override

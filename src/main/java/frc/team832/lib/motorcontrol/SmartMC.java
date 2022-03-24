@@ -4,7 +4,7 @@ import frc.team832.lib.util.ClosedLoopConfig;
 
 public interface SmartMC<B, S extends SmartMCSimCollection> extends SimpleMC<B> {
 
-	void follow(SmartMC<?, ?> masterMC);
+	void follow(B masterMC);
 
 	/**
 	 * Gets the current input voltage of the controller.

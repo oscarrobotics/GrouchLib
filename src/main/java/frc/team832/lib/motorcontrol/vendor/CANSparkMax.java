@@ -51,25 +51,18 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	}
 
 	@Override
-	public void follow(SmartMC<?, ?> masterMC) {
-		if (getCANConnection()) {
-			if (masterMC instanceof CANSparkMax) {
-				_spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController());
-			} else {
-				_spark.follow(ExternalFollower.kFollowerPhoenix, masterMC.getCANID());
-			}
-		}
+	public void follow(com.revrobotics.CANSparkMax master) {
+		_spark.follow(master);
 	}
 
-	public void follow(SmartMC<?, ?> masterMC, boolean invert) {
-		if (getCANConnection()) {
-			if (masterMC instanceof CANSparkMax) {
-				_spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController(), invert);
-			} else {
-				_spark.follow(ExternalFollower.kFollowerPhoenix, masterMC.getCANID(), invert);
-			}
-		}
-	}
+	// public void follow(SmartMC<?, ?> masterMC, boolean invert) {
+			// if (masterMC instanceof CANSparkMax) {/
+				// _spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController(), invert);
+			// } else {
+				// _spark.follow(ExternalFollower.kFollowerPhoenix, masterMC.getCANID(), invert);
+			// }
+		// }
+	// }
 
 	@Override
 	public double getInputVoltage() {

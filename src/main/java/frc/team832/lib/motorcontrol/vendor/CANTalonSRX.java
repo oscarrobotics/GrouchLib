@@ -43,13 +43,8 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 	}
 
 	@Override
-	public void follow(SmartMC<?, ?> masterMC) {
-		if (!(masterMC instanceof CANSparkMax)) {
-			_talon.follow(((CANTalonSRX)masterMC).getBaseController());
-		} else {
-			_ctrlMode = ControlMode.Follower;
-		}
-		_talon.set(_ctrlMode, masterMC.getCANID());
+	public void follow(WPI_TalonSRX master) {
+		_talon.follow(master);
 	}
 
 	@Override
