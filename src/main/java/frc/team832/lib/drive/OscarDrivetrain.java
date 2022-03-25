@@ -3,6 +3,8 @@ package frc.team832.lib.drive;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.sensors.BasePigeon;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 
@@ -185,10 +187,10 @@ public class OscarDrivetrain {
 		if (RobotBase.isSimulation()) {
 			m_leftSimCollection.setSensorPosition(0);
 			m_rightSimCollection.setSensorPosition(0);
-			((WPI_PigeonIMU)m_gyro).getSimCollection().setRawHeading(0);
+			// ((BasePigeon)m_gyro).getSimCollection().setRawHeading(newPose.getRotation().getDegrees());
 		}
 
-		m_gyro.reset();
+		// ((WPI_Pigeon2)m_gyro).setYaw(newPose.getRotation().getDegrees());
 
 		m_odometry.resetPosition(newPose, getGyroHeading());
 		m_driveSim.setPose(newPose);
@@ -253,7 +255,8 @@ public class OscarDrivetrain {
 
 			// m_pose = m_driveSim.getPose();
 			m_lastGyroYaw = m_driveSim.getHeading();
-			((WPI_PigeonIMU)m_gyro).getSimCollection().setRawHeading(m_lastGyroYaw.getDegrees());
+			// TODO: fix cast hack
+			((BasePigeon)m_gyro).getSimCollection().setRawHeading(m_lastGyroYaw.getDegrees());
 
 			leftMeters = m_driveSim.getLeftPositionMeters();
 			rightMeters = m_driveSim.getRightPositionMeters();
