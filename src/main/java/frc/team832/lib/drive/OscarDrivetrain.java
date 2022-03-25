@@ -3,6 +3,9 @@ package frc.team832.lib.drive;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -182,7 +185,10 @@ public class OscarDrivetrain {
 		if (RobotBase.isSimulation()) {
 			m_leftSimCollection.setSensorPosition(0);
 			m_rightSimCollection.setSensorPosition(0);
+			((WPI_PigeonIMU)m_gyro).getSimCollection().setRawHeading(0);
 		}
+
+		m_gyro.reset();
 
 		m_odometry.resetPosition(newPose, getGyroHeading());
 		m_driveSim.setPose(newPose);
@@ -215,7 +221,6 @@ public class OscarDrivetrain {
 	 */
 	public void periodic() {
 		// values that differ between sim and real
-		Rotation2d gyroYaw;
 		double leftRotations, rightRotations;
 		double leftMeters, rightMeters;
 		double leftMetersPerSec, rightMetersPerSec;
@@ -248,6 +253,7 @@ public class OscarDrivetrain {
 
 			// m_pose = m_driveSim.getPose();
 			m_lastGyroYaw = m_driveSim.getHeading();
+			((WPI_PigeonIMU)m_gyro).getSimCollection().setRawHeading(m_lastGyroYaw.getDegrees());
 
 			leftMeters = m_driveSim.getLeftPositionMeters();
 			rightMeters = m_driveSim.getRightPositionMeters();
