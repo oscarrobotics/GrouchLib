@@ -54,22 +54,22 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	@Override
 	public double getInputVoltage() {
-		return canConnectedAtBoot ? _talon.getBusVoltage() : Double.NaN;
+		return _talon.getBusVoltage();
 	}
 
 	@Override
 	public double getOutputVoltage() {
-		return canConnectedAtBoot ? _talon.getMotorOutputVoltage() : Double.NaN;
+		return _talon.getMotorOutputVoltage();
 	}
 
 	@Override
 	public double getInputCurrent() {
-		return canConnectedAtBoot ? _talon.getSupplyCurrent() : Double.NaN;
+		return _talon.getSupplyCurrent();
 	}
 
 	@Override
 	public double getOutputCurrent() {
-		return canConnectedAtBoot ? _talon.getStatorCurrent() : Double.NaN;
+		return _talon.getStatorCurrent();
 	}
 
 	@Override

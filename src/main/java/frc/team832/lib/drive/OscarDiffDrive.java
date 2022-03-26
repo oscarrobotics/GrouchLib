@@ -113,21 +113,21 @@ public final class OscarDiffDrive extends RobotDriveBase implements Sendable {
 		xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
 		zRotation = MathUtil.applyDeadband(zRotation, m_deadband);
 		
-		xSpeed = OscarMath.signumPow(xSpeed, inputPow);
-		zRotation = OscarMath.signumPow(zRotation, inputPow);
+		// xSpeed = OscarMath.signumPow(xSpeed, inputPow);
+		// zRotation = OscarMath.signumPow(zRotation, inputPow);
 		
 		var speeds = DifferentialDrive.arcadeDriveIK(xSpeed, zRotation, false);
 		
-		if (m_useFF) {
-			double leftFFEffortVolts = m_leftFF.calculate(speeds.left * m_maxVelocity);
-			double rightFFEffortVolts = m_rightFF.calculate(speeds.left * m_maxVelocity);
+		// if (m_useFF) {
+			// double leftFFEffortVolts = m_leftFF.calculate(speeds.left * m_maxVelocity);
+			// double rightFFEffortVolts = m_rightFF.calculate(speeds.left * m_maxVelocity);
 
-			m_leftMotor.setVoltage(leftFFEffortVolts);
-			m_rightMotor.setVoltage(rightFFEffortVolts);
-		} else {
+			// m_leftMotor.setVoltage(leftFFEffortVolts);
+			// m_rightMotor.setVoltage(rightFFEffortVolts);
+		// } else {
 			m_leftMotor.set(speeds.left);
 			m_rightMotor.set(speeds.right);
-		}		
+		// }		
 	}
 	
 	/**

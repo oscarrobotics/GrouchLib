@@ -186,15 +186,15 @@ public class OscarRamseteCommand extends CommandBase {
       double rightRealSpeed = m_speeds.get().rightMetersPerSecond;
 
       SmartDashboard.putNumber("WheelSpeeds/LeftReal", leftRealSpeed);
-      SmartDashboard.putNumber("WheelSpeeds/RightReal", -rightRealSpeed);
+      SmartDashboard.putNumber("WheelSpeeds/RightReal", rightRealSpeed);
 
-      leftOutput = leftFeedforward
-          + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
-          leftSpeedSetpoint);
+      leftOutput = leftFeedforward;
+          // + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
+          // leftSpeedSetpoint);
 
-      rightOutput = rightFeedforward
-          + m_rightController.calculate(m_speeds.get().rightMetersPerSecond,
-          rightSpeedSetpoint);
+      rightOutput = rightFeedforward;
+          // + m_rightController.calculate(m_speeds.get().rightMetersPerSecond,
+          // rightSpeedSetpoint);
     } else {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
