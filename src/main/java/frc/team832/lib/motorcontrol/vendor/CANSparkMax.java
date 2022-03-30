@@ -11,6 +11,8 @@ import frc.team832.lib.util.ClosedLoopConfig;
 import static com.revrobotics.CANSparkMax.*;
 import static com.revrobotics.SparkMaxPIDController.*;
 
+import com.revrobotics.REVLibError;
+
 public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 	private final com.revrobotics.CANSparkMax _spark;
@@ -132,6 +134,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 	@Override
 	public void setSensorPhase(boolean phase) {
+		// No-op. sensor is always in phase with motor.
 	}
 
 	@Override
@@ -199,22 +202,18 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 	public void set(double power) {
 		if (power != _openLoopSetpoint) {
 			_openLoopSetpoint = power;
-			if (getCANConnection()) {
 				_spark.set(power);
-			}
 		}
 	}
 
 	@Override
 	public double get() {
-		return getCANConnection() ? _spark.getAppliedOutput() : Double.NaN;
+		return _openLoopSetpoint;
 	}
 
 	@Override
-	public void stop() {
-		if (getCANConnection()) {
-			_spark.set(0);
-		}
+	public void stopMotor() {
+		_spark.stopMotor();
 	}
 
 	@Override
@@ -226,7 +225,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 	@Override
 	public boolean getInverted() {
-		return getCANConnection() && _spark.getInverted();
+		return _spark.getInverted();
 	}
 
 	@Override
@@ -244,6 +243,12 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 	@Override
 	public boolean getCANConnection() {
-		return !_spark.getFirmwareString().equalsIgnoreCase("v0.0.0");
+		return _spark.getLastError() != REVLibError.kCANDisconnected;
+	}
+
+	@Override
+	public void disable() {
+		_spark.disable();
+		
 	}
 }
