@@ -16,13 +16,13 @@ public class Gearbox {
 		
 		for (double reduction : _reductions) {
 			stages++;
-			tempVal = tempVal * reduction;
+			tempVal = tempVal *  (1 / reduction);
 		}
-		totalReduction = 1 / tempVal;
+		totalReduction = tempVal;
 		numStages = stages;
 	}
 
 	protected double getReduction(int index) {
-		return _reductions[index];
+		return 1 / _reductions[index];
 	}
 }

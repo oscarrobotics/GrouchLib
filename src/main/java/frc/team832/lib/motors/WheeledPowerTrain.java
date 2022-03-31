@@ -62,10 +62,6 @@ public class WheeledPowerTrain extends Powertrain {
 		return Units.metersToFeet(calcMetersPerSec(currentMotorRpm));
 	}
 	
-	public double calcEncoderTicksFromMeters(double meters) {
-		return 1 / calcWheelFromEncoder(meters);
-	}
-
 	/**
 	 * Returns a Motor modified to use the motor count, as WPILib uses in their system plants.
 	 */

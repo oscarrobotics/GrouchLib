@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -163,8 +164,8 @@ public class OscarRamseteCommand extends CommandBase {
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-    SmartDashboard.putNumber("WheelSpeed/LeftTarget", leftSpeedSetpoint);
-    SmartDashboard.putNumber("WheelSpeed/RightTarget", rightSpeedSetpoint);
+    SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/LeftTarget", leftSpeedSetpoint);
+    SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/RightTarget", rightSpeedSetpoint);
 
     double leftOutput;
     double rightOutput;
@@ -174,27 +175,35 @@ public class OscarRamseteCommand extends CommandBase {
           m_leftFeedForward.calculate(leftSpeedSetpoint,
               (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
 
-      SmartDashboard.putNumber("FF/Left", leftFeedforward);
+      if (RobotBase.isSimulation()) {
+        leftFeedforward -= m_leftFeedForward.ks * Math.signum(leftSpeedSetpoint);
+      }
+
+      SmartDashboard.putNumber("OscarRamsete/FF/Left", leftFeedforward);
 
       double rightFeedforward =
           m_rightFeedForward.calculate(rightSpeedSetpoint,
               (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
 
-      SmartDashboard.putNumber("FF/Right", rightFeedforward);
+      if (RobotBase.isSimulation()) {
+        rightFeedforward -= m_rightFeedForward.ks * Math.signum(rightSpeedSetpoint);
+      }
+
+      SmartDashboard.putNumber("OscarRamsete/FF/Right", rightFeedforward);
 
       double leftRealSpeed = m_speeds.get().leftMetersPerSecond;
       double rightRealSpeed = m_speeds.get().rightMetersPerSecond;
 
-      SmartDashboard.putNumber("WheelSpeeds/LeftReal", leftRealSpeed);
-      SmartDashboard.putNumber("WheelSpeeds/RightReal", rightRealSpeed);
+      SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/LeftReal", leftRealSpeed);
+      SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/RightReal", rightRealSpeed);
 
-      leftOutput = leftFeedforward;
-          // + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
-          // leftSpeedSetpoint);
+      leftOutput = leftFeedforward
+          + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
+          leftSpeedSetpoint);
 
-      rightOutput = rightFeedforward;
-          // + m_rightController.calculate(m_speeds.get().rightMetersPerSecond,
-          // rightSpeedSetpoint);
+      rightOutput = rightFeedforward
+          + m_rightController.calculate(m_speeds.get().rightMetersPerSecond,
+          rightSpeedSetpoint);
     } else {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;

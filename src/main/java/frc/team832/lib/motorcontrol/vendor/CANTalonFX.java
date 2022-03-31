@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import frc.team832.lib.CANDevice;
@@ -35,6 +36,8 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 		canConnectedAtBoot = getCANConnection();
 		
 		CANDevice.addDevice(this, "Talon FX");
+		
+		_talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
 	}
 
 	@Override
@@ -110,14 +113,16 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	@Override
 	public double getSensorPosition() {
-		return canConnectedAtBoot ? (_talon.getSelectedSensorPosition() / 2048.0) : Double.NaN;
+		return _talon.getSelectedSensorPosition() / 2048.0;
 	}
 
 	@Override
 	public double getSensorVelocity() {
-		if (canConnectedAtBoot) {
-			return (_talon.getSelectedSensorVelocity() / 2048.0) * 600;
-		} else return Double.NaN;
+		// var raw = _talon.getSelectedSensorVelocity();
+		// var rot100ms = raw / 2048;
+		// var rpm = rot100ms * 600;
+		// return rpm;
+		return (_talon.getSelectedSensorVelocity() / 2048.0) * 600;
 	}
 
 	@Override
@@ -157,9 +162,7 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	@Override
 	public void rezeroSensor() {
-		if (canConnectedAtBoot) {
-			_talon.setSelectedSensorPosition(0);
-		}
+		_talon.setSelectedSensorPosition(0);
 	}
 
 	@Override
@@ -172,7 +175,7 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 
 	@Override
 	public void setVoltage(double voltage) {
-		double compVoltage = Math.max(12.0, getInputVoltage());
+		double compVoltage = getInputVoltage();
 		_ctrlMode = ControlMode.PercentOutput;
 
 		_talon.configVoltageCompSaturation(compVoltage);

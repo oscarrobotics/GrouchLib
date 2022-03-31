@@ -12,8 +12,9 @@ public class GearboxTest {
 		boolean insideIndexException = false;
 		boolean outsideIndexException = false;
 
-		double expectedReduction = 11.0 / 60.0;
-		double expectedReduction1 = 16.0 / 32.0;
+		// numbers greater than 1 are reductions.
+		double expectedReduction = 1 / (11.0 / 60.0);
+		double expectedReduction1 = 1 / (16.0 / 32.0);
 
 		try {
 			m_drivetrainGearbox.getReduction(0);
