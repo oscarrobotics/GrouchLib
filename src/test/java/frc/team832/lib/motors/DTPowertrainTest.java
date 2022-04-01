@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DTPowertrainTest {
     private static Motor m_motor = Motor.kFalcon500;
-    private static Gearbox m_gearbox = new Gearbox(11.0 / 60.0, 16.0 / 32.0);
-    private static WheeledPowerTrain m_wheeledPowerTrain = new WheeledPowerTrain(m_gearbox, m_motor, 2, 6.0, 1.0);
+    private static Gearbox m_gearbox = Gearbox.fromStages(11.0 / 60.0, 16.0 / 32.0);
+    private static WheeledPowerTrain m_wheeledPowerTrain = new WheeledPowerTrain(m_gearbox, m_motor, 2, 6.0);
 
     @Test
     public void wheelSpeedFromMotorSpeedTest() {

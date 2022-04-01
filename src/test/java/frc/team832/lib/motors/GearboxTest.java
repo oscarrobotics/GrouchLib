@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GearboxTest {
-	private static final Gearbox m_drivetrainGearbox = new Gearbox(11.0 / 60.0, 16.0 / 32.0);
+	private static final Gearbox m_drivetrainGearbox = Gearbox.fromStages(11.0 / 60.0, 16.0 / 32.0);
 
 	@Test
 	public void getReductionTest() {
@@ -40,8 +40,8 @@ public class GearboxTest {
 
 	@Test
 	public void getTotalReductionTest() {
-		var gearbox = new Gearbox(11.23f, 7.0f, 3.0f);
-		double totalReduction = 1 / 235.83;
+		var gearbox = Gearbox.fromStages(1 / 7.0f, 1 / 3.0f);
+		double totalReduction = 21;
 
 		assertEquals(totalReduction, gearbox.totalReduction, 0.001f, "GetTotalReduction failed to output correctly");
 	}

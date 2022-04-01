@@ -22,16 +22,31 @@ public class WheeledPowerTrain extends Powertrain {
 		this.encoderRatio = encoderRatio;
 	}
 
+	/**
+	 *	This constructor assumes the encoder is at the input of the gearbox.
+	 * 
+	 * @param gearbox Gearbox
+	 * @param motor Motor type
+	 * @param motorCount Amount of motors
+	 * @param wheelDiameterInches Wheel diameter in inches
+	 */
+	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
+		super(gearbox, motor, motorCount);
+		m_wpilibPlantMotor = new Motor(motor, motorCount);
+		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
+		this.encoderRatio = 1;
+	}
+
 	public double getWheelCircumferenceMeters() {
 		return wheelDiameterMeters * Math.PI;
 	}
 
 	public double calcWheelFromMotor(double motorUnits) {
-		return motorUnits / gearbox.totalReduction;
+		return gearbox.getInputToOutput(motorUnits);
 	}
 
 	public double calcMotorFromWheel(double wheelUnits) {
-		return wheelUnits * gearbox.totalReduction;
+		return gearbox.getOutputToInput(wheelUnits);
 	}
 
 	public double calcWheelFromEncoder(double encoderUnits) {
@@ -50,7 +65,7 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public double calcEncoderRotationsFromMeters(double meters) {
 		double wheelRotations = meters / getWheelCircumferenceMeters();
-		return wheelRotations * gearbox.totalReduction;
+		return gearbox.getOutputToInput(wheelRotations);
 	}
 
 	public double calcMetersPerSec(double encoderRpm) {

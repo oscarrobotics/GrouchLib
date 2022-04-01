@@ -76,7 +76,7 @@ public class OscarFlywheel {
 		nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Input Amps", -60.0, 60.0);
 		// nte_motorInputCurrent = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Output Amps", -60.0, 60.0);
 
-		var maxRpm = powertrain.getOutputSpeed();
+		var maxRpm = powertrain.getOutputFreeSpeed();
 		nte_targetVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Target RPM", -maxRpm, maxRpm);
 		nte_encVelocityRpm = DashboardManager.addTabNumberBar(DB_TABNAME, DB_TABNAME + "/Enc RPM", -maxRpm, maxRpm);
 

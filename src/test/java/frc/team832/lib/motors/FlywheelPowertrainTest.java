@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FlywheelPowertrainTest {
 	private static final Motor m_motor = Motor.kFalcon500;
-	private static final Gearbox m_gearbox = new Gearbox(1.0 / 2.0);
+	private static final Gearbox m_gearbox = Gearbox.fromStages(1.0 / 2.0);
 	private static final WheeledPowerTrain m_wheeledPowerTrain = new WheeledPowerTrain(m_gearbox, m_motor, 1, 4.0, 1.0);
 
 	@Test

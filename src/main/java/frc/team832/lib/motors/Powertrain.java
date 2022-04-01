@@ -16,7 +16,7 @@ public class Powertrain {
 		this.motorCount = motorCount;
 	}
 
-	public double getOutputSpeed() { return motor.freeSpeedRPM / gearbox.totalReduction; }
+	public double getOutputFreeSpeed() { return gearbox.getInputToOutput(motor.freeSpeedRPM); }
 
 	public double getFreeCurrent() { return motor.freeCurrentAmps * motorCount; }
 
@@ -24,7 +24,7 @@ public class Powertrain {
 		return motor.stallCurrentAmps * motorCount;
 	}
 
-	public double getStallTorque() {
-		return (motor.stallTorqueNewtonMeters * motorCount) * gearbox.totalReduction;
+	public double getOutputStallTorque() {
+		return gearbox.getOutputToInput(motor.stallTorqueNewtonMeters * motorCount);
 	}
 }
