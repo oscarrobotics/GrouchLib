@@ -17,7 +17,7 @@ public class OscarFlywheel {
 		return OscarFlywheel.class.getSimpleName() + INSTANCE_COUNT;
 	}
 	
-	private final SmartMC<?, ?> m_motor;
+	private final SmartMC<?> m_motor;
 	private final WheeledPowerTrain m_powertrain;
 	private final SimpleMotorFeedforward m_feedforward;
 	private final PIDController m_pidController;
@@ -42,7 +42,7 @@ public class OscarFlywheel {
 	private final NetworkTableEntry nte_ffEffortVolts, nte_pEffortVolts, nte_atTarget;
 
 	public OscarFlywheel(
-		SmartMC<?, ?> motor, WheeledPowerTrain powertrain,
+		SmartMC<?> motor, WheeledPowerTrain powertrain,
 		SimpleMotorFeedforward feedforward, 
 		double kP, double moiKgM2
 	) {
@@ -51,7 +51,7 @@ public class OscarFlywheel {
 
 	public OscarFlywheel(
 		String dashboardName,
-		SmartMC<?, ?> motor, WheeledPowerTrain powertrain,
+		SmartMC<?> motor, WheeledPowerTrain powertrain,
 		SimpleMotorFeedforward feedforward, 
 		double kP, double moiKgM2
 	) {
@@ -145,7 +145,7 @@ public class OscarFlywheel {
 			inputAmps = m_sim.getCurrentDrawAmps();
 			encoderRpm =  m_sim.getAngularVelocityRPM();
 
-			m_motor.getSimCollection().setSensorVelocity(encoderRpm);
+			m_motor.getSim().setSensorVelocity(encoderRpm);
 		}
 		
 		updateControlLoops(encoderRpm);

@@ -5,6 +5,7 @@ import com.revrobotics.SparkMaxPIDController;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.SmartMC;
+import frc.team832.lib.motorcontrol.SmartMCSim;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 
@@ -13,7 +14,7 @@ import static com.revrobotics.SparkMaxPIDController.*;
 
 import com.revrobotics.REVLibError;
 
-public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSparkMaxSimCollection> {
+public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 	private final com.revrobotics.CANSparkMax _spark;
 	private final int _canID;
@@ -21,7 +22,7 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	private final SparkMaxPIDController _pid;
 	private final Motor _motor;
 
-	private final CANSparkMaxSimCollection _simCollection;
+	private final SmartMCSim _sim;
 
 	private double _openLoopSetpoint;
 	private double _closedLoopSetpoint;
@@ -40,7 +41,17 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 		_encoder = _spark.getEncoder();
 		_pid = _spark.getPIDController();
 
-		_simCollection = new CANSparkMaxSimCollection(this);
+		_sim = new SmartMCSim() {
+			// TODO: Wait for REV to fix Sim...
+			@Override
+			public void setBusVoltage(double voltage) {}
+
+			@Override
+			public void setSensorPosition(double position) {}
+
+			@Override
+			public void setSensorVelocity(double velocity) {}
+		};
 
 		CANDevice.addDevice(this, "Spark MAX");
 	}
@@ -54,15 +65,6 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	public void follow(com.revrobotics.CANSparkMax master) {
 		_spark.follow(master);
 	}
-
-	// public void follow(SmartMC<?, ?> masterMC, boolean invert) {
-			// if (masterMC instanceof CANSparkMax) {/
-				// _spark.follow((com.revrobotics.CANSparkMax) masterMC.getBaseController(), invert);
-			// } else {
-				// _spark.follow(ExternalFollower.kFollowerPhoenix, masterMC.getCANID(), invert);
-			// }
-		// }
-	// }
 
 	@Override
 	public double getInputVoltage() {
@@ -250,8 +252,8 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	}
 
 	@Override
-	public CANSparkMaxSimCollection getSimCollection() {
-		return _simCollection;
+	public SmartMCSim getSim() {
+		return _sim;
 	}
 
 	@Override

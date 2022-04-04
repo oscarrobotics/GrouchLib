@@ -12,17 +12,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.SmartMC;
+import frc.team832.lib.motorcontrol.SmartMCSim;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 import frc.team832.lib.util.Conversions;
 
-public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection> {
+public class CANTalonFX implements SmartMC<WPI_TalonFX> {
 
 	public static final int ENCODER_CPR = 2048;
 
 	private final WPI_TalonFX _talon;
 	private final int _canID;
-	private final CANTalonFXSimCollection _simCollection;
+	private final SmartMCSim _sim;
 
 	private ControlMode _ctrlMode;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
@@ -33,7 +34,25 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 		_canID = canId;
 		_ctrlMode = ControlMode.Disabled;
 
-		_simCollection = new CANTalonFXSimCollection(this);
+		var _talonSim = _talon.getSimCollection();
+		_sim = new SmartMCSim() {
+			@Override
+			public void setBusVoltage(double voltage) {
+				_talonSim.setBusVoltage(voltage);
+			}
+
+			@Override
+			public void setSensorPosition(double position) {
+				var ticks = Conversions.fromRotationsToTicks(position, ENCODER_CPR);
+				_talonSim.setIntegratedSensorRawPosition(ticks);
+			}
+
+			@Override
+			public void setSensorVelocity(double velocity) {
+				var ticksPer100ms = Conversions.fromRpmToCtreVelocity(velocity, ENCODER_CPR);
+				_talonSim.setIntegratedSensorVelocity(ticksPer100ms);
+			}
+		};
 		
 		CANDevice.addDevice(this, "Talon FX");
 		
@@ -213,8 +232,8 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX, CANTalonFXSimCollection>
 	}
 
 	@Override
-	public CANTalonFXSimCollection getSimCollection() {
-		return _simCollection;
+	public SmartMCSim getSim() {
+		return _sim;
 	}
 		
 	@Override

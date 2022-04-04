@@ -2,7 +2,7 @@ package frc.team832.lib.motorcontrol;
 
 import frc.team832.lib.util.ClosedLoopConfig;
 
-public interface SmartMC<B, S extends SmartMCSimCollection> extends SimpleMC<B> {
+public interface SmartMC<B> extends SimpleMC<B> {
 
 	void follow(B masterMC);
 
@@ -70,7 +70,7 @@ public interface SmartMC<B, S extends SmartMCSimCollection> extends SimpleMC<B> 
 	void enableReverseSoftLimit(boolean enable);
 	void setReverseSoftLimit(double limit);
 
-	S getSimCollection();	
+	SmartMCSim getSim();	
 
 	boolean getCANConnection();
 }

@@ -30,13 +30,13 @@ import edu.wpi.first.wpilibj2.command.OscarRamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
-import frc.team832.lib.motorcontrol.SmartMCSimCollection;
+import frc.team832.lib.motorcontrol.SmartMCSim;
 import frc.team832.lib.motors.WheeledPowerTrain;
 
 public class OscarDrivetrain {
 	private static final String DB_TABNAME = OscarDrivetrain.class.getSimpleName();
 
-	private final SmartMC<?, ?> m_leftMotor, m_rightMotor;
+	private final SmartMC<?> m_leftMotor, m_rightMotor;
 	private final Gyro m_gyro;
 	private final WheeledPowerTrain m_powertrain;
 	private final OscarDiffDrive m_diffDrive;
@@ -51,7 +51,7 @@ public class OscarDrivetrain {
 	private Pose2d m_pose = new Pose2d();
 
 	private final DifferentialDrivetrainSim m_driveSim;
-	private final SmartMCSimCollection m_leftSimCollection, m_rightSimCollection;
+	private final SmartMCSim m_leftSimCollection, m_rightSimCollection;
 
 	private Rotation2d m_lastGyroYaw = Rotation2d.fromDegrees(0);
 	
@@ -69,7 +69,7 @@ public class OscarDrivetrain {
 	// Odometry data
 	private final NetworkTableEntry nte_robotPoseX, nte_robotPoseY, nte_robotPoseRot;
 
-	public OscarDrivetrain(SmartMC<?, ?> leftMotor, SmartMC<?, ?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
+	public OscarDrivetrain(SmartMC<?> leftMotor, SmartMC<?> rightMotor, Gyro gyro, OscarDTCharacteristics dtCharacteristics) {
 		m_leftMotor = leftMotor;
 		m_rightMotor = rightMotor;
 		m_gyro = gyro;
@@ -109,8 +109,8 @@ public class OscarDrivetrain {
 			// VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
 		);
 
-		m_leftSimCollection = m_leftMotor.getSimCollection();
-		m_rightSimCollection = m_rightMotor.getSimCollection();
+		m_leftSimCollection = m_leftMotor.getSim();
+		m_rightSimCollection = m_rightMotor.getSim();
 
 		// m_field.setRobotPose(new Pose2d());
 

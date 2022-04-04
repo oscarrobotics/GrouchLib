@@ -11,11 +11,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.SmartMC;
+import frc.team832.lib.motorcontrol.SmartMCSim;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
 import frc.team832.lib.util.Conversions;
 
-public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollection> {
+public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
 	private final WPI_TalonSRX _talon;
 	private final Motor _motor;
 	private final int _canID;
@@ -25,7 +26,7 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 
 	private ControlMode _ctrlMode;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
-	private final CANTalonSRXSimCollection _simCollection;
+	private final SmartMCSim _sim;
 
 	public CANTalonSRX(int canId, Motor motor) {
 		assert motor != Motor.kNEO && motor != Motor.kNEO550 && motor != Motor.kFalcon500 : "Invalid motor for CANTalonSRX!";
@@ -35,7 +36,25 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 		_canID = canId;
 		_ctrlMode = ControlMode.Disabled;
 
-		_simCollection = new CANTalonSRXSimCollection(this);
+		var _talonSim = _talon.getSimCollection();
+		_sim = new SmartMCSim() {
+			@Override
+			public void setBusVoltage(double voltage) {
+				_talonSim.setBusVoltage(voltage);
+			}
+
+			@Override
+			public void setSensorPosition(double position) {
+				var ticks = Conversions.fromRotationsToTicks(position, ENCODER_CPR);
+				_talonSim.setQuadratureRawPosition(ticks);
+			}
+
+			@Override
+			public void setSensorVelocity(double velocity) {
+				var ticksPer100ms = Conversions.fromRpmToCtreVelocity(velocity, ENCODER_CPR);
+				_talonSim.setQuadratureVelocity(ticksPer100ms);
+			}
+		};
 
 		CANDevice.addDevice(this, "Talon SRX");
 	}
@@ -211,8 +230,8 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 	}
 
 	@Override
-	public CANTalonSRXSimCollection getSimCollection() {
-		return _simCollection;
+	public SmartMCSim getSim() {
+		return _sim;
 	}
 
 	@Override
@@ -255,5 +274,4 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 		String errorStr = deviceName + " | " + actionName + " | ERROR: " + error.name();
 		DriverStation.reportError(errorStr, false);
 	}
-
 }
