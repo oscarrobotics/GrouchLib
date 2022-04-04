@@ -3,17 +3,25 @@ package frc.team832.lib.motorcontrol.vendor;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.team832.lib.CANDevice;
 import frc.team832.lib.motorcontrol.NeutralMode;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motors.Motor;
 import frc.team832.lib.util.ClosedLoopConfig;
+import frc.team832.lib.util.Conversions;
 
 public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollection> {
 	private final WPI_TalonSRX _talon;
 	private final Motor _motor;
 	private final int _canID;
+
+	// TODO: this is not always the case!
+	public final int ENCODER_CPR = 4096;
 
 	private ControlMode _ctrlMode;
 	private SupplyCurrentLimitConfiguration inputCurrentConfig = new SupplyCurrentLimitConfiguration(true, 40, 0, 0);
@@ -25,7 +33,7 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 		_motor = motor;
 		_talon = new WPI_TalonSRX(canId);
 		_canID = canId;
-		_ctrlMode = ControlMode.PercentOutput;
+		_ctrlMode = ControlMode.Disabled;
 
 		_simCollection = new CANTalonSRXSimCollection(this);
 
@@ -49,24 +57,24 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 
 	@Override
 	public double getInputVoltage() {
-		return getCANConnection() ? _talon.getBusVoltage() : Double.NaN;
+		return _talon.getBusVoltage();
 	}
 
 	@Override
 	public double getOutputVoltage() {
-		return getCANConnection() ? _talon.getMotorOutputVoltage() : Double.NaN;
+		return _talon.getMotorOutputVoltage();
 	}
 
 	@Override
 	public double getInputCurrent() {
-		return getCANConnection() ? _talon.getSupplyCurrent() : Double.NaN;
+		return _talon.getSupplyCurrent();
 	}
 
 	@Override
 	public double getOutputCurrent() {
-		return getCANConnection() ? _talon.getStatorCurrent() : Double.NaN;
+		return _talon.getStatorCurrent();
 	}
-
+	
 	@Override
 	public void setNeutralMode(NeutralMode mode) {
 		if (getCANConnection()) {
@@ -83,76 +91,68 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 
 	@Override
 	public void wipeSettings() {
-		if (getCANConnection()) {
-			_talon.configFactoryDefault();
-		}
+		var err = _talon.configFactoryDefault();
+		notifyOnError(err, "wipeSettings");
 	}
 
 	@Override
 	public void limitInputCurrent(int currentLimit) {
-		if (getCANConnection()) {
-			inputCurrentConfig.currentLimit = currentLimit;
-			_talon.configSupplyCurrentLimit(inputCurrentConfig);
-		}
+		inputCurrentConfig.currentLimit = currentLimit;
+		var err = _talon.configSupplyCurrentLimit(inputCurrentConfig);
+		notifyOnError(err, "limitInputCurrent");
 	}
 
 	@Override
 	public double getSensorPosition() {
-		return getCANConnection() ? (_talon.getSelectedSensorPosition() / 4096.0) : Double.NaN;
+		return Conversions.fromTicksToRotation(_talon.getSelectedSensorPosition(), ENCODER_CPR);
 	}
 
 	@Override
 	public double getSensorVelocity() {
-		return getCANConnection() ? ((_talon.getSelectedSensorVelocity() / 4096.0) * 600) : Double.NaN;
+		double ticksPer100ms = _talon.getSelectedSensorVelocity();
+		return Conversions.fromCtreVelocityToRpm(ticksPer100ms, ENCODER_CPR);
 	}
 
 	@Override
-	public void setMotionProfileVelocity(double velocityPerSec) {
-		if (getCANConnection()) {
-			_talon.configMotionCruiseVelocity((int) (velocityPerSec / 10));
-		}
+	public void setMotionProfileVelocity(double rpm) {
+		int ticksPer100ms = Conversions.fromRpmToCtreVelocity(rpm, ENCODER_CPR);
+		var err = _talon.configMotionCruiseVelocity(ticksPer100ms, 5);
+		notifyOnError(err, "setMotionProfileVelocity");
 	}
 
 	@Override
-	public void setTargetVelocity(double target) {
-		if (getCANConnection()) {
-			_talon.set(ControlMode.Velocity, target);
-		}
+	public void setTargetVelocity(double rpm) {
+		int ticksPer100ms = Conversions.fromRpmToCtreVelocity(rpm, ENCODER_CPR);
+		_talon.set(ControlMode.Velocity, ticksPer100ms);
 	}
 
 	@Override
-	public void setTargetVelocity(double target, double arbFF) {
-		if (getCANConnection()) {
-			_talon.set(ControlMode.Velocity, target, DemandType.ArbitraryFeedForward, arbFF);
-		}
+	public void setTargetVelocity(double rpm, double arbFF) {
+		int ticksPer100ms = Conversions.fromRpmToCtreVelocity(rpm, ENCODER_CPR);
+		_talon.set(ControlMode.Velocity, ticksPer100ms, DemandType.ArbitraryFeedForward, arbFF);
 	}
 
 	@Override
-	public void setTargetPosition(double target) {
-		if (getCANConnection()) {
-			_talon.set(ControlMode.Position, target);
-		}
+	public void setTargetPosition(double rotations) {
+		int ticks = Conversions.fromRotationsToTicks(rotations, ENCODER_CPR);
+		_talon.set(ControlMode.Position, ticks);
 	}
 
 	@Override
-	public void setTargetPosition(double target, double arbFF) {
-		if (getCANConnection()) {
-			_talon.set(ControlMode.Position, target, DemandType.ArbitraryFeedForward, arbFF);
-		}
+	public void setTargetPosition(double rotations, double arbFF) {
+		int ticks = Conversions.fromRotationsToTicks(rotations, ENCODER_CPR);
+		_talon.set(ControlMode.Position, ticks, DemandType.ArbitraryFeedForward, arbFF);
 	}
 
 	@Override
 	public void rezeroSensor() {
-		if (getCANConnection()) {
-			_talon.setSelectedSensorPosition(0);
-		}
+		var err = _talon.setSelectedSensorPosition(0);
+		notifyOnError(err, "rezeroSensor");
 	}
 
 	@Override
 	public void setSensorPhase(boolean phase) {
-		if (getCANConnection()) {
-			_talon.setSensorPhase(phase);
-		}
+		_talon.setSensorPhase(phase);
 	}
 
 	@Override
@@ -161,52 +161,99 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX, CANTalonSRXSimCollecti
 	}
 
 	@Override
+	public void setVoltage(double voltage) {
+		double compVoltage = getInputVoltage();
+		_ctrlMode = ControlMode.PercentOutput;
+
+		var err = _talon.configVoltageCompSaturation(compVoltage);
+		_talon.enableVoltageCompensation(true);
+		_talon.set(_ctrlMode, voltage / compVoltage);
+
+		notifyOnError(err, "setVoltage_configVoltageCompSaturation");
+	}
+
+	@Override
 	public double get() {
-		return getCANConnection() ? _talon.getMotorOutputPercent() : Double.NaN;
+		return _talon.getMotorOutputPercent();
 	}
 
 	@Override
 	public void stopMotor() {
-		if (getCANConnection()) {
-			_talon.set(ControlMode.PercentOutput, 0);
-		}
+		_talon.stopMotor();
 	}
 
 	@Override
 	public void setInverted(boolean inverted) {
-		if (getCANConnection()) {
-			_talon.setInverted(inverted);
-		}
+		_talon.setInverted(inverted);
 	}
 
 	@Override
 	public boolean getInverted() {
-		return getCANConnection() && _talon.getInverted();
+		return _talon.getInverted();
 	}
 
 	@Override
 	public void setPIDF(ClosedLoopConfig closedLoopConfig) {
-		if (getCANConnection()) {
-			_talon.config_kP(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkP());
-			_talon.config_kI(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkI());
-			_talon.config_kD(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkD());
-			_talon.config_kF(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkF());
-		}
+		var err1 = _talon.config_kP(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkP(), 5);
+		var err2 = _talon.config_kI(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkI(), 5);
+		var err3 = _talon.config_kD(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkD(), 5);
+		var err4 = _talon.config_kF(closedLoopConfig.getSlotIDx(), closedLoopConfig.getkF(), 5);
+	
+		notifyOnError(err1, "setPIDF (P)");
+		notifyOnError(err2, "setPIDF (I)");
+		notifyOnError(err3, "setPIDF (D)");
+		notifyOnError(err4, "setPIDF (F)");
 	}
 
 	@Override
 	public boolean getCANConnection() {
-		return _talon.getBusVoltage() > 0.0;
-	}
-
-	@Override
-	public void disable() {
-		_talon.disable();
-		
+		return _talon.getLastError() == ErrorCode.OK;
 	}
 
 	@Override
 	public CANTalonSRXSimCollection getSimCollection() {
 		return _simCollection;
 	}
+
+	@Override
+	public void disable() {
+		_talon.disable();
+	}
+
+	@Override
+	public void enableForwardSoftLimit(boolean enable) {
+		var err = _talon.configForwardSoftLimitEnable(enable, 5);
+		notifyOnError(err, "enableForwardSoftLimit");
+	}
+
+	@Override
+	public void setForwardSoftLimit(double limit) {
+		enableForwardSoftLimit(true);
+		int ticks = Conversions.fromRotationsToTicks(limit, ENCODER_CPR);
+		var err = _talon.configForwardSoftLimitThreshold(ticks, 5);
+		notifyOnError(err, "setForwardSoftLimit");
+	}
+
+	@Override
+	public void enableReverseSoftLimit(boolean enable) {
+		var err = _talon.configReverseSoftLimitEnable(enable, 5);
+		notifyOnError(err, "enableReverseSoftLimit");
+	}
+
+	@Override
+	public void setReverseSoftLimit(double limit) {
+		enableReverseSoftLimit(true);
+		int ticks = Conversions.fromRotationsToTicks(limit, ENCODER_CPR);
+		var err = _talon.configReverseSoftLimitThreshold(ticks, 5);
+		notifyOnError(err, "setReverseSoftLimit");
+	}
+
+	private void notifyOnError(ErrorCode error, String actionName) {
+		if (error == ErrorCode.OK) return;
+
+		String deviceName = "CANTalonSRX (ID: " + _canID + ")";
+		String errorStr = deviceName + " | " + actionName + " | ERROR: " + error.name();
+		DriverStation.reportError(errorStr, false);
+	}
+
 }

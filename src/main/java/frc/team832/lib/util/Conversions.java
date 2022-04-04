@@ -1,9 +1,11 @@
 package frc.team832.lib.util;
 
 public class Conversions {
-	public static double fromRpmToCtreVelocity(double rpm, double encoderCpr) {
+	private Conversions() {}
+
+	public static int fromRpmToCtreVelocity(double rpm, double encoderCpr) {
 		double rotationsPer100ms = rpm / (60 * 10);
-		double ticksPer100ms = rotationsPer100ms * encoderCpr;
+		int ticksPer100ms = (int)(rotationsPer100ms * encoderCpr);
 		return ticksPer100ms;
 	}
 
@@ -11,5 +13,13 @@ public class Conversions {
 		double rotationsPer100ms = ticksPer100ms / encoderCpr;
 		double rotationsPerMin = rotationsPer100ms * (60 * 10);
 		return rotationsPerMin;
+	}
+
+	public static int fromRotationsToTicks(double rotations, double encoderCpr) {
+		return (int)(rotations * encoderCpr);
+	}
+
+	public static double fromTicksToRotation(double ticks, double encoderCpr) {
+		return ticks / encoderCpr;
 	}
 }

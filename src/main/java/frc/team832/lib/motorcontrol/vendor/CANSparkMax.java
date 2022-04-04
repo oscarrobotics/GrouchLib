@@ -253,4 +253,26 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax, CANSpar
 	public CANSparkMaxSimCollection getSimCollection() {
 		return _simCollection;
 	}
+
+	@Override
+	public void enableForwardSoftLimit(boolean enable) {
+		_spark.enableSoftLimit(SoftLimitDirection.kForward, enable);
+	}
+
+	@Override
+	public void setForwardSoftLimit(double limit) {
+		enableForwardSoftLimit(true);
+		_spark.setSoftLimit(SoftLimitDirection.kForward, (float)limit);
+	}
+
+	@Override
+	public void enableReverseSoftLimit(boolean enable) {
+		_spark.enableSoftLimit(SoftLimitDirection.kReverse, enable);
+	}
+
+	@Override
+	public void setReverseSoftLimit(double limit) {
+		enableReverseSoftLimit(true);
+		_spark.setSoftLimit(SoftLimitDirection.kReverse, (float)limit);
+	}
 }
