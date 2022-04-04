@@ -74,8 +74,29 @@ public class DashboardManager {
 		return addTabItem(tabName, itemName, defaultValue, BuiltInWidgets.kTextView);
 	}
 
+	
 	public static NetworkTableEntry addTabNumberBar(String tabName, String itemName, double min, double max) {
 		return addTabItem(tabName, itemName, 0.0, BuiltInWidgets.kNumberBar, getRangePropertiesMap(min, max));
+	}
+	
+	public static NetworkTableEntry addTabNumberBar(SubsystemBase subsystemBase, String itemName, double min, double max) {
+		return addTabNumberBar(subsystemBase.getName(), itemName, min, max);
+	}
+
+	public static NetworkTableEntry addTabBooleanBox(String tabName, String itemName) {
+		return addTabItem(tabName, itemName, false, BuiltInWidgets.kBooleanBox);
+	}
+
+	public static NetworkTableEntry addTabBooleanBox(SubsystemBase subsystemBase, String itemName) {
+		return addTabBooleanBox(subsystemBase.getName(), itemName);
+	}
+
+	public static NetworkTableEntry addTabDial(SubsystemBase subsystemBase, String itemName, double min, double max) {
+		return addTabDial(subsystemBase.getName(), itemName, min, max);
+	}
+
+	public static NetworkTableEntry addTabDial(String tabName, String itemName, double min, double max) {
+		return addTabItem(tabName, itemName, 0.0, BuiltInWidgets.kDial, getRangePropertiesMap(min, max));
 	}
 
 	public static void addTabButton(String tabName, String buttonName, Runnable onPress) {
