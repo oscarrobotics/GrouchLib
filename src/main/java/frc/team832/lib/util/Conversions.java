@@ -3,10 +3,14 @@ package frc.team832.lib.util;
 public class Conversions {
 	private Conversions() {}
 
-	public static int fromRpmToCtreVelocity(double rpm, double encoderCpr) {
-		double rotationsPer100ms = rpm / (60 * 10);
+	public static int fromRpsToCtreVelocity(double rotPerSec, double encoderCpr) {
+		double rotationsPer100ms = rotPerSec / 10;
 		int ticksPer100ms = (int)(rotationsPer100ms * encoderCpr);
 		return ticksPer100ms;
+	}
+
+	public static int fromRpmToCtreVelocity(double rpm, double encoderCpr) {
+		return fromRpsToCtreVelocity(rpm / 60, encoderCpr);
 	}
 
 	public static double fromCtreVelocityToRpm(double ticksPer100ms, double encoderCpr) {
