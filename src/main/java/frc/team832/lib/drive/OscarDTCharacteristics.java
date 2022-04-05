@@ -5,7 +5,7 @@ import frc.team832.lib.motors.WheeledPowerTrain;
 
 public class OscarDTCharacteristics {
 	public final WheeledPowerTrain powertrain;
-	public final double wheelbaseMeters;
+	public final double trackwidthMeters;
 	public final SimpleMotorFeedforward leftFeedforward;
 	public final SimpleMotorFeedforward rightFeedforward;
 	public final double leftkP;
@@ -21,7 +21,7 @@ public class OscarDTCharacteristics {
 			double massKg, double moiKgM2	
 		) {
 		this.powertrain = powertrain;
-		this.wheelbaseMeters = wheelbaseMeters;
+		this.trackwidthMeters = wheelbaseMeters;
 		this.leftFeedforward = leftFeedforward;
 		this.rightFeedforward = rightFeedforward;
 		this.leftkP = leftkP;

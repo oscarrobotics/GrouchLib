@@ -6,6 +6,7 @@ public class WheeledPowerTrain extends Powertrain {
 	private final Motor m_wpilibPlantMotor;
 	public final double encoderRatio;
 	public final double wheelDiameterMeters;
+	public final double wheelCircumferenceMeters;
 
 	/**
 	 *
@@ -19,6 +20,7 @@ public class WheeledPowerTrain extends Powertrain {
 		super(gearbox, motor, motorCount);
 		m_wpilibPlantMotor = new Motor(motor, motorCount);
 		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
+		wheelCircumferenceMeters = wheelDiameterMeters * Math.PI;
 		this.encoderRatio = encoderRatio;
 	}
 
@@ -31,14 +33,7 @@ public class WheeledPowerTrain extends Powertrain {
 	 * @param wheelDiameterInches Wheel diameter in inches
 	 */
 	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
-		super(gearbox, motor, motorCount);
-		m_wpilibPlantMotor = new Motor(motor, motorCount);
-		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
-		this.encoderRatio = 1;
-	}
-
-	public double getWheelCircumferenceMeters() {
-		return wheelDiameterMeters * Math.PI;
+		this(gearbox, motor, motorCount, wheelDiameterInches, 1);
 	}
 
 	public double calcWheelFromMotor(double motorUnits) {
@@ -63,25 +58,25 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public double calcWheelDistanceMeters(double encoderRotations) {
 		double wheelRotations = calcWheelFromEncoder(encoderRotations);
-		double wheelCircumference = getWheelCircumferenceMeters();
+		double wheelCircumference = wheelCircumferenceMeters;
 		return wheelRotations * wheelCircumference;
 	}
 
 	public double calcEncoderRotationsFromMeters(double meters) {
-		double wheelRotations = meters / getWheelCircumferenceMeters();
+		double wheelRotations = meters / wheelCircumferenceMeters;
 		double encoderRotations = calcEncoderFromWheel(wheelRotations);
 		return encoderRotations;
 	}
 
 	public double calcEncoderRpmFromMetersPerSec(double metersPerSec) {
-		double wheelRotationsPerSec = metersPerSec / getWheelCircumferenceMeters();
+		double wheelRotationsPerSec = metersPerSec / wheelCircumferenceMeters;
 		double encoderRotationsPerSec = calcEncoderFromWheel(wheelRotationsPerSec);
 		return encoderRotationsPerSec * 60;
 	}
 
 	public double calcMetersPerSec(double encoderRpm) {
 		double wheelRpm = calcWheelFromEncoder(encoderRpm);
-		return (wheelRpm * getWheelCircumferenceMeters()) / 60f ;
+		return (wheelRpm * wheelCircumferenceMeters) / 60f ;
 	}
 
 	public double calcFeetPerSec(double currentMotorRpm) {

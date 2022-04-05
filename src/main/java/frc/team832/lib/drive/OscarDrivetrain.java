@@ -1,7 +1,6 @@
 package frc.team832.lib.drive;
 
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import java.util.List;
 
 import com.ctre.phoenix.sensors.BasePigeon;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
@@ -16,22 +15,29 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.OscarRamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team832.lib.driverstation.dashboard.DashboardManager;
 import frc.team832.lib.motorcontrol.SmartMC;
 import frc.team832.lib.motorcontrol.SmartMCSim;
 import frc.team832.lib.motors.WheeledPowerTrain;
+
+// TODO: make flexible enough for externally-encodered drivetrains
 
 public class OscarDrivetrain {
 	private static final String DB_TABNAME = OscarDrivetrain.class.getSimpleName();
@@ -51,7 +57,7 @@ public class OscarDrivetrain {
 	private Pose2d m_pose = new Pose2d();
 
 	private final DifferentialDrivetrainSim m_driveSim;
-	private final SmartMCSim m_leftSimCollection, m_rightSimCollection;
+	private final SmartMCSim m_leftMotorSim, m_rightMotorSim;
 
 	private Rotation2d m_lastGyroYaw = Rotation2d.fromDegrees(0);
 	
@@ -84,7 +90,7 @@ public class OscarDrivetrain {
 		);
 			
 		m_odometry = new DifferentialDriveOdometry(getGyroHeading());
-		m_kinematics = new DifferentialDriveKinematics(dtCharacteristics.wheelbaseMeters);
+		m_kinematics = new DifferentialDriveKinematics(dtCharacteristics.trackwidthMeters);
 		
 		m_leftPIDController = new PIDController(dtCharacteristics.leftkP, 0, 0);
 		m_rightPIDController = new PIDController(dtCharacteristics.rightkP, 0, 0);
@@ -92,25 +98,42 @@ public class OscarDrivetrain {
 		m_leftFeedforward = dtCharacteristics.leftFeedforward;
 		m_rightFeedforward = dtCharacteristics.rightFeedforward;
 		
-		m_driveSim = new DifferentialDrivetrainSim(
-			dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
-			dtCharacteristics.powertrain.gearbox.totalReduction, // gearbox reduction
-			dtCharacteristics.moiKgM2, // MoI (kg / m^2) from CAD
-			dtCharacteristics.massKg, // Mass (kg), from competition weight
-			dtCharacteristics.powertrain.wheelDiameterMeters / 2, // wheel radius (meters)
-			Units.inchesToMeters(dtCharacteristics.wheelbaseMeters), // robot track width (meters)
-			
-			// The standard deviations for measurement noise:
-			// x and y:          0.001 m
-			// heading:          0.001 rad
-			// l and r velocity: 0.1   m/s
-			// l and r position: 0.005 m
-			null
-			// VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+		var drivePlant = LinearSystemId.createDrivetrainVelocitySystem(
+			dtCharacteristics.powertrain.getWPILibPlantMotor(), 
+			dtCharacteristics.massKg, 
+			dtCharacteristics.powertrain.wheelDiameterMeters / 2, 
+			dtCharacteristics.trackwidthMeters, 
+			dtCharacteristics.moiKgM2,
+			dtCharacteristics.powertrain.gearbox.totalReduction
 		);
 
-		m_leftSimCollection = m_leftMotor.getSim();
-		m_rightSimCollection = m_rightMotor.getSim();
+		m_driveSim = new DifferentialDrivetrainSim(
+			drivePlant,
+			dtCharacteristics.powertrain.getWPILibPlantMotor(),
+			dtCharacteristics.powertrain.gearbox.totalReduction,
+			dtCharacteristics.trackwidthMeters,
+			dtCharacteristics.powertrain.wheelDiameterMeters / 2.0,
+		null);
+
+		// m_driveSim = new DifferentialDrivetrainSim(
+		// 	dtCharacteristics.powertrain.getWPILibPlantMotor(), // motors
+		// 	dtCharacteristics.powertrain.gearbox.totalReduction, // gearbox reduction
+		// 	dtCharacteristics.moiKgM2, // MoI (kg / m^2) from CAD
+		// 	dtCharacteristics.massKg, // Mass (kg), from competition weight
+		// 	dtCharacteristics.powertrain.wheelDiameterMeters / 2, // wheel radius (meters)
+		// 	Units.inchesToMeters(dtCharacteristics.trackwidthMeters), // robot track width (meters)
+			
+		// 	// The standard deviations for measurement noise:
+		// 	// x and y:          0.001 m
+		// 	// heading:          0.001 rad
+		// 	// l and r velocity: 0.1   m/s
+		// 	// l and r position: 0.005 m
+		// 	null
+		// 	// VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+		// );
+
+		m_leftMotorSim = m_leftMotor.getSim();
+		m_rightMotorSim = m_rightMotor.getSim();
 
 		// m_field.setRobotPose(new Pose2d());
 
@@ -185,60 +208,143 @@ public class OscarDrivetrain {
 		m_rightMotor.rezeroSensor();
 
 		if (RobotBase.isSimulation()) {
-			m_leftSimCollection.setSensorPosition(0);
-			m_rightSimCollection.setSensorPosition(0);
+			m_leftMotorSim.setSensorPosition(0);
+			m_rightMotorSim.setSensorPosition(0);
 			// ((BasePigeon)m_gyro).getSimCollection().setRawHeading(newPose.getRotation().getDegrees());
+			m_driveSim.setPose(newPose);
+			m_driveSim.update(0.02);
 		}
 
 		// ((WPI_Pigeon2)m_gyro).setYaw(newPose.getRotation().getDegrees());
 
 		m_odometry.resetPosition(newPose, getGyroHeading());
-		m_driveSim.setPose(newPose);
 		m_pose = newPose;
+	}
+
+	public void setMotorVoltages(double left, double right) {
+		m_leftMotor.setVoltage(left);
+		m_rightMotor.setVoltage(right);
+	}
+
+	public double getLeftWheelMeters() {
+		var rots = m_leftMotor.getSensorPosition();
+		var meters = m_powertrain.calcWheelDistanceMeters(rots);
+		return meters;
+	}
+
+	public double getRightWheelMeters() {
+		var rots = m_rightMotor.getSensorPosition();
+		var meters = m_powertrain.calcWheelDistanceMeters(rots);
+		return meters;
+	}
+
+	public double getLeftWheelMetersPerSec() {
+		var veloRpm = m_leftMotor.getSensorVelocity();
+		var mps = m_powertrain.calcMetersPerSec(veloRpm);
+		return mps;
+	}
+
+	public double getRightWheelMetersPerSec() {
+		var veloRpm = m_rightMotor.getSensorVelocity();
+		var mps = m_powertrain.calcMetersPerSec(veloRpm);
+		return mps;
 	}
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
 		return new DifferentialDriveWheelSpeeds(
-			m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity()),
-			m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity())
+			getLeftWheelMetersPerSec(), getRightWheelMetersPerSec()
 		);
 	}
 
-	public OscarRamseteCommand generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem) {
-		BiConsumer<Double, Double> outputVoltsConsumer = (Double left, Double right) -> {
-			m_leftMotor.setVoltage(left);
-			m_rightMotor.setVoltage(right);
-		};
+	public CommandBase generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem) {
+		return generateRamseteCommand(path, drivetrainSubsystem, true);
+	}
 
-		return new OscarRamseteCommand(
-			path, this::getPose, m_ramseteController,
-			m_leftFeedforward, m_rightFeedforward,
-			m_kinematics, this::getWheelSpeeds,
+	public CommandBase generateRamseteCommand(Trajectory path, SubsystemBase drivetrainSubsystem, boolean showPath) {
+		var showOnFieldCommand = new InstantCommand(() -> {
+			if (showPath) {
+				m_field.getObject("RamseteCommandTraj").setTrajectory(path);
+			} else {
+				m_field.getObject("RamseteCommandTraj").setPoses(List.of());
+			}
+		}, drivetrainSubsystem);
+
+		var resetPoseCommand = new InstantCommand(() -> {
+			resetPose(path.getInitialPose());
+		}, drivetrainSubsystem).withTimeout(0.125);
+
+		var ramseteCommand = new OscarRamseteCommand(
+			path, this::getPose, m_ramseteController, 
+			m_leftFeedforward, m_rightFeedforward, 
+			m_kinematics, 
+			this::getWheelSpeeds, 
 			m_leftPIDController, m_rightPIDController,
-			outputVoltsConsumer, drivetrainSubsystem);
+			this::setMotorVoltages,
+			drivetrainSubsystem
+		);
+
+		return showOnFieldCommand.andThen(resetPoseCommand).andThen(ramseteCommand);
 	}
 	
+	public void simulationPeriodic() {
+		if (!RobotState.isEnabled()) return;
+
+		m_leftMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
+		m_rightMotorSim.setBusVoltage(RobotController.getBatteryVoltage());
+
+		m_driveSim.setInputs(
+			m_leftMotorSim.getOutputVoltage(),
+			-m_rightMotorSim.getOutputVoltage()
+		);
+
+		m_driveSim.update(0.02);
+
+		var leftMeters = m_driveSim.getLeftPositionMeters();
+		var leftMps = m_driveSim.getLeftVelocityMetersPerSecond();
+		SmartDashboard.putNumber("Sim/LeftMeters", leftMeters);
+		SmartDashboard.putNumber("Sim/LeftMps", leftMps);
+
+		var leftSensorPosition = m_powertrain.calcEncoderRotationsFromMeters(leftMeters);
+		var leftSensorVelocity = m_powertrain.calcEncoderRpmFromMetersPerSec(leftMps);
+		m_leftMotorSim.setSensorPosition(leftSensorPosition);
+		m_leftMotorSim.setSensorVelocity(leftSensorVelocity);
+
+		var rightMeters = -m_driveSim.getRightPositionMeters();
+		var rightMps = -m_driveSim.getRightVelocityMetersPerSecond();
+		SmartDashboard.putNumber("Sim/RightMeters", rightMeters);
+		SmartDashboard.putNumber("Sim/RightMps", rightMps);
+
+		var rightSensorPosition = m_powertrain.calcEncoderRotationsFromMeters(rightMeters);
+		var rightSensorVelocity = m_powertrain.calcEncoderRpmFromMetersPerSec(rightMps);
+		m_rightMotorSim.setSensorPosition(rightSensorPosition);
+		m_rightMotorSim.setSensorVelocity(rightSensorVelocity);
+
+		((BasePigeon)m_gyro).getSimCollection().setRawHeading(m_driveSim.getHeading().getDegrees());
+	}
+
 	/**
 	 * Call this in a high-frequency loop to update drivetrain telemetry and odometry.
 	 */
 	public void periodic() {
 		// values that differ between sim and real
-		double leftRotations, rightRotations;
-		double leftMeters, rightMeters;
-		double leftMetersPerSec, rightMetersPerSec;
-		double leftAmps, rightAmps;
+		double leftRotations = 0, rightRotations = 0;
+		double leftMeters = 0, rightMeters = 0;
+		double leftMetersPerSec = 0, rightMetersPerSec = 0;
+		double leftAmps = 0, rightAmps = 0;
+
+		boolean ran = false;
 
 		// the same between sim/real
 		double leftVolts = m_leftMotor.getOutputVoltage();
 		double rightVolts = m_rightMotor.getOutputVoltage();
 
-		if (RobotBase.isReal()) {
+		// if (RobotBase.isReal()) {
 			leftRotations = m_leftMotor.getSensorPosition();
 			rightRotations = m_rightMotor.getSensorPosition();
-			leftMeters = m_powertrain.calcWheelDistanceMeters(leftRotations);
-			rightMeters = m_powertrain.calcWheelDistanceMeters(rightRotations);
-			leftMetersPerSec = m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity());
-			rightMetersPerSec = m_powertrain.calcMetersPerSec(m_rightMotor.getSensorVelocity());
+			leftMeters = getLeftWheelMeters();
+			rightMeters = getRightWheelMeters();
+			leftMetersPerSec = getLeftWheelMetersPerSec();
+			rightMetersPerSec = getRightWheelMetersPerSec();
 			leftAmps = m_leftMotor.getInputCurrent();
 			rightAmps = m_leftMotor.getInputCurrent();
 
@@ -246,35 +352,39 @@ public class OscarDrivetrain {
 			
 			// Update pose
 			m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
-		} else {
-			// run drive simulation
-			if (DriverStation.isEnabled()) {
-				m_driveSim.setInputs(leftVolts, rightVolts);
-				m_driveSim.update(0.02);
-			}
+			ran = true;
+		// } else {
+		// 	// run drive simulation
+		// 	if (DriverStation.isEnabled()) {
+		// 		m_driveSim.setInputs(leftVolts, rightVolts);
+		// 		m_driveSim.update(0.02);
 
-			// m_pose = m_driveSim.getPose();
-			m_lastGyroYaw = m_driveSim.getHeading();
-			// TODO: fix cast hack
-			((BasePigeon)m_gyro).getSimCollection().setRawHeading(m_lastGyroYaw.getDegrees());
+		// 			// m_pose = m_driveSim.getPose();
+		// 		m_lastGyroYaw = m_driveSim.getHeading();
+		// 		// TODO: fix cast hack
+		// 		((BasePigeon)m_gyro).getSimCollection().setRawHeading(m_lastGyroYaw.getDegrees());
 
-			leftMeters = m_driveSim.getLeftPositionMeters();
-			rightMeters = m_driveSim.getRightPositionMeters();
+		// 		leftMeters = m_driveSim.getLeftPositionMeters();
+		// 		rightMeters = m_driveSim.getRightPositionMeters();
 
-			m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
+		// 		m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
 
-			leftRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getLeftPositionMeters());
-			rightRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getRightPositionMeters());
+		// 		leftRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getLeftPositionMeters());
+		// 		rightRotations = m_powertrain.calcEncoderRotationsFromMeters(m_driveSim.getRightPositionMeters());
 
-			leftMetersPerSec = m_driveSim.getLeftVelocityMetersPerSecond();
-			rightMetersPerSec = m_driveSim.getRightVelocityMetersPerSecond();
+		// 		leftMetersPerSec = m_powertrain.calcMetersPerSec(m_leftMotor.getSensorVelocity());
 
-			leftAmps = m_driveSim.getLeftCurrentDrawAmps();
-			rightAmps = m_driveSim.getRightCurrentDrawAmps();
+		// 		// leftMetersPerSec = m_driveSim.getLeftVelocityMetersPerSecond();
+		// 		// rightMetersPerSec = m_driveSim.getRightVelocityMetersPerSecond();
 
-			m_leftSimCollection.setSensorPosition(leftRotations);
-			m_rightSimCollection.setSensorPosition(rightRotations);
-		}
+		// 		leftAmps = m_driveSim.getLeftCurrentDrawAmps();
+		// 		rightAmps = m_driveSim.getRightCurrentDrawAmps();
+
+		// 		m_leftMotorSim.setSensorPosition(leftRotations);
+		// 		m_rightMotorSim.setSensorPosition(rightRotations);
+		// 		ran = true;
+		// 	}
+		// }
 
 		nte_gyroYaw.setDouble(m_lastGyroYaw.getDegrees());
 
@@ -284,17 +394,20 @@ public class OscarDrivetrain {
 		nte_leftMotorOutputVoltage.setDouble(leftVolts);
 		nte_rightMotorOutputVoltage.setDouble(rightVolts);
 
-		nte_leftEncoderRaw.setDouble(leftRotations);
-		nte_rightEncoderRaw.setDouble(rightRotations);
+		// if (ran) {
+			nte_leftEncoderRaw.setDouble(leftRotations);
+			nte_rightEncoderRaw.setDouble(rightRotations);
+	
+			nte_leftEncoderMeters.setDouble(leftMeters);
+			nte_rightEncoderMeters.setDouble(rightMeters);
+	
+			nte_leftEncoderMetersPerSec.setDouble(leftMetersPerSec);
+			nte_rightEncoderMetersPerSec.setDouble(rightMetersPerSec);
+	
+			nte_leftMotorInputCurrent.setDouble(leftAmps);
+			nte_rightMotorInputCurrent.setDouble(rightAmps);
+		// }
 
-		nte_leftEncoderMeters.setDouble(leftMeters);
-		nte_rightEncoderMeters.setDouble(rightMeters);
-
-		nte_leftEncoderMetersPerSec.setDouble(leftMetersPerSec);
-		nte_rightEncoderMetersPerSec.setDouble(rightMetersPerSec);
-
-		nte_leftMotorInputCurrent.setDouble(leftAmps);
-		nte_rightMotorInputCurrent.setDouble(rightAmps);
 		
 		nte_robotPoseX.setDouble(m_pose.getX());
 		nte_robotPoseY.setDouble(m_pose.getY());
