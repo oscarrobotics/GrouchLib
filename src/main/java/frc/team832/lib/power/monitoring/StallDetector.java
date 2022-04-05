@@ -3,12 +3,13 @@ package frc.team832.lib.power.monitoring;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.team832.lib.power.PDSlot;
 
 public class StallDetector {
 	public class StallDetectorStatus {
 		public boolean isStalled;
-		public int stalledForMillis;
+		public double stalledForMillis;
 	}
 
 	private int stallCurrent = 5;
@@ -18,8 +19,8 @@ public class StallDetector {
 	private final MedianFilter currentFilter = new MedianFilter(40); // enough to keep 1 second of data when called every 25ms
 	private final DoubleSupplier currentSupplier;
 	
-	private long stallMillis;
-	private long lastRunMillis;
+	private double stalledMillis = 0;
+	private long lastRunMicros = 0;
 	
 	public StallDetector(PDSlot slot) {
 		stallCurrent = slot.getBreakerRatedCurrent();
@@ -40,19 +41,23 @@ public class StallDetector {
 
 	public void updateStallStatus() {
 		double currentCurrent = currentFilter.calculate(currentSupplier.getAsDouble());
-		long nowMillis = System.currentTimeMillis();
-		long elapsed = nowMillis - lastRunMillis;
+		long nowMicros = RobotController.getFPGATime();
+		long elapsedMicros = nowMicros - lastRunMicros;
 
 		if (currentCurrent >= stallCurrent) {
-			stallMillis += elapsed;
+			stalledMillis += (elapsedMicros / 1000.0);
 		} else {
-			stallMillis -= elapsed;
+			if (stalledMillis >= 0) {
+				stalledMillis = 0;
+			} else {
+				stalledMillis -= (elapsedMicros / 1000.0);
+			}
 		}
 
-		lastRunMillis = System.currentTimeMillis();
+		lastRunMicros = RobotController.getFPGATime();
 
-		stallStatus.isStalled = stallMillis >= minStallMillis;
-		stallStatus.stalledForMillis = (int) stallMillis;
+		stallStatus.isStalled = stalledMillis >= minStallMillis;
+		stallStatus.stalledForMillis = stalledMillis;
 	}
 
 	public StallDetectorStatus getStallStatus() {
