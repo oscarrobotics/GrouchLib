@@ -50,7 +50,11 @@ public class WheeledPowerTrain extends Powertrain {
 	}
 
 	public double calcWheelFromEncoder(double encoderUnits) {
-		return encoderUnits * encoderRatio;
+		return encoderUnits / encoderRatio;
+	}
+
+	public double calcEncoderFromWheel(double wheelUnits) {
+		return wheelUnits * encoderRatio;
 	}
 
 	public double calcMotorFromEncoder(double encoderUnits) {
@@ -65,7 +69,14 @@ public class WheeledPowerTrain extends Powertrain {
 
 	public double calcEncoderRotationsFromMeters(double meters) {
 		double wheelRotations = meters / getWheelCircumferenceMeters();
-		return gearbox.getOutputToInput(wheelRotations);
+		double encoderRotations = calcEncoderFromWheel(wheelRotations);
+		return encoderRotations;
+	}
+
+	public double calcEncoderRpmFromMetersPerSec(double metersPerSec) {
+		double wheelRotationsPerSec = metersPerSec / getWheelCircumferenceMeters();
+		double encoderRotationsPerSec = calcEncoderFromWheel(wheelRotationsPerSec);
+		return encoderRotationsPerSec * 60;
 	}
 
 	public double calcMetersPerSec(double encoderRpm) {
