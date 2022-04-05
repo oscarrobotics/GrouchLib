@@ -54,6 +54,11 @@ public class CANTalonSRX implements SmartMC<WPI_TalonSRX> {
 				var ticksPer100ms = Conversions.fromRpmToCtreVelocity(velocity, ENCODER_CPR);
 				_talonSim.setQuadratureVelocity(ticksPer100ms);
 			}
+
+			@Override
+			public double getOutputVoltage() {
+				return _talonSim.getMotorOutputLeadVoltage();
+			}
 		};
 
 		CANDevice.addDevice(this, "Talon SRX");

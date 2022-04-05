@@ -52,6 +52,11 @@ public class CANTalonFX implements SmartMC<WPI_TalonFX> {
 				var ticksPer100ms = Conversions.fromRpmToCtreVelocity(velocity, ENCODER_CPR);
 				_talonSim.setIntegratedSensorVelocity(ticksPer100ms);
 			}
+
+			@Override
+			public double getOutputVoltage() {
+				return _talonSim.getMotorOutputLeadVoltage();
+			}
 		};
 		
 		CANDevice.addDevice(this, "Talon FX");

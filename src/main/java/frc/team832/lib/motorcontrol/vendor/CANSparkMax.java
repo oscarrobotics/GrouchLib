@@ -51,6 +51,9 @@ public class CANSparkMax implements SmartMC<com.revrobotics.CANSparkMax> {
 
 			@Override
 			public void setSensorVelocity(double velocity) {}
+
+			@Override
+			public double getOutputVoltage() { return 0; }
 		};
 
 		CANDevice.addDevice(this, "Spark MAX");

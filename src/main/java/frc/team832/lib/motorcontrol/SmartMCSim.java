@@ -7,6 +7,11 @@ public interface SmartMCSim {
     void setBusVoltage(double voltage);
 
     /**
+     * @return Output voltage in volts.
+     */
+    double getOutputVoltage();
+
+    /**
      * @param position Position in rotations (360deg = 1 rotation).
      */
     void setSensorPosition(double position);
