@@ -34,7 +34,7 @@ public class CANDevice {
 	 * @return boolean
 	 */
 	public static boolean hasMissingDevices() {
-		return getDevices().stream().anyMatch(device -> device._onBus);
+		return getDevices().stream().anyMatch(device -> !device._onBus);
 	}
 
 	public static List<CANDevice> getDevices() {
@@ -44,13 +44,13 @@ public class CANDevice {
 	public static void printMissingDevices() {
 		if (hasMissingDevices()) {
 			System.err.println("Missing CAN Devices!");
-			for (var device : getDevices()) {
-				if (!device._onBus) {
-					System.err.println(device.toString());
-				}
-			}
 		} else {
 			System.out.println("No missing CAN devices.");
+		}
+
+		System.out.println("GrouchLib init'd CAN Devices: ");
+		for (var device : getDevices()) {
+			System.out.println(device.toString());
 		}
 	}
 
