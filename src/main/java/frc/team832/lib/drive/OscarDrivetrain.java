@@ -3,6 +3,8 @@ package frc.team832.lib.drive;
 import java.util.List;
 
 import com.ctre.phoenix.sensors.BasePigeon;
+import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
@@ -269,21 +271,25 @@ public class OscarDrivetrain {
 			}
 		}, drivetrainSubsystem);
 
-		var resetPoseCommand = new InstantCommand(() -> {
-			resetPose(path.getInitialPose());
-		}, drivetrainSubsystem).withTimeout(0.125);
+		// var resetPoseCommand = new InstantCommand(() -> {
+		// 	resetPose(path.getInitialPose());
+		// }, drivetrainSubsystem).withTimeout(0.125);
+
+		var noPid = new PIDController(0, 0, 0);
 
 		var ramseteCommand = new OscarRamseteCommand(
 			path, this::getPose, m_ramseteController, 
 			m_leftFeedforward, m_rightFeedforward, 
 			m_kinematics, 
 			this::getWheelSpeeds, 
-			m_leftPIDController, m_rightPIDController,
+			noPid, noPid,
+			// m_leftPIDController, m_rightPIDController,
 			this::setMotorVoltages,
 			drivetrainSubsystem
 		);
 
-		return showOnFieldCommand.andThen(resetPoseCommand).andThen(ramseteCommand);
+		return showOnFieldCommand.andThen(ramseteCommand);
+		// return showOnFieldCommand.andThen(resetPoseCommand).andThen(ramseteCommand);
 	}
 	
 	public void simulationPeriodic() {
@@ -350,8 +356,17 @@ public class OscarDrivetrain {
 
 			m_lastGyroYaw = m_gyro.getRotation2d();
 			
+			// Thank you CTRE.
+			// boolean gyroIsPigeon1 = m_gyro instanceof PigeonIMU;
+			// if (RobotBase.isReal() && gyroIsPigeon1) {
+				// m_lastGyroYaw = m_lastGyroYaw.times(-1);
+			// }
+
 			// Update pose
 			m_pose = m_odometry.update(m_lastGyroYaw, leftMeters, rightMeters);
+			// if (RobotBase.isReal()) {
+				// m_pose = new Pose2d(-m_pose.getX(), m_pose.getY(), m_pose.getRotation());
+			// }
 			ran = true;
 		// } else {
 		// 	// run drive simulation
