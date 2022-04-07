@@ -30,7 +30,8 @@ public class DTPowertrainTest {
     @Test
     public void freeSpeedCorrect() {
         double expectedFreeSpeed = 15.31;
-        double encoderRpm = m_wheeledPowerTrain.calcWheelFromMotor(m_motor.freeSpeedRPM);
+        double wheelRpm = m_wheeledPowerTrain.calcWheelFromMotor(m_motor.freeSpeedRPM);
+        double encoderRpm = m_wheeledPowerTrain.calcEncoderFromWheel(wheelRpm);
         double actualFreeSpeed = m_wheeledPowerTrain.calcFeetPerSec(encoderRpm);
 
         assertEquals(expectedFreeSpeed, actualFreeSpeed, 0.009f, "Free Speed FAIL");
@@ -39,7 +40,8 @@ public class DTPowertrainTest {
     @Test
     public void metersPerSecondTest(){
         double expectedMetersPerSec = 2.19;
-        double encoderRpm = m_wheeledPowerTrain.calcWheelFromMotor(3000);
+        double wheelRpm = m_wheeledPowerTrain.calcWheelFromMotor(3000);
+        double encoderRpm = m_wheeledPowerTrain.calcEncoderFromWheel(wheelRpm);
         double actualMeterPerSec = m_wheeledPowerTrain.calcMetersPerSec(encoderRpm);
 
         assertEquals(expectedMetersPerSec, actualMeterPerSec, 0.009f, "Meters Per Second FAIL");
@@ -48,7 +50,8 @@ public class DTPowertrainTest {
     @Test
     public void feetPerSecondTest(){
         double expectedFeetPerSec = 12.96;
-        double encoderRpm = m_wheeledPowerTrain.calcWheelFromMotor(5400);
+        double wheelRpm = m_wheeledPowerTrain.calcWheelFromMotor(5400);
+        double encoderRpm = m_wheeledPowerTrain.calcEncoderFromWheel(wheelRpm);
         double actualFeetPerSec = m_wheeledPowerTrain.calcFeetPerSec(encoderRpm);
 
         assertEquals(expectedFeetPerSec, actualFeetPerSec, 0.009f, "Feet Per Second FAIL");
@@ -57,8 +60,8 @@ public class DTPowertrainTest {
     @Test
     public void calculateWheelDistanceMetersTest() {
         double expectedWheelDistanceMeters = 0.479;
-        double wheelRotations = m_wheeledPowerTrain.calcWheelFromEncoder(1);
-        double actualWheelDistanceMeters = m_wheeledPowerTrain.calcWheelDistanceMeters(wheelRotations);
+        double encoderRotations = m_wheeledPowerTrain.calcEncoderFromWheel(1);
+        double actualWheelDistanceMeters = m_wheeledPowerTrain.calcWheelDistanceMeters(encoderRotations);
 
         assertEquals(expectedWheelDistanceMeters, actualWheelDistanceMeters, 0.001f, "Calculate Wheel Distance Meters FAIL");
     }
