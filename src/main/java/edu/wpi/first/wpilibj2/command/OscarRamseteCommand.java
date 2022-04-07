@@ -218,6 +218,10 @@ public class OscarRamseteCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_timer.stop();
+
+    if (interrupted) {
+      m_output.accept(0.0, 0.0);
+    }
   }
 
   @Override

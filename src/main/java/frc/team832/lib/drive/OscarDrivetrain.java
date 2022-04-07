@@ -275,15 +275,15 @@ public class OscarDrivetrain {
 		// 	resetPose(path.getInitialPose());
 		// }, drivetrainSubsystem).withTimeout(0.125);
 
-		var noPid = new PIDController(0, 0, 0);
+		// var noPid = new PIDController(0, 0, 0);
 
 		var ramseteCommand = new OscarRamseteCommand(
 			path, this::getPose, m_ramseteController, 
 			m_leftFeedforward, m_rightFeedforward, 
 			m_kinematics, 
 			this::getWheelSpeeds, 
-			noPid, noPid,
-			// m_leftPIDController, m_rightPIDController,
+			// noPid, noPid,
+			m_leftPIDController, m_rightPIDController,
 			this::setMotorVoltages,
 			drivetrainSubsystem
 		);
