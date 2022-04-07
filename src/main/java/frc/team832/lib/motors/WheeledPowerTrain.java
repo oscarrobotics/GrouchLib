@@ -33,7 +33,7 @@ public class WheeledPowerTrain extends Powertrain {
 	 * @param wheelDiameterInches Wheel diameter in inches
 	 */
 	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
-		this(gearbox, motor, motorCount, wheelDiameterInches, 1);
+		this(gearbox, motor, motorCount, wheelDiameterInches, gearbox.totalReduction);
 	}
 
 	public double calcWheelFromMotor(double motorUnits) {
