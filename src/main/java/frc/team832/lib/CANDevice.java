@@ -1,10 +1,10 @@
 package frc.team832.lib;
 
-import frc.team832.lib.motorcontrol2.SmartMC;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import frc.team832.lib.motorcontrol.SmartMC;
 
 public class CANDevice {
 	private static final HashMap<Integer, CANDevice> _canDevices = new HashMap<>();
@@ -34,7 +34,7 @@ public class CANDevice {
 	 * @return boolean
 	 */
 	public static boolean hasMissingDevices() {
-		return getDevices().stream().anyMatch(device -> device._onBus);
+		return getDevices().stream().anyMatch(device -> !device._onBus);
 	}
 
 	public static List<CANDevice> getDevices() {
@@ -44,13 +44,13 @@ public class CANDevice {
 	public static void printMissingDevices() {
 		if (hasMissingDevices()) {
 			System.err.println("Missing CAN Devices!");
-			for (var device : getDevices()) {
-				if (!device._onBus) {
-					System.err.println(device.toString());
-				}
-			}
 		} else {
 			System.out.println("No missing CAN devices.");
+		}
+
+		System.out.println("GrouchLib init'd CAN Devices: ");
+		for (var device : getDevices()) {
+			System.out.println(device.toString());
 		}
 	}
 

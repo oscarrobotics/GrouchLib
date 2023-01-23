@@ -1,72 +1,77 @@
 package frc.team832.lib.motors;
 
-public class Motor {
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 
-    public final double freeSpeed;
-    public final double freeCurrent;
-    public final double stallTorque;
-    public final double stallCurrent;
-	
-    public final double r;
-	public final double kv;
-    public final double kt;
+public class Motor extends DCMotor {
 
-    public Motor(double _freeSpeed, double _freeCurrent, double _stallTorque, double _stallCurrent, double _r, double _kv, double _kt) {
-        freeSpeed = _freeSpeed;
-        freeCurrent = _freeCurrent;
-        stallTorque = _stallTorque;
-        stallCurrent = _stallCurrent;
-		
-        r = _r;
-		kv = _kv;
-        kt = _kt;
-    }
+	public final double freeSpeedRPM;
+	public final double KvRPMPerVolt;
 
-    public Motor(double _freeSpeed, double _freeCurrent, double _stallTorque, double _stallCurrent) {
-        freeSpeed = _freeSpeed;
-        freeCurrent = _freeCurrent;
-        stallTorque = _stallTorque;
-        stallCurrent = _stallCurrent;
-		
-		r = 12 / _stallCurrent;
-        kv = _freeSpeed / (12 - _freeCurrent * r);
-        kt = _stallTorque / _stallCurrent;
-    }
+	public static Motor fromDCMotor(DCMotor wpilibMotor) {
+		return new Motor(
+			wpilibMotor.nominalVoltageVolts,
+			wpilibMotor.stallTorqueNewtonMeters,
+			wpilibMotor.stallCurrentAmps, 
+			wpilibMotor.freeCurrentAmps,
+			Units.radiansPerSecondToRotationsPerMinute(wpilibMotor.freeSpeedRadPerSec));
+	}
 
-    public double getPredictiveCurrent(double currentVolts, double currentRPM) {
-        return -1.0 / kv / r * currentRPM + 1.0 / r * currentVolts;
-    }
+	public Motor(
+		double nominalVoltageVolts, double stallTorqueNewtonMeters,
+		double stallCurrentAmps, double freeCurrentAmps,
+		double freeSpeedRPM) {
+		super(
+			nominalVoltageVolts, stallTorqueNewtonMeters, 
+			stallCurrentAmps, freeCurrentAmps,
+			Units.rotationsPerMinuteToRadiansPerSecond(freeSpeedRPM), 1);
 
-    public double predictiveCurrentLimit(double currentVolts, double maxI, double currentRPM) {
-        double currentI = getPredictiveCurrent(currentVolts, currentRPM);
-        double outputV = currentVolts;
+		this.freeSpeedRPM = Units.radiansPerSecondToRotationsPerMinute(freeSpeedRadPerSec);
+		this.KvRPMPerVolt = Units.radiansPerSecondToRotationsPerMinute(KvRadPerSecPerVolt);
+	}
 
-        if (currentI > maxI) {
-            outputV = maxI * r + currentRPM / kv;
-        }
-        return outputV;
-    }
+	public Motor(Motor existingMotor, int motorCount) {
+		this(
+			existingMotor.nominalVoltageVolts,
+			existingMotor.stallTorqueNewtonMeters * motorCount,
+			existingMotor.stallCurrentAmps * motorCount,
+			existingMotor.freeCurrentAmps * motorCount,
+			existingMotor.freeSpeedRPM
+		);
+	}
 
-    public double reactiveCurrentLimit(double currentV, double maxI, double currentI) {
-        double omega = kv * currentV - currentI * r * kv;
-        double outputV = currentV;
 
-        if (currentI > maxI) {
-            outputV = maxI * r + omega / kv;
-        }
-        return outputV;
-    }
+	public static double predictiveCurrentLimit(DCMotor motor, double currentVolts, double maxI, double speedRPM) {
+		double radsPerSec = Units.radiansPerSecondToRotationsPerMinute(speedRPM);
+		double currentI = motor.getCurrent(radsPerSec, currentVolts);
+		double outputV = currentVolts;
 
-    public static final Motor kCIM = new Motor(5330, 2.7, 2.41, 131, 0.0916, 453.514, 0.0184);
-    public static final Motor kMiniCIM = new Motor(5840, 3, 1.41, 89);
-    public static final Motor kNEO = new Motor(5880, 1.3, 3.36, 166);
-    public static final Motor kNEO550 = new Motor(11000, 1.4, 0.97, 100); 
-    public static final Motor kFalcon500 = new Motor(6380, 1.5, 4.69, 257);
-    public static final Motor kBAG = new Motor(13180, 1.8, 0.43, 53);
-    public static final Motor k775Pro = new Motor(18730, 0.7, 0.71, 134);
-    public static final Motor kAndyMark9015 = new Motor(14720, 3.7, 0.36, 71);
-    public static final Motor kAndyMarkNeveRest = new Motor(5480, 0.4, 0.17, 10);
-    public static final Motor kRS775_125 = new Motor(5800, 1.6, 0.28, 18);
-    public static final Motor kRS775_18V = new Motor(13050, 2.7, 0.72, 97);
-    public static final Motor kRS550 = new Motor(19000, 0.4, 0.38, 84);
+		if (currentI > maxI) {
+			outputV = maxI * motor.rOhms + (radsPerSec / motor.KvRadPerSecPerVolt);
+		}
+		return outputV;
+	}
+
+	public double reactiveCurrentLimit(DCMotor motor, double currentV, double maxI, double currentI) {
+		double omega = motor.KvRadPerSecPerVolt * currentV - currentI * motor.rOhms * motor.KvRadPerSecPerVolt;
+		double outputV = currentV;
+
+		if (currentI > maxI) {
+			outputV = maxI * motor.rOhms + omega / motor.KvRadPerSecPerVolt;
+		}
+		return outputV;
+	}
+
+	public static final Motor kCIM = fromDCMotor(DCMotor.getCIM(1));
+	public static final Motor kMiniCIM = fromDCMotor(DCMotor.getMiniCIM(1));
+	public static final Motor kNEO = fromDCMotor(DCMotor.getNEO(1));
+	public static final Motor kNEO550 = fromDCMotor(DCMotor.getNeo550(1));
+	public static final Motor kFalcon500 = fromDCMotor(DCMotor.getFalcon500(1));
+	public static final Motor kBAG = fromDCMotor(DCMotor.getBag(1));
+	public static final Motor k775Pro = fromDCMotor(DCMotor.getVex775Pro(1));
+	public static final Motor kAndyMark9015 = fromDCMotor(DCMotor.getAndymark9015(1));
+	public static final Motor kAndyMarkNeveRest = new Motor(12, 5480, 0.4, 0.17, 10);
+	public static final Motor kRS775_125 = fromDCMotor(DCMotor.getAndymarkRs775_125(1));
+	public static final Motor kRS775_18V = fromDCMotor(DCMotor.getBanebotsRs775(1));
+	public static final Motor kRS550 = fromDCMotor(DCMotor.getBanebotsRs550(1));
 }

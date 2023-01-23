@@ -14,147 +14,147 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
  * Buffer storage for Addressable LEDs.
  */
 public class AddressableLEDBuffer {
-    byte[] m_buffer;
-    final AddressableLEDColorOrder m_colorOrder;
+	byte[] m_buffer;
+	final AddressableLEDColorOrder m_colorOrder;
 
-    /**
-     * Constructs a new LED buffer with the specified length.
-     *
-     * @param length The length of the buffer in pixels
-     */
-    public AddressableLEDBuffer(int length) {
-        this(length, AddressableLEDColorOrder.kRGB);
-    }
+	/**
+	 * Constructs a new LED buffer with the specified length.
+	 *
+	 * @param length The length of the buffer in pixels
+	 */
+	public AddressableLEDBuffer(int length) {
+		this(length, AddressableLEDColorOrder.kRGB);
+	}
 
-    /**
-     * Constructs a new LED buffer with the specified length and color order.
-     *
-     * @param length The length of the buffer in pixels
-     * @param colorOrder The order the pixels display colors in
-     */
-    public AddressableLEDBuffer(int length, AddressableLEDColorOrder colorOrder) {
-        m_buffer = new byte[length * 4];
-        m_colorOrder = colorOrder;
-    }
+	/**
+	 * Constructs a new LED buffer with the specified length and color order.
+	 *
+	 * @param length The length of the buffer in pixels
+	 * @param colorOrder The order the pixels display colors in
+	 */
+	public AddressableLEDBuffer(int length, AddressableLEDColorOrder colorOrder) {
+		m_buffer = new byte[length * 4];
+		m_colorOrder = colorOrder;
+	}
 
-    /**
-     * Sets a specific led in the buffer.
-     *
-     * @param index the index to write
-     * @param r     the r value [0-255]
-     * @param g     the g value [0-255]
-     * @param b     the b value [0-255]
-     */
-    @SuppressWarnings("ParameterName")
-    public void setRGB(int index, int r, int g, int b) {
-        switch (m_colorOrder) {
-            case kRGB:
-                m_buffer[index * 4] = (byte) b;
-                m_buffer[(index * 4) + 1] = (byte) g;
-                m_buffer[(index * 4) + 2] = (byte) r;
-                break;
-            case kRBG:
-                m_buffer[index * 4] = (byte) g;
-                m_buffer[(index * 4) + 1] = (byte) b;
-                m_buffer[(index * 4) + 2] = (byte) r;
-                break;
-            case kGBR:
-                m_buffer[index * 4] = (byte) r;
-                m_buffer[(index * 4) + 1] = (byte) b;
-                m_buffer[(index * 4) + 2] = (byte) g;
-                break;
-            case kGRB:
-                m_buffer[index * 4] = (byte) b;
-                m_buffer[(index * 4) + 1] = (byte) r;
-                m_buffer[(index * 4) + 2] = (byte) g;
-                break;
-            case kBRG:
-                m_buffer[index * 4] = (byte) g;
-                m_buffer[(index * 4) + 1] = (byte) r;
-                m_buffer[(index * 4) + 2] = (byte) b;
-                break;
-            case kBGR:
-                m_buffer[index * 4] = (byte) r;
-                m_buffer[(index * 4) + 1] = (byte) g;
-                m_buffer[(index * 4) + 2] = (byte) b;
-                break;
-        }
-        m_buffer[(index * 4) + 3] = 0;
-    }
+	/**
+	 * Sets a specific led in the buffer.
+	 *
+	 * @param index the index to write
+	 * @param r     the r value [0-255]
+	 * @param g     the g value [0-255]
+	 * @param b     the b value [0-255]
+	 */
+	@SuppressWarnings("ParameterName")
+	public void setRGB(int index, int r, int g, int b) {
+		switch (m_colorOrder) {
+			case kRGB:
+				m_buffer[index * 4] = (byte) b;
+				m_buffer[(index * 4) + 1] = (byte) g;
+				m_buffer[(index * 4) + 2] = (byte) r;
+				break;
+			case kRBG:
+				m_buffer[index * 4] = (byte) g;
+				m_buffer[(index * 4) + 1] = (byte) b;
+				m_buffer[(index * 4) + 2] = (byte) r;
+				break;
+			case kGBR:
+				m_buffer[index * 4] = (byte) r;
+				m_buffer[(index * 4) + 1] = (byte) b;
+				m_buffer[(index * 4) + 2] = (byte) g;
+				break;
+			case kGRB:
+				m_buffer[index * 4] = (byte) b;
+				m_buffer[(index * 4) + 1] = (byte) r;
+				m_buffer[(index * 4) + 2] = (byte) g;
+				break;
+			case kBRG:
+				m_buffer[index * 4] = (byte) g;
+				m_buffer[(index * 4) + 1] = (byte) r;
+				m_buffer[(index * 4) + 2] = (byte) b;
+				break;
+			case kBGR:
+				m_buffer[index * 4] = (byte) r;
+				m_buffer[(index * 4) + 1] = (byte) g;
+				m_buffer[(index * 4) + 2] = (byte) b;
+				break;
+		}
+		m_buffer[(index * 4) + 3] = 0;
+	}
 
-    /**
-     * Sets a specific led in the buffer.
-     *
-     * @param index the index to write
-     * @param h     the h value [0-180]
-     * @param s     the s value [0-255]
-     * @param v     the v value [0-255]
-     */
-    @SuppressWarnings("ParameterName")
-    public void setHSV(final int index, final int h, final int s, final int v) {
-        if (s == 0) {
-            setRGB(index, v, v, v);
-            return;
-        }
+	/**
+	 * Sets a specific led in the buffer.
+	 *
+	 * @param index the index to write
+	 * @param h     the h value [0-180]
+	 * @param s     the s value [0-255]
+	 * @param v     the v value [0-255]
+	 */
+	@SuppressWarnings("ParameterName")
+	public void setHSV(final int index, final int h, final int s, final int v) {
+		if (s == 0) {
+			setRGB(index, v, v, v);
+			return;
+		}
 
-        final int region = h / 30;
-        final int remainder = (h - (region * 30)) * 6;
+		final int region = h / 30;
+		final int remainder = (h - (region * 30)) * 6;
 
-        final int p = (v * (255 - s)) >> 8;
-        final int q = (v * (255 - ((s * remainder) >> 8))) >> 8;
-        final int t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
+		final int p = (v * (255 - s)) >> 8;
+		final int q = (v * (255 - ((s * remainder) >> 8))) >> 8;
+		final int t = (v * (255 - ((s * (255 - remainder)) >> 8))) >> 8;
 
-        switch (region) {
-            case 0:
-                setRGB(index, v, t, p);
-                break;
-            case 1:
-                setRGB(index, q, v, p);
-                break;
-            case 2:
-                setRGB(index, p, v, t);
-                break;
-            case 3:
-                setRGB(index, p, q, v);
-                break;
-            case 4:
-                setRGB(index, t, p, v);
-                break;
-            default:
-                setRGB(index, v, p, q);
-                break;
-        }
-    }
+		switch (region) {
+			case 0:
+				setRGB(index, v, t, p);
+				break;
+			case 1:
+				setRGB(index, q, v, p);
+				break;
+			case 2:
+				setRGB(index, p, v, t);
+				break;
+			case 3:
+				setRGB(index, p, q, v);
+				break;
+			case 4:
+				setRGB(index, t, p, v);
+				break;
+			default:
+				setRGB(index, v, p, q);
+				break;
+		}
+	}
 
-    /**
-     * Sets a specific LED in the buffer.
-     *
-     * @param index The index to write
-     * @param color The color of the LED
-     */
-    public void setLED(int index, Color color) {
-        setRGB(index,
-                (int) (color.red * 255),
-                (int) (color.green * 255),
-                (int) (color.blue * 255));
-    }
+	/**
+	 * Sets a specific LED in the buffer.
+	 *
+	 * @param index The index to write
+	 * @param color The color of the LED
+	 */
+	public void setLED(int index, Color color) {
+		setRGB(index,
+				(int) (color.red * 255),
+				(int) (color.green * 255),
+				(int) (color.blue * 255));
+	}
 
-    /**
-     * Sets a specific LED in the buffer.
-     *
-     * @param index The index to write
-     * @param color The color of the LED
-     */
-    public void setLED(int index, Color8Bit color) {
-        setRGB(index, color.red, color.green, color.blue);
-    }
+	/**
+	 * Sets a specific LED in the buffer.
+	 *
+	 * @param index The index to write
+	 * @param color The color of the LED
+	 */
+	public void setLED(int index, Color8Bit color) {
+		setRGB(index, color.red, color.green, color.blue);
+	}
 
-    /**
-     * Gets the buffer length.
-     *
-     * @return the buffer length
-     */
-    public int getLength() {
-        return m_buffer.length / 4;
-    }
+	/**
+	 * Gets the buffer length.
+	 *
+	 * @return the buffer length
+	 */
+	public int getLength() {
+		return m_buffer.length / 4;
+	}
 }

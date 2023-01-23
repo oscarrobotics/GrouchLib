@@ -1,68 +1,92 @@
 package frc.team832.lib.motors;
 
+import edu.wpi.first.math.util.Units;
+
 public class WheeledPowerTrain extends Powertrain {
+	private final Motor m_wpilibPlantMotor;
+	public final double encoderRatio;
+	public final double wheelDiameterMeters;
+	public final double wheelCircumferenceMeters;
 
-    public static final double METERS_SEC_TO_FEET_SEC = 3.28084;
+	/**
+	 *
+	 * @param gearbox Gearbox
+	 * @param motor Motor type
+	 * @param motorCount Amount of motors
+	 * @param wheelDiameterInches Wheel diameter in inches
+	 * @param encoderRatio Ratio from encoder to wheel.
+	 */
+	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches, double encoderRatio) {
+		super(gearbox, motor, motorCount);
+		m_wpilibPlantMotor = new Motor(motor, motorCount);
+		wheelDiameterMeters = Units.inchesToMeters(wheelDiameterInches);
+		wheelCircumferenceMeters = wheelDiameterMeters * Math.PI;
+		this.encoderRatio = encoderRatio;
+	}
 
-    private final double _wheelDiameterMeters;
-    private double _encoderRatio;
+	/**
+	 *	This constructor assumes the encoder is at the input of the gearbox.
+	 * 
+	 * @param gearbox Gearbox
+	 * @param motor Motor type
+	 * @param motorCount Amount of motors
+	 * @param wheelDiameterInches Wheel diameter in inches
+	 */
+	public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterInches) {
+		this(gearbox, motor, motorCount, wheelDiameterInches, gearbox.totalReduction);
+	}
 
-    /**
-     *
-     * @param gearbox Gearbox
-     * @param motor Motor type
-     * @param motorCount Amount of motors
-     * @param wheelDiameterMeters Wheel diameter in meters
-     */
-    public WheeledPowerTrain(Gearbox gearbox, Motor motor, int motorCount, double wheelDiameterMeters) {
-        super(gearbox, motor, motorCount);
-        _wheelDiameterMeters = wheelDiameterMeters;
-        setEncoderRatioIndex(0);
-    }
+	public double calcWheelFromMotor(double motorUnits) {
+		return gearbox.getInputToOutput(motorUnits);
+	}
 
-    public void setEncoderRatioIndex(int reductionIndex) {
-        if (reductionIndex == 0) {
-            _encoderRatio = gearbox.getTotalReduction();
-        } else if (reductionIndex > 0) {
-            _encoderRatio = gearbox.getReduction(reductionIndex - 1);
-        }
-    }
+	public double calcMotorFromWheel(double wheelUnits) {
+		return gearbox.getOutputToInput(wheelUnits);
+	}
 
-    public double getWheelCircumferenceMeters() {
-        return _wheelDiameterMeters * Math.PI;
-    }
+	public double calcWheelFromEncoder(double encoderUnits) {
+		return encoderUnits / encoderRatio;
+	}
 
-    public int getWheelTicksPerRev(int encoderCPR) {
-        return (int) (encoderCPR / _encoderRatio * _wheelDiameterMeters);
-    }
+	public double calcEncoderFromWheel(double wheelUnits) {
+		return wheelUnits * encoderRatio;
+	}
 
-    public double calculateWheelRPMFromMotorRPM(double currentRpm) { return currentRpm / _encoderRatio ; }
+	public double calcMotorFromEncoder(double encoderUnits) {
+		return calcMotorFromWheel(calcWheelFromEncoder(encoderUnits));
+	}
 
-    public double calculateMotorRpmFromWheelRpm(double wheelRPM) {
-        return wheelRPM / _encoderRatio;
-    }
+	public double calcWheelDistanceMeters(double encoderRotations) {
+		double wheelRotations = calcWheelFromEncoder(encoderRotations);
+		double wheelCircumference = wheelCircumferenceMeters;
+		return wheelRotations * wheelCircumference;
+	}
 
-    public double calculateTicksFromWheelDistance(double distanceMeters) {
-        return calculateTicksFromPosition(distanceMeters / (getWheelCircumferenceMeters()));
-    }
+	public double calcEncoderRotationsFromMeters(double meters) {
+		double wheelRotations = meters / wheelCircumferenceMeters;
+		double encoderRotations = calcEncoderFromWheel(wheelRotations);
+		return encoderRotations;
+	}
 
-    public double calculateWheelDistanceMeters(double encoderRotations) {
-        return (encoderRotations / _encoderRatio) * getWheelCircumferenceMeters();
-    }
+	public double calcEncoderRpmFromMetersPerSec(double metersPerSec) {
+		double wheelRotationsPerSec = metersPerSec / wheelCircumferenceMeters;
+		double encoderRotationsPerSec = calcEncoderFromWheel(wheelRotationsPerSec);
+		return encoderRotationsPerSec * 60;
+	}
 
-    public double calculateMetersPerSec(double currentRpm) {
-        return (calculateWheelRPMFromMotorRPM(currentRpm) * getWheelCircumferenceMeters()) / 60f ;
-    }
+	public double calcMetersPerSec(double encoderRpm) {
+		double wheelRpm = calcWheelFromEncoder(encoderRpm);
+		return (wheelRpm * wheelCircumferenceMeters) / 60f ;
+	}
 
-    public double calculateFeetPerSec(double currentRpm) {
-        return calculateMetersPerSec(currentRpm) * METERS_SEC_TO_FEET_SEC;
-    }
-
-    public double calculateMotorRpmFromSurfaceSpeed(double wheelMetersPerSec) {
-        return wheelMetersPerSec * 60f / (_wheelDiameterMeters * Math.PI * _encoderRatio);
-    }
-
-    public double calculateTicksFromPosition(double targetPosition) {
-        return targetPosition / _encoderRatio;
-    }
+	public double calcFeetPerSec(double currentMotorRpm) {
+		return Units.metersToFeet(calcMetersPerSec(currentMotorRpm));
+	}
+	
+	/**
+	 * Returns a Motor modified to use the motor count, as WPILib uses in their system plants.
+	 */
+	public Motor getWPILibPlantMotor() {
+		return m_wpilibPlantMotor;
+	}
 }

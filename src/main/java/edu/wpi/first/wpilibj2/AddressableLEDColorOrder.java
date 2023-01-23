@@ -11,10 +11,10 @@ package edu.wpi.first.wpilibj2;
  * Defines the order in which the LED strip displays colors
  */
 public enum AddressableLEDColorOrder {
-    kRGB,
-    kRBG,
-    kGBR,
-    kGRB,
-    kBRG,
-    kBGR
+	kRGB,
+	kRBG,
+	kGBR,
+	kGRB,
+	kBRG,
+	kBGR
 }

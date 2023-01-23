@@ -1,49 +1,66 @@
 package frc.team832.lib.power.monitoring;
 
-import edu.wpi.first.wpilibj.MedianFilter;
-import frc.team832.lib.power.PDPPortNumber;
-import frc.team832.lib.power.PDPSlot;
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.wpilibj.RobotController;
+import frc.team832.lib.power.PDSlot;
 
 public class StallDetector {
-    private int stallCurrent;
-    private int minStallMillis;
-    private long stallMillis;
-    private long lastRunMillis;
-    private StallDetectorStatus stallStatus = new StallDetectorStatus();
-    private final MedianFilter currentFilter = new MedianFilter(40); // enough to keep 1 second of data when called every 25ms
-    private final PDPSlot slot;
+	public class StallDetectorStatus {
+		public boolean isStalled;
+		public double stalledForMillis;
+	}
 
-    public StallDetector(PDPSlot slot) {
-        this.slot = slot;
-        stallCurrent = slot.getBreakerRatedCurrent();
-    }
+	private int stallCurrent = 5;
+	private int minStallMillis = 100;
 
-    public void setStallCurrent(int stallCurrent) {
-        this.stallCurrent = stallCurrent;
-    }
+	private StallDetectorStatus stallStatus = new StallDetectorStatus();
+	private final MedianFilter currentFilter = new MedianFilter(40); // enough to keep 1 second of data when called every 25ms
+	private final DoubleSupplier currentSupplier;
+	
+	private double stalledMillis = 0;
+	private long lastRunMicros = 0;
+	
+	public StallDetector(PDSlot slot) {
+		stallCurrent = slot.getBreakerRatedCurrent();
+		currentSupplier = slot::getCurrentUsage;
+	}
 
-    public void setMinStallMillis(int minStallMillis) {
-        this.minStallMillis = minStallMillis;
-    }
+	public StallDetector(DoubleSupplier currentSupplier) {
+		this.currentSupplier = currentSupplier;
+	}
 
-    public void updateStallStatus() {
-        double currentCurrent = currentFilter.calculate(slot.getCurrentUsage());
-        long nowMillis = System.currentTimeMillis();
-        long elapsed = nowMillis - lastRunMillis;
+	public void setStallCurrent(int stallCurrent) {
+		this.stallCurrent = stallCurrent;
+	}
 
-        if (currentCurrent >= stallCurrent) {
-            stallMillis += elapsed;
-        } else {
-            stallMillis -= elapsed;
-        }
+	public void setMinStallMillis(int minStallMillis) {
+		this.minStallMillis = minStallMillis;
+	}
 
-        lastRunMillis = System.currentTimeMillis();
+	public void updateStallStatus() {
+		double currentCurrent = currentFilter.calculate(currentSupplier.getAsDouble());
+		long nowMicros = RobotController.getFPGATime();
+		long elapsedMicros = nowMicros - lastRunMicros;
 
-        stallStatus.isStalled = stallMillis >= minStallMillis;
-        stallStatus.stalledForMillis = (int) stallMillis;
-    }
+		if (currentCurrent >= stallCurrent) {
+			stalledMillis += (elapsedMicros / 1000.0);
+		} else {
+			if (stalledMillis >= 0) {
+				stalledMillis = 0;
+			} else {
+				stalledMillis -= (elapsedMicros / 1000.0);
+			}
+		}
 
-    public StallDetectorStatus getStallStatus() {
-        return stallStatus;
-    }
+		lastRunMicros = RobotController.getFPGATime();
+
+		stallStatus.isStalled = stalledMillis >= minStallMillis;
+		stallStatus.stalledForMillis = stalledMillis;
+	}
+
+	public StallDetectorStatus getStallStatus() {
+		return stallStatus;
+	}
 }

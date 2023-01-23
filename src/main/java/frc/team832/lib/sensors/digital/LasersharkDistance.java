@@ -1,23 +1,27 @@
-package frc.team832.lib.sensors.digital;
+// Awaiting LibCu 2022 update
 
-import com.cuforge.libcu.Lasershark;
-import edu.wpi.first.wpilibj.util.Units;
-import frc.team832.lib.sensors.base.DistanceSensor;
+// package frc.team832.lib.sensors.digital;
 
-public class LasersharkDistance extends DistanceSensor {
+// import com.cuforge.libcu.Lasershark;
 
-    private static final double kMinRangeMeters = Units.inchesToMeters(2);
-    private static final double kMaxRangeMeters = Units.feetToMeters(12);
+// import edu.wpi.first.math.util.Units;
+// import edu.wpi.first.util.sendable.Sendable;
+// import frc.team832.lib.sensors.base.DistanceSensor;
 
-    private final Lasershark shark;
+// public class LasersharkDistance extends DistanceSensor {
 
-    public LasersharkDistance(int digitalChannel) {
-        super(kMinRangeMeters, kMaxRangeMeters);
-        shark = new Lasershark(digitalChannel);
-    }
+// 	private static final double kMinRangeMeters = Units.inchesToMeters(2);
+// 	private static final double kMaxRangeMeters = Units.feetToMeters(12);
 
-    @Override
-    public double getDistanceMeters() {
-        return shark.getDistanceMeters();
-    }
-}
+// 	private final Lasershark shark;
+
+// 	public LasersharkDistance(int digitalChannel) {
+// 		super(kMinRangeMeters, kMaxRangeMeters);
+// 		shark = new Lasershark(digitalChannel);
+// 	}
+
+// 	@Override
+// 	public double getDistanceMeters() {
+// 		return shark.getDistanceMeters();
+// 	}
+// }

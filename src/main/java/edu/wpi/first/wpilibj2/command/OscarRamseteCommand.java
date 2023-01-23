@@ -1,25 +1,19 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package edu.wpi.first.wpilibj2.command;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
@@ -170,8 +164,8 @@ public class OscarRamseteCommand extends CommandBase {
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-    SmartDashboard.putNumber("WheelSpeed/LeftTarget", leftSpeedSetpoint);
-    SmartDashboard.putNumber("WheelSpeed/RightTarget", rightSpeedSetpoint);
+    SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/LeftTarget", leftSpeedSetpoint);
+    SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/RightTarget", rightSpeedSetpoint);
 
     double leftOutput;
     double rightOutput;
@@ -181,19 +175,27 @@ public class OscarRamseteCommand extends CommandBase {
           m_leftFeedForward.calculate(leftSpeedSetpoint,
               (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
 
-      SmartDashboard.putNumber("FF/Left", leftFeedforward);
+      if (RobotBase.isSimulation()) {
+        leftFeedforward -= m_leftFeedForward.ks * Math.signum(leftSpeedSetpoint);
+      }
+
+      SmartDashboard.putNumber("OscarRamsete/FF/Left", leftFeedforward);
 
       double rightFeedforward =
           m_rightFeedForward.calculate(rightSpeedSetpoint,
               (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
 
-      SmartDashboard.putNumber("FF/Right", rightFeedforward);
+      if (RobotBase.isSimulation()) {
+        rightFeedforward -= m_rightFeedForward.ks * Math.signum(rightSpeedSetpoint);
+      }
+
+      SmartDashboard.putNumber("OscarRamsete/FF/Right", rightFeedforward);
 
       double leftRealSpeed = m_speeds.get().leftMetersPerSecond;
       double rightRealSpeed = m_speeds.get().rightMetersPerSecond;
 
-      SmartDashboard.putNumber("WheelSpeeds/LeftReal", leftRealSpeed);
-      SmartDashboard.putNumber("WheelSpeeds/RightReal", -rightRealSpeed);
+      SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/LeftReal", leftRealSpeed);
+      SmartDashboard.putNumber("OscarRamsete/WheelSpeeds/RightReal", rightRealSpeed);
 
       leftOutput = leftFeedforward
           + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
@@ -207,7 +209,7 @@ public class OscarRamseteCommand extends CommandBase {
       rightOutput = rightSpeedSetpoint;
     }
 
-    m_output.accept(-leftOutput, rightOutput);
+    m_output.accept(leftOutput, rightOutput);
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
@@ -216,10 +218,14 @@ public class OscarRamseteCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_timer.stop();
+
+    if (interrupted) {
+      m_output.accept(0.0, 0.0);
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return m_timer.hasPeriodPassed(m_trajectory.getTotalTimeSeconds());
+    return m_timer.advanceIfElapsed(m_trajectory.getTotalTimeSeconds());
   }
 }
